@@ -1,7 +1,0 @@
-Release/installer checks passed:
-- Complete release has 91 project files, plus update helper/instructions.
-- Applied to clean original archive; existing customized settings.py, backend/frontend env values, custom SQLite filename/data and media bytes preserved.
-- All other installed source/asset bytes match the release manifest.
-- Repeated update changed 0 files.
-- Disposable fresh copy: setup_local, Django check, migrate, seed and database readiness passed.
-- ZIP does not contain live env, SQLite databases, media uploads, dependencies or build output.

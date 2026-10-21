@@ -1,6 +1,0 @@
-Installer checks passed:
-- Applied all 43 payload files to an extracted original PeerMentor.zip.
-- Re-running from backend/ auto-detected project root and changed 0 files.
-- Original settings.py, fake local .env, database fixture bytes and media fixture bytes unchanged.
-- Installed source/asset bytes match the full manifest.
-- Old refresh.css import absent; brand has no trailing dot; duration constant is 50.

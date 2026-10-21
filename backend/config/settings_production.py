@@ -12,16 +12,22 @@ if not ALLOWED_HOSTS or '*' in ALLOWED_HOSTS:
 CSRF_TRUSTED_ORIGINS = [value.strip() for value in os.getenv('CSRF_TRUSTED_ORIGINS','').split(',') if value.strip()]
 if not CSRF_TRUSTED_ORIGINS or any(urlsplit(value).scheme != 'https' or not urlsplit(value).netloc or '*' in value for value in CSRF_TRUSTED_ORIGINS):
     raise ImproperlyConfigured('Set explicit HTTPS CSRF_TRUSTED_ORIGINS for production.')
-for name in ['POSTGRES_DB','POSTGRES_USER','POSTGRES_PASSWORD','POSTGRES_HOST']:
-    if not os.getenv(name):
-        raise ImproperlyConfigured(f'Set {name} for production PostgreSQL.')
-DATABASES = {'default':{
+if os.getenv('DATABASE_URL'):
+    import dj_database_url
+    DATABASES = {'default': dj_database_url.parse(os.environ['DATABASE_URL'], conn_max_age=60, conn_health_checks=True)}
+    if DATABASES['default']['ENGINE'] != 'django.db.backends.postgresql':
+        raise ImproperlyConfigured('Production requires PostgreSQL.')
+else:
+    for name in ['POSTGRES_DB','POSTGRES_USER','POSTGRES_PASSWORD','POSTGRES_HOST']:
+        if not os.getenv(name):
+            raise ImproperlyConfigured(f'Set {name} for production PostgreSQL.')
+    DATABASES = {'default':{
     'ENGINE':'django.db.backends.postgresql',
     'NAME':os.environ['POSTGRES_DB'],'USER':os.environ['POSTGRES_USER'],
     'PASSWORD':os.environ['POSTGRES_PASSWORD'],'HOST':os.environ['POSTGRES_HOST'],
     'PORT':os.getenv('POSTGRES_PORT','5432'),'CONN_MAX_AGE':60,'CONN_HEALTH_CHECKS':True,
     'OPTIONS':{'sslmode':os.getenv('POSTGRES_SSLMODE','prefer')},
-}}
+    }}
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
