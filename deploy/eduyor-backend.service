@@ -1,0 +1,22 @@
+[Unit]
+Description=EduYor Django
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=eduyor
+Group=www-data
+WorkingDirectory=/srv/eduyor/backend
+EnvironmentFile=/etc/eduyor/backend.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/srv/eduyor/.venv/bin/gunicorn config.wsgi:application --bind 127.0.0.1:8000 --workers 2 --timeout 60 --access-logfile - --error-logfile -
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+NoNewPrivileges=true
+PrivateTmp=true
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,23 @@
+{% extends "admin/change_form.html" %}
+{% block after_field_sets %}
+{{ block.super }}
+<fieldset class="module aligned"><h2>Manual operations</h2>
+<p><a href="{% url 'admin:core_booking_payment_review' original.pk %}" style="display:inline-block;padding:12px 18px;background:#873af0;color:white;border-radius:8px">To‘lovni oson tekshirish →</a></p>
+<p>Verify receipt independently in your bank before confirming. A transaction reference submitted by a student is only a claim. Never transfer money twice: these buttons record transfers already performed.</p>
+<p>Expired/cancelled reservations with received funds require a full refund. No automatic confirmation. Resolve issues before completion/payout. For an after-start refund, record a refund decision with a note; then send the full refund and record its reference. Paid-out sessions require manual bank reconciliation first.</p>
+<div style="padding:16px">
+<label for="op-reference">Bank/transfer reference</label><input id="op-reference" name="reference" maxlength="160">
+<label for="op-note">Resolution / issue note</label><textarea id="op-note" name="note" maxlength="1500"></textarea>
+{% url 'admin:core_booking_operate' original.pk as operate_url %}
+<p>
+<button type="submit" name="operation" value="verify" formaction="{{ operate_url }}" formmethod="post">I independently verified receipt → confirm</button>
+<button type="submit" name="operation" value="cancel" formaction="{{ operate_url }}" formmethod="post">Cancel before start</button>
+<button type="submit" name="operation" value="dispute" formaction="{{ operate_url }}" formmethod="post">Flag issue</button>
+<button type="submit" name="operation" value="resolve" formaction="{{ operate_url }}" formmethod="post">Resolve issue (note required)</button>
+<button type="submit" name="operation" value="resolve_refund" formaction="{{ operate_url }}" formmethod="post">Resolve with full refund (note required)</button>
+<button type="submit" name="operation" value="complete" formaction="{{ operate_url }}" formmethod="post">Resolve completion after end</button>
+<button type="submit" name="operation" value="payout" formaction="{{ operate_url }}" formmethod="post">Record mentor transfer already sent</button>
+<button type="submit" name="operation" value="refund" formaction="{{ operate_url }}" formmethod="post">Record full refund already sent</button>
+</p></div></fieldset>
+{% endblock %}
+{% block submit_buttons_bottom %}{% endblock %}
