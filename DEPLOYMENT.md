@@ -7,7 +7,7 @@
 - Render: `DJANGO_SETTINGS_MODULE=config.settings_render`, strong generated `DJANGO_SECRET_KEY`, explicit `DJANGO_ALLOWED_HOSTS`, HTTPS `CSRF_TRUSTED_ORIGINS`, and the internal `DATABASE_URL`. Secrets belong only in provider environment settings.
 - Build: `bash build.sh`; start: `gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --access-logfile -`; health: `/api/health/`. WhiteNoise serves collected static files; normalized JPEG avatars are served by the backend.
 - Free-tier limits: Render sleeps when idle, so the first request can be slow. The free database expires **November 20, 2026**. Uploaded avatars use ephemeral disk and can disappear on restart/redeploy; configure persistent media storage before relying on uploads. Upgrade the database before expiration for continued use.
-- Vercel deploys from GitHub automatically. The Render service was connected through the public repository URL; trigger Render's “Deploy latest commit” after backend updates.
+- Vercel and Render deploy from GitHub automatically. Render builds backend changes from `main`; its dashboard also provides “Deploy latest commit” for manual retries.
 - Django admin: https://eduyor-api.onrender.com/admin/ . Create an administrator deliberately; no demo accounts or default production passwords are seeded.
 
 The following VPS instructions are retained as an alternative hosting reference.
