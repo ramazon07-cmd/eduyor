@@ -1,3 +1,17 @@
+# Live deployment — Vercel + Render
+
+- Frontend: https://eduyor.vercel.app (Vercel project `eduyor`, root `frontend`, production branch `main`).
+- Backend: https://eduyor-api.onrender.com (Render service `eduyor-api`, root `backend`, Python 3.12.8).
+- Database: Render PostgreSQL `eduyor-db`, Frankfurt. Production starts with a fresh database; local SQLite is not imported.
+- Vercel production environment: `DJANGO_API_ORIGIN=https://eduyor-api.onrender.com`. Rebuild after changing this value. Next.js proxies `/api/` and `/media/`, preserving same-origin browser sessions and CSRF cookies.
+- Render: `DJANGO_SETTINGS_MODULE=config.settings_render`, strong generated `DJANGO_SECRET_KEY`, explicit `DJANGO_ALLOWED_HOSTS`, HTTPS `CSRF_TRUSTED_ORIGINS`, and the internal `DATABASE_URL`. Secrets belong only in provider environment settings.
+- Build: `bash build.sh`; start: `gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --access-logfile -`; health: `/api/health/`. WhiteNoise serves collected static files; normalized JPEG avatars are served by the backend.
+- Free-tier limits: Render sleeps when idle, so the first request can be slow. The free database expires **November 20, 2026**. Uploaded avatars use ephemeral disk and can disappear on restart/redeploy; configure persistent media storage before relying on uploads. Upgrade the database before expiration for continued use.
+- Vercel deploys from GitHub automatically. The Render service was connected through the public repository URL; trigger Render's “Deploy latest commit” after backend updates.
+- Django admin: https://eduyor-api.onrender.com/admin/ . Create an administrator deliberately; no demo accounts or default production passwords are seeded.
+
+The following VPS instructions are retained as an alternative hosting reference.
+
 # EduYor deployment — one Linux VPS, one HTTPS origin
 
 Prepared configuration; no server or domain has been deployed from this workspace. Keep local SQLite for development. The production profile always uses PostgreSQL because live booking conflict protection depends on row locks.
