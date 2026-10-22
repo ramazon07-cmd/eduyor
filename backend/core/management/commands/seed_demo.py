@@ -3,11 +3,12 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from core.models import User, Subject, MentorProfile, AvailabilityRule
 from core.services import lock_users
+from core.subjects import SUBJECT_NAMES
 class Command(BaseCommand):
     help = 'Create clearly labelled demo mentors. Demo users have unusable passwords.'
     @transaction.atomic
     def handle(self,*args,**options):
-        subjects = {name:Subject.objects.get_or_create(name=name)[0] for name in ['SAT','IELTS','English','Mathematics','University Admissions']}
+        subjects = {name:Subject.objects.get_or_create(name=name)[0] for name in SUBJECT_NAMES}
         rows = [
             ('demo.sat@example.invalid','Demo · Aziz','SAT matematikasini birga o‘rganamiz','SAT',30000),
             ('demo.ielts@example.invalid','Demo · Madina','IELTS uchun aniq mashq rejasi','IELTS',45000),

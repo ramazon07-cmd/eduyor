@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from .models import User, Profile, Subject, MentorProfile, AvailabilityRule, BlockedDate, Booking, validate_timezone
 from .services import SESSION_DURATION_MINUTES
+from .subjects import SUBJECT_LABELS
 
 
 class RegistrationSerializer(serializers.Serializer):
@@ -51,6 +52,11 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class SubjectSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
+    def get_name(self, obj):
+        return SUBJECT_LABELS.get(obj.name, obj.name)
+
     class Meta:
         model = Subject
         fields = ['id','name']

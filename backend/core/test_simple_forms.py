@@ -23,7 +23,7 @@ class SimpleMentorAndPaymentTests(TestCase):
         cls.staff=User.objects.create_user('simple-staff@example.invalid',None,is_staff=True)
         for user,name in [(cls.student,'Student'),(cls.teacher,'Mentor')]:
             user.profile.full_name=name;user.profile.save()
-        cls.subject=Subject.objects.create(name='SAT')
+        cls.subject=Subject.objects.get_or_create(name='SAT')[0]
         cls.mentor=MentorProfile.objects.create(user=cls.teacher,headline='SAT mentor',bio='Bio',experience='Achievements',hourly_price=30000,teaching_languages='English',approval='approved')
         cls.mentor.subjects.add(cls.subject)
 

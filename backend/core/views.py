@@ -21,6 +21,7 @@ from .models import User, Profile, MentorProfile, Subject, AvailabilityRule, Blo
 from .serializers import RegistrationSerializer, ProfileSerializer, PublicMentorSerializer, MentorSettingsSerializer, SubjectSerializer, ScheduleSerializer, BookingCreateSerializer, BookingSerializer, MentorFilterSerializer, BookingFilterSerializer
 from . import services
 from .payments import payment_info
+from .subjects import SUBJECT_NAMES, SUBJECT_LABELS
 
 
 def csrf_failure(request,reason=''):
@@ -118,7 +119,8 @@ class MeView(SecureView):
 class SubjectsView(SecureView):
     permission_classes = [AllowAny]
     def get(self,request):
-        return Response(SubjectSerializer(Subject.objects.order_by('name'),many=True).data)
+        subjects = {subject.name: subject for subject in Subject.objects.filter(name__in=SUBJECT_NAMES)}
+        return Response(SubjectSerializer([subjects[name] for name in SUBJECT_NAMES if name in subjects],many=True).data)
 
 
 def public_mentors():
@@ -138,7 +140,8 @@ class MentorListView(SecureView):
             qs = qs.exclude(user=request.user)
         if params['search']:
             term = params['search']
-            qs = qs.filter(Q(user__profile__full_name__icontains=term)|Q(headline__icontains=term)|Q(subjects__name__icontains=term))
+            direction_names = [name for name, label in SUBJECT_LABELS.items() if term.casefold() in label.casefold()]
+            qs = qs.filter(Q(user__profile__full_name__icontains=term)|Q(headline__icontains=term)|Q(subjects__name__icontains=term)|Q(subjects__name__in=direction_names))
         if params.get('subject'):
             qs = qs.filter(subjects=params['subject'])
         if params['language']:

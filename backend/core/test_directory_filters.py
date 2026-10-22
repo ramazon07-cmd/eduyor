@@ -6,8 +6,8 @@ from .models import User, Subject, MentorProfile
 class MentorDirectoryFilterTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.sat=Subject.objects.create(name='SAT')
-        cls.ielts=Subject.objects.create(name='IELTS')
+        cls.sat=Subject.objects.get_or_create(name='SAT')[0]
+        cls.ielts=Subject.objects.get_or_create(name='IELTS')[0]
         cls.mentors={}
         for name,price,languages,subjects,approval,paused,active in [
             ('Amy',30000,'O‘zbekcha, English',['SAT'],'approved',False,True),

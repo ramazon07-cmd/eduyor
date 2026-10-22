@@ -15,7 +15,7 @@ class FiftyMinuteSessionTests(TestCase):
         cls.student=User.objects.create_user('duration-student@example.invalid',None)
         cls.teacher=User.objects.create_user('duration-teacher@example.invalid',None)
         cls.other=User.objects.create_user('duration-other@example.invalid',None)
-        cls.subject=Subject.objects.create(name='SAT')
+        cls.subject=Subject.objects.get_or_create(name='SAT')[0]
         for user in [cls.teacher,cls.other]:
             mentor=MentorProfile.objects.create(user=user,headline='Demo',bio='Demo',teaching_languages='English',hourly_price=30000,approval='approved')
             mentor.subjects.add(cls.subject)

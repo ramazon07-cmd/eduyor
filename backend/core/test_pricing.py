@@ -16,7 +16,7 @@ class PricingPolicyTests(TestCase):
     def setUp(self):
         self.student = User.objects.create_user('pricing-student@example.invalid', None)
         self.mentor = User.objects.create_user('pricing-mentor@example.invalid', None)
-        self.subject = Subject.objects.create(name='SAT')
+        self.subject = Subject.objects.get_or_create(name='SAT')[0]
         self.profile = MentorProfile.objects.create(user=self.mentor, headline='SAT', bio='Demo', experience='Demo', teaching_languages='O‘zbekcha', hourly_price=30000, approval='approved')
         self.profile.subjects.add(self.subject)
         self.clock = patch('core.services.timezone.now', return_value=NOW)

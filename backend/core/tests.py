@@ -23,7 +23,7 @@ START = datetime(2026,6,3,13,tzinfo=UTC)  # Wednesday 18:00 Tashkent
 
 
 def people():
-    subject = Subject.objects.create(name='SAT')
+    subject = Subject.objects.get_or_create(name='SAT')[0]
     users = [User.objects.create_user(f'person{i}@example.com','Test-password-826!',first_name=f'Person {i}') for i in range(4)]
     for u in users:
         m = MentorProfile.objects.create(user=u,headline='SAT mentor',bio='Bio',teaching_languages='Uzbek',experience='Experience',hourly_price=50000,approval='approved')
