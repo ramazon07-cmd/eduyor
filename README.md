@@ -2,7 +2,7 @@
 
 Next.js App Router + TypeScript + Tailwind, Django/DRF, Uzbek Latin UI. One shared logo/sidebar/card theme across the landing page, directory, booking, dashboard, profile, auth and session/payment pages. Django Admin uses the same brand colors and mark.
 
-New lessons are **50 minutes** and cost **30,000–60,000 UZS**. Platform share: **20%**, mentor share: **80%**. Existing booking timestamps and financial snapshots are preserved. A payment reservation is separately held for 60 minutes.
+New lessons are **50 minutes** and cost **30,000–60,000 UZS**. Platform share: **20%**, mentor share: **80%**. Upcoming active legacy 60-minute bookings are shortened to 50 minutes by migration 0004; past bookings and financial snapshots are preserved. A payment reservation is separately held for 60 minutes.
 
 ## Local run — SQLite
 
@@ -59,7 +59,7 @@ Restart `npm run dev` in frontend/. The installer preserves existing settings.py
 - After the lesson ends, the student confirms it happened; time passing alone does not prove completion. Admin manually pays the mentor only for verified, completed, undisputed sessions and records the transfer reference.
 - Every account can learn and teach. No self-booking, user cancellation or mentor availability form. Both participants are checked across both roles before a slot is reserved or confirmed.
 
-New slots start on whole hours in the mentor timezone, leaving ten minutes between new 50-minute lessons. At least 24 hours' notice; next 30 days. UTC timestamps are stored; the viewer sees their own timezone. The API owns prices, approval, verification, commissions and payouts. Money uses Decimal; snapshots are immutable. Old booked 60-minute sessions retain their actual duration and display it honestly.
+New slots start on whole hours in the mentor timezone, leaving ten minutes between new 50-minute lessons. At least 24 hours' notice; next 30 days. UTC timestamps are stored; the viewer sees their own timezone. The API owns prices, approval, verification, commissions and payouts. Money uses Decimal; snapshots are immutable. Past 60-minute sessions retain their historical duration; upcoming active legacy sessions use 50 minutes after migration 0004.
 
 PostgreSQL services lock participant rows in deterministic order inside transactions. SQLite is for local use and cannot prove the row-lock concurrency guarantees required for live bookings. Expired holds stop blocking immediately without cleanup; `python3 backend/manage.py expire_reservations` is idempotent.
 

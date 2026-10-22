@@ -22,6 +22,11 @@ export function MeetingNotice(){
     void check();const timer=setInterval(check,20000);
     return()=>{active=false;clearInterval(timer);setBooking(null);};
   },[user?.id]);
+  useEffect(()=>{
+    if(!booking)return;
+    const timer=setTimeout(()=>setBooking(null),30_000);
+    return()=>clearTimeout(timer);
+  },[booking]);
   if(!booking)return null;
   return <aside className="meeting-notice" role="status" aria-live="polite"><span className="meeting-notice-icon"><Video size={22}/></span><div><strong>Google Meet havolasi tayyor</strong><p>{booking.mentor_name} darsga kirish havolasini yubordi.</p><Link href={`/sessions/${booking.id}`} onClick={()=>setBooking(null)}>Darsni ochish <ArrowUpRight size={14}/></Link></div><button type="button" onClick={()=>setBooking(null)} aria-label="Bildirishnomani yopish"><X size={16}/></button></aside>;
 }

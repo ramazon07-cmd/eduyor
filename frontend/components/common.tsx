@@ -10,7 +10,7 @@ import {Button} from './ui/button';
 import {Card} from './ui/card';
 import {MeetingNotice} from './meeting-notice';
 import {BrandMark} from './brand';
-export function Logo(){return <Link href="/" className="logo" aria-label="EduYor bosh sahifa"><BrandMark/><span className="wordmark">Edu<span>Yor</span></span></Link>;}
+export function Logo({href="/"}:{href?:string}){return <Link href={href} className="logo" aria-label="EduYor bosh sahifa"><BrandMark/><span className="wordmark">Edu<span>Yor</span></span></Link>;}
 export function Header(){
   const {user,loading,setUser,error} = useAuth();const router=useRouter();const [open,setOpen]=useState(false);const [busy,setBusy]=useState(false);const [logoutError,setLogoutError]=useState('');
   async function signOut(){setBusy(true);try{await api('auth/logout/',{method:'POST',body:'{}'});setUser(null);router.push('/');setOpen(false);}catch(e){setLogoutError((e as Error).message);}finally{setBusy(false);}}
