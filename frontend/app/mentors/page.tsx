@@ -1,4 +1,5 @@
 'use client';
+import {useI18n} from '@/components/i18n';
 import {useEffect,useState,useCallback,useRef} from 'react';
 import {Search,SlidersHorizontal,ArrowLeft,ArrowRight,Globe} from 'lucide-react';
 import {useAuth} from '@/components/auth';
@@ -16,6 +17,7 @@ function readFilters(params:URLSearchParams):Filters{return Object.fromEntries(O
 function encodeFilters(filters:Filters,page=1){const params=new URLSearchParams();Object.entries(filters).forEach(([key,value])=>{if(value&&value!==defaults[key as keyof Filters])params.set(key,value);});if(page>1)params.set('page',String(page));return params.toString();}
 
 export default function Directory(){
+  const {t:translate}=useI18n();
   const {user,loading:authLoading,refresh}=useAuth();
   const requestId=useRef(0);
   const [data,setData]=useState<Page<Mentor>|null>(null);
@@ -60,19 +62,19 @@ export default function Directory(){
   const hasFilters=Object.values(applied).some(Boolean);
 
   return <div className="container section">
-    <div className="directory-heading"><div><span className="eyebrow">O‘ZINGIZGA MOSINI TOPING</span><h1>Bir maqsad. Mos mentor.</h1><p>Yo‘nalish va ta’lim tili bo‘yicha tanlang.</p></div><span className="directory-symbol" aria-hidden="true">↗</span></div>
+    <div className="directory-heading"><div><span className="eyebrow">{translate("O‘ZINGIZGA MOSINI TOPING")}</span><h1>{translate("Bir maqsad. Mos mentor.")}</h1><p>{translate("Yo‘nalish va ta’lim tili bo‘yicha tanlang.")}</p></div><span className="directory-symbol" aria-hidden="true">↗</span></div>
     <form className="directory-filters card" onSubmit={e=>{e.preventDefault();apply(draft);}}>
-      <div className="directory-search-row"><label className="search-field"><Search size={20}/><Input aria-label="Mentor qidirish" placeholder="Ism, yo‘nalish yoki sarlavha bo‘yicha qidirish" maxLength={160} value={draft.search} onChange={e=>update('search',e.target.value)}/></label><Button><SlidersHorizontal size={17}/>Mentorlarni topish</Button></div>
+      <div className="directory-search-row"><label className="search-field"><Search size={20}/><Input aria-label={translate("Mentor qidirish")} placeholder={translate("Ism, yo‘nalish yoki sarlavha bo‘yicha qidirish")} maxLength={160} value={draft.search} onChange={e=>update('search',e.target.value)}/></label><Button><SlidersHorizontal size={17}/>{translate("Mentorlarni topish")}</Button></div>
       <div className="filter-fields">
-        <label><span>Yo‘nalish</span><select aria-label="Yo‘nalish" value={draft.subject} onChange={e=>apply({...draft,subject:e.target.value})}><option value="">Barcha yo‘nalishlar</option>{subjects.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select></label>
-        <label><span><Globe size={14}/>Ta’lim tili</span><select aria-label="Ta’lim tili" value={draft.language} onChange={e=>apply({...draft,language:e.target.value})}><option value="">Barcha tillar</option>{Object.entries(languageNames).map(([id,name])=><option key={id} value={id}>{name}</option>)}</select></label>
+        <label><span>{translate("Yo‘nalish")}</span><select aria-label={translate("Yo‘nalish")} value={draft.subject} onChange={e=>apply({...draft,subject:e.target.value})}><option value="">{translate("Barcha yo‘nalishlar")}</option>{subjects.map(s=><option key={s.id} value={s.id}>{translate(s.name)}</option>)}</select></label>
+        <label><span><Globe size={14}/>{translate("Ta’lim tili")}</span><select aria-label={translate("Ta’lim tili")} value={draft.language} onChange={e=>apply({...draft,language:e.target.value})}><option value="">{translate("Barcha tillar")}</option>{Object.entries(languageNames).map(([id,name])=><option key={id} value={id}>{translate(name)}</option>)}</select></label>
       </div>
     </form>
-    {subjectError&&<Notice kind="error">{subjectError}<button onClick={loadSubjects}>Qayta urinish</button></Notice>}
-    {validation&&<Notice kind="error">{validation}</Notice>}
-    <div className="directory-results-bar"><span className="muted small" role="status">{loading?'Mentorlar qidirilmoqda…':error?'Natijalarni yuklab bo‘lmadi':`${count} ta e’lon${showOwn&&!own?.is_public?' · shaxsiy e’loningiz bilan':''}`}</span>{hasFilters&&<button type="button" className="text-link" onClick={reset}>Filtrlarni tozalash</button>}</div>
-    {error&&<Notice kind="error">{error}<button onClick={load}>Qayta urinish</button></Notice>}
-    {loading?<div className="mentor-grid" aria-busy="true">{[1,2,3].map(n=><div className="card skeleton" key={n} aria-label="Mentor yuklanmoqda"/>)}</div>:!error&&(rows.length||showOwn)?<div className="mentor-grid">{showOwn&&own&&<MentorCard mentor={own} own={own}/ >}{rows.map(m=><MentorCard key={m.id} mentor={m}/>)}</div>:!error&&<Empty title="Mos mentor topilmadi"><p>Yo‘nalish yoki ta’lim tilini o‘zgartirib ko‘ring.</p></Empty>}
-    {data&&data.count>9&&!error&&<div className="pagination"><Button variant="outline" disabled={!data.previous||loading} onClick={()=>apply(applied,page-1)}><ArrowLeft size={16}/>Oldingi</Button><span>{page} / {Math.ceil(data.count/9)}</span><Button variant="outline" disabled={!data.next||loading} onClick={()=>apply(applied,page+1)}>Keyingi<ArrowRight size={16}/></Button></div>}
+    {subjectError&&<Notice kind="error">{translate(subjectError)}<button onClick={loadSubjects}>{translate("Qayta urinish")}</button></Notice>}
+    {validation&&<Notice kind="error">{translate(validation)}</Notice>}
+    <div className="directory-results-bar"><span className="muted small" role="status">{translate(loading?'Mentorlar qidirilmoqda…':error?'Natijalarni yuklab bo‘lmadi':`${count} ta e’lon${showOwn&&!own?.is_public?' · shaxsiy e’loningiz bilan':''}`)}</span>{hasFilters&&<button type="button" className="text-link" onClick={reset}>{translate("Filtrlarni tozalash")}</button>}</div>
+    {error&&<Notice kind="error">{translate(error)}<button onClick={load}>{translate("Qayta urinish")}</button></Notice>}
+    {loading?<div className="mentor-grid" aria-busy="true">{[1,2,3].map(n=><div className="card skeleton" key={n} aria-label={translate("Mentor yuklanmoqda")}/>)}</div>:!error&&(rows.length||showOwn)?<div className="mentor-grid">{showOwn&&own&&<MentorCard mentor={own} own={own}/ >}{rows.map(m=><MentorCard key={m.id} mentor={m}/>)}</div>:!error&&<Empty title={translate("Mos mentor topilmadi")}><p>{translate("Yo‘nalish yoki ta’lim tilini o‘zgartirib ko‘ring.")}</p></Empty>}
+    {data&&data.count>9&&!error&&<div className="pagination"><Button variant="outline" disabled={!data.previous||loading} onClick={()=>apply(applied,page-1)}><ArrowLeft size={16}/>{translate("Oldingi")}</Button><span>{page} / {Math.ceil(data.count/9)}</span><Button variant="outline" disabled={!data.next||loading} onClick={()=>apply(applied,page+1)}>{translate("Keyingi")}<ArrowRight size={16}/></Button></div>}
   </div>;
 }

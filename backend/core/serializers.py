@@ -33,22 +33,26 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = ['full_name','avatar','school','study_level','learning_goals','timezone']
 
     def validate_avatar(self,file):
-        if not file:
-            return file
-        if file.size > 2*1024*1024:
-            raise serializers.ValidationError('Rasm hajmi 2 MB dan oshmasin.')
-        try:
-            with Image.open(file) as image:
-                if image.format not in ['JPEG','PNG','WEBP'] or image.width*image.height > 16_000_000:
-                    raise ValueError()
-                image.load()
-                image = ImageOps.exif_transpose(image).convert('RGB')
-                image.thumbnail((600,600))
-                out = BytesIO()
-                image.save(out,format='JPEG',quality=85)
-        except Exception:
-            raise serializers.ValidationError('JPEG, PNG yoki WebP rasm yuklang.')
-        return ContentFile(out.getvalue(),name=f'{uuid4().hex}.jpg')
+        return prepare_avatar(file)
+
+
+def prepare_avatar(file, max_size=2*1024*1024):
+    if not file:
+        return file
+    if file.size > max_size:
+        raise serializers.ValidationError('Rasm hajmi 2 MB dan oshmasin.')
+    try:
+        with Image.open(file) as image:
+            if image.format not in ['JPEG','PNG','WEBP'] or image.width*image.height > 16_000_000:
+                raise ValueError()
+            image.load()
+            image = ImageOps.exif_transpose(image).convert('RGB')
+            image.thumbnail((600,600))
+            out = BytesIO()
+            image.save(out,format='JPEG',quality=85)
+    except Exception:
+        raise serializers.ValidationError('JPEG, PNG yoki WebP rasm yuklang.')
+    return ContentFile(out.getvalue(),name=f'{uuid4().hex}.jpg')
 
 
 class SubjectSerializer(serializers.ModelSerializer):
@@ -70,6 +74,11 @@ def combined_bio(bio, experience):
 
 
 class PublicMentorSerializer(serializers.ModelSerializer):
+    is_demo = serializers.SerializerMethodField()
+
+    def get_is_demo(self, obj):
+        return obj.user.email.startswith("demo.") and obj.user.email.endswith("@example.invalid")
+
     session_duration_minutes = serializers.SerializerMethodField()
 
     def get_session_duration_minutes(self, obj):
@@ -90,7 +99,7 @@ class PublicMentorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MentorProfile
-        fields = ['id','full_name','avatar','school','study_level','timezone','headline','bio','subjects','teaching_languages','hourly_price','session_duration_minutes']
+        fields = ['id','full_name','avatar','school','study_level','timezone','headline','bio','subjects','teaching_languages','hourly_price','session_duration_minutes','is_demo']
 
 
 class MentorSettingsSerializer(serializers.ModelSerializer):
@@ -149,6 +158,14 @@ class BookingCreateSerializer(serializers.Serializer):
     objective = serializers.CharField(max_length=1500)
 
 
+class LessonFeedbackSerializer(serializers.Serializer):
+    rating = serializers.IntegerField(min_value=1, max_value=5, error_messages={
+        'required': 'Yulduzli baho majburiy.', 'invalid': '1 dan 5 gacha yulduz tanlang.',
+        'min_value': '1 dan 5 gacha yulduz tanlang.', 'max_value': '1 dan 5 gacha yulduz tanlang.',
+    })
+    comment = serializers.CharField(max_length=1500, allow_blank=True, required=False, error_messages={'max_length': 'Izoh 1500 belgidan oshmasin.'})
+
+
 class BookingSerializer(serializers.ModelSerializer):
     duration_minutes = serializers.SerializerMethodField()
 
@@ -160,7 +177,7 @@ class BookingSerializer(serializers.ModelSerializer):
     meeting_url = serializers.SerializerMethodField()
     class Meta:
         model = Booking
-        fields = ['id','student','mentor','student_name','mentor_name','starts_at','ends_at','duration_minutes','objective','status','expires_at','total_price','commission_rate','platform_fee','mentor_net','currency','payment_status','payment_reference','payout_status','meeting_url','disputed','issue_note','resolution_note','completed_at']
+        fields = ['id','student','mentor','student_name','mentor_name','starts_at','ends_at','duration_minutes','objective','status','expires_at','total_price','commission_rate','platform_fee','mentor_net','currency','payment_status','payment_reference','payout_status','meeting_url','disputed','issue_note','resolution_note','completed_at','feedback_rating','feedback_comment','feedback_submitted_at']
         read_only_fields = fields
 
     def get_meeting_url(self,b):

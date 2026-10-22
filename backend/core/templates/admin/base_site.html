@@ -3,8 +3,8 @@
 {% block title %}{{ title }} | EduYor{% endblock %}
 {% block extrastyle %}{{ block.super }}
 <style>
-:root,html[data-theme="light"]{--primary:#0968b7;--secondary:#0b345f;--accent:#ffae41;--header-bg:#0b345f;--header-color:#fff;--header-link-color:#fff;--link-fg:#176ba8;--link-selected-fg:#07315f;--button-bg:#0968b7;--button-hover-bg:#07518c;--default-button-bg:#0968b7;--default-button-hover-bg:#07518c;--selected-bg:#edf5fc;--selected-row:#fff3e5}
-#site-name a{display:flex;align-items:center;gap:9px;font-weight:600;color:#fff}#site-name img{width:35px;height:42px;object-fit:contain;background:#fff;border-radius:9px;padding:2px}#site-name span span{color:#ffae41}.module{border-radius:10px;overflow:hidden}.button,input[type=submit],input[type=button]{border-radius:7px}
+:root,html[data-theme="light"]{--primary:#54218b;--secondary:#350b5f;--accent:#ff7866;--header-bg:#350b5f;--header-color:#fff;--header-link-color:#fff;--link-fg:#5f17a8;--link-selected-fg:#301253;--button-bg:#54218b;--button-hover-bg:#40186d;--default-button-bg:#54218b;--default-button-hover-bg:#40186d;--selected-bg:#f4edfc;--selected-row:#fde7ec}
+#site-name a{display:flex;align-items:center;gap:9px;font-weight:600;color:#fff}#site-name img{width:35px;height:42px;object-fit:contain;background:#fff;border-radius:9px;padding:2px}#site-name span span{color:#ff7866}.module{border-radius:10px;overflow:hidden}.button,input[type=submit],input[type=button]{border-radius:7px}
 </style>
 {% endblock %}
 {% block branding %}<div id="site-name"><a href="{% url 'admin:index' %}"><img src="{% static 'core/eduyor-mark.svg' %}" alt=""><span>Edu<span>Yor</span></span></a></div>{% endblock %}

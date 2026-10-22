@@ -1,0 +1,43 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+const ts=require('typescript');
+const React=require('react');
+const {renderToStaticMarkup}=require('react-dom/server');
+const root=path.join(__dirname,'..');
+const cache=new Map();
+function load(filename){
+  if(filename.endsWith('.css'))return {};
+  if(!path.extname(filename))filename=['.ts','.tsx'].map(ext=>filename+ext).find(fs.existsSync)||filename;
+  if(cache.has(filename))return cache.get(filename);
+  const module={exports:{}};
+  cache.set(filename,module.exports);
+  const source=ts.transpileModule(fs.readFileSync(filename,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.ReactJSX}}).outputText;
+  function resolve(ref){return ref.startsWith('@/')?load(path.join(root,ref.slice(2))):ref.startsWith('.')?load(path.resolve(path.dirname(filename),ref)):require(ref);}
+  vm.runInNewContext(source,{exports:module.exports,module,require:resolve,Date,Intl,setInterval,clearInterval},{filename});
+  return module.exports;
+}
+const {feedbackSecondsRemaining:remaining,canDismissFeedback:canClose}=load(path.join(root,'lib/feedback.ts'));
+assert.equal(remaining(11000,1000),10);
+assert.equal(remaining(11000,10999),1);
+assert.equal(remaining(11000,11000),0);
+assert.equal(remaining(11000,25000),0);
+assert.equal(canClose(0,11000,12000),false,'Stars are mandatory even after the countdown');
+assert.equal(canClose(5,null,12000),false,'Countdown starts after stars are saved');
+assert.equal(canClose(5,11000,10999),false,'No X before ten seconds');
+assert.equal(canClose(5,11000,11000),true,'X is allowed at ten seconds');
+const {LessonFeedback}=load(path.join(root,'components/lesson-feedback.tsx'));
+const props={booking:{id:1,mentor_name:'Test Mentor',feedback_rating:null,feedback_comment:''},onSaved:()=>{},onClose:()=>{}};
+const rating=renderToStaticMarkup(React.createElement(LessonFeedback,props));
+assert.equal((rating.match(/type="radio"/g)||[]).length,5);
+assert.equal((rating.match(/required=""/g)||[]).length,5);
+assert.match(rating,/role=|<dialog/);
+assert.match(rating,/disabled=""[^>]*>Bahoni saqlash va davom etish/);
+assert.ok(!rating.includes('lesson-feedback-close'),'Rating dialog has no dismiss button');
+const comment=renderToStaticMarkup(React.createElement(LessonFeedback,{...props,booking:{...props.booking,feedback_rating:4}}));
+assert.match(comment,/10 soniyadan keyin/);
+assert.match(comment,/<textarea/);
+assert.ok(!comment.includes('required=""'),'Comment is optional');
+assert.ok(!comment.includes('lesson-feedback-close'),'X stays hidden when comment stage starts');
+console.log('Mandatory stars, optional comment, modal structure and ten-second close boundary checks passed.');

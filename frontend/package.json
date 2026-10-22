@@ -6,7 +6,9 @@
     "dev": "node scripts/dev.mjs",
     "build": "next build",
     "start": "next start --hostname 127.0.0.1",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:i18n": "node scripts/check-i18n.cjs",
+    "check:feedback": "node scripts/check-feedback.cjs"
   },
   "dependencies": {
     "next": "16.4.2",

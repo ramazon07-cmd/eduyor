@@ -133,6 +133,9 @@ class Booking(models.Model):
     refund_reference = models.CharField(max_length=160,blank=True)
     refunded_at = models.DateTimeField(null=True,blank=True)
     completed_at = models.DateTimeField(null=True,blank=True)
+    feedback_rating = models.PositiveSmallIntegerField(null=True, blank=True, validators=[MinValueValidator(1), MaxValueValidator(5)])
+    feedback_comment = models.TextField(max_length=1500, blank=True)
+    feedback_submitted_at = models.DateTimeField(null=True, blank=True)
     meeting_url = models.URLField(blank=True)
     disputed = models.BooleanField(default=False)
     issue_note = models.TextField(max_length=1500,blank=True)
@@ -142,7 +145,7 @@ class Booking(models.Model):
     class Meta:
         ordering = ['-starts_at']
         indexes = [models.Index(fields=['mentor','starts_at','ends_at']),models.Index(fields=['student','starts_at','ends_at']),models.Index(fields=['status','expires_at'])]
-        constraints = [models.CheckConstraint(condition=~models.Q(student=models.F('mentor')),name='no_self_booking'),models.CheckConstraint(condition=models.Q(ends_at__gt=models.F('starts_at')),name='positive_booking_duration'),models.CheckConstraint(condition=models.Q(total_price=models.F('platform_fee')+models.F('mentor_net')),name='financial_balance')]
+        constraints = [models.CheckConstraint(condition=~models.Q(student=models.F('mentor')),name='no_self_booking'),models.CheckConstraint(condition=models.Q(ends_at__gt=models.F('starts_at')),name='positive_booking_duration'),models.CheckConstraint(condition=models.Q(total_price=models.F('platform_fee')+models.F('mentor_net')),name='financial_balance'),models.CheckConstraint(condition=models.Q(feedback_rating__isnull=True) | models.Q(feedback_rating__gte=1, feedback_rating__lte=5), name='booking_feedback_rating_range')]
 
     def save(self,*args,**kwargs):
         if self.pk:

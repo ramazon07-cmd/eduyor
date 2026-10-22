@@ -1,4 +1,5 @@
 'use client';
+import {useI18n} from '@/components/i18n';
 import Link from 'next/link';
 import {useEffect,useRef,useState} from 'react';
 import {ArrowUpRight,Video,X} from 'lucide-react';
@@ -6,6 +7,7 @@ import {useAuth} from './auth';
 import {api} from '@/lib/api';
 import type {Booking,Page} from '@/lib/types';
 export function MeetingNotice(){
+  const {t:translate}=useI18n();
   const {user}=useAuth();const [booking,setBooking]=useState<Booking|null>(null);const seen=useRef(new Set<string>());
   useEffect(()=>{
     if(!user){seen.current.clear();setBooking(null);return;}
@@ -28,5 +30,5 @@ export function MeetingNotice(){
     return()=>clearTimeout(timer);
   },[booking]);
   if(!booking)return null;
-  return <aside className="meeting-notice" role="status" aria-live="polite"><span className="meeting-notice-icon"><Video size={22}/></span><div><strong>Google Meet havolasi tayyor</strong><p>{booking.mentor_name} darsga kirish havolasini yubordi.</p><Link href={`/sessions/${booking.id}`} onClick={()=>setBooking(null)}>Darsni ochish <ArrowUpRight size={14}/></Link></div><button type="button" onClick={()=>setBooking(null)} aria-label="Bildirishnomani yopish"><X size={16}/></button></aside>;
+  return <aside className="meeting-notice" role="status" aria-live="polite"><span className="meeting-notice-icon"><Video size={22}/></span><div><strong>{translate("Google Meet havolasi tayyor")}</strong><p>{booking.mentor_name} {translate("darsga kirish havolasini yubordi.")}</p><Link href={`/sessions/${booking.id}`} onClick={()=>setBooking(null)}>{translate("Darsni ochish")} <ArrowUpRight size={14}/></Link></div><button type="button" onClick={()=>setBooking(null)} aria-label={translate("Bildirishnomani yopish")}><X size={16}/></button></aside>;
 }

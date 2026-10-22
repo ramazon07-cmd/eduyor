@@ -212,6 +212,28 @@ def complete(pk,user):
         return b
 
 
+def submit_feedback(pk, user, rating, comment=None):
+    with locked_booking(pk) as b:
+        # Even staff cannot rate their own teaching or impersonate a student.
+        if user.pk != b.student_id:
+            raise PermissionDenied('Faqat dars o‘quvchisi baho bera oladi.')
+        if b.status != 'completed' or b.payment_status != 'verified' or timezone.now() < b.ends_at:
+            raise Conflict('Faqat yakunlangan va to‘lovi tasdiqlangan darsga baho berish mumkin.')
+        if isinstance(rating, bool) or not isinstance(rating, int) or not 1 <= rating <= 5:
+            raise ValidationError({'rating': '1 dan 5 gacha yulduz tanlang.'})
+        if comment is not None and (not isinstance(comment, str) or len(comment) > 1500):
+            raise ValidationError({'comment': 'Izoh 1500 belgidan oshmasin.'})
+        if b.feedback_rating is not None and b.feedback_rating != rating:
+            raise Conflict('Saqlangan yulduzli bahoni o‘zgartirib bo‘lmaydi.')
+        b.feedback_rating = rating
+        if b.feedback_submitted_at is None:
+            b.feedback_submitted_at = timezone.now()
+        if comment is not None:
+            b.feedback_comment = comment.strip()
+        b.save(update_fields=['feedback_rating', 'feedback_comment', 'feedback_submitted_at'])
+        return b
+
+
 def set_meeting(pk,user,url):
     parsed = urlsplit(url)
     import re

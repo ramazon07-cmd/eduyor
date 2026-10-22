@@ -18,10 +18,10 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.throttling import UserRateThrottle
 from rest_framework import serializers
 from .models import User, Profile, MentorProfile, Subject, AvailabilityRule, BlockedDate, Booking, validate_timezone
-from .serializers import RegistrationSerializer, ProfileSerializer, PublicMentorSerializer, MentorSettingsSerializer, SubjectSerializer, ScheduleSerializer, BookingCreateSerializer, BookingSerializer, MentorFilterSerializer, BookingFilterSerializer
+from .serializers import RegistrationSerializer, ProfileSerializer, PublicMentorSerializer, MentorSettingsSerializer, SubjectSerializer, ScheduleSerializer, BookingCreateSerializer, BookingSerializer, LessonFeedbackSerializer, MentorFilterSerializer, BookingFilterSerializer
 from . import services
 from .payments import payment_info
-from .subjects import SUBJECT_NAMES, SUBJECT_LABELS
+from .subjects import SUBJECT_NAMES, SUBJECT_SEARCH_LABELS
 
 
 def csrf_failure(request,reason=''):
@@ -140,7 +140,8 @@ class MentorListView(SecureView):
             qs = qs.exclude(user=request.user)
         if params['search']:
             term = params['search']
-            direction_names = [name for name, label in SUBJECT_LABELS.items() if term.casefold() in label.casefold()]
+            direction_names = [name for name, labels in SUBJECT_SEARCH_LABELS.items()
+                               if any(term.casefold() in label.casefold() for label in labels)]
             qs = qs.filter(Q(user__profile__full_name__icontains=term)|Q(headline__icontains=term)|Q(subjects__name__icontains=term)|Q(subjects__name__in=direction_names))
         if params.get('subject'):
             qs = qs.filter(subjects=params['subject'])
@@ -273,6 +274,10 @@ class BookingActionView(SecureView):
             raise MethodNotAllowed('POST',detail='Darsni foydalanuvchi bekor qila olmaydi.')
         elif action == 'complete':
             obj = services.complete(pk,request.user)
+        elif action == 'feedback':
+            feedback = LessonFeedbackSerializer(data=request.data)
+            feedback.is_valid(raise_exception=True)
+            obj = services.submit_feedback(pk, request.user, **feedback.validated_data)
         elif action == 'meeting':
             obj = services.set_meeting(pk,request.user,text('meeting_url',300))
         elif action == 'issue':
