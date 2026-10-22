@@ -43,7 +43,6 @@ export function MentorForm(){
       <h3>Yo‘nalishlar</h3><div className="chips">{subjects.filter(s=>mentor.subjects.includes(s.id)).map(s=><span key={s.id} className="chip">{s.name}</span>)}</div>
       {error&&<Notice kind="error">{error}</Notice>}
       <div className="mentor-profile-facts"><div><small>Ta’lim tillari</small><strong>{chosenLanguages(mentor.teaching_languages).map(l=>l==='English'?'Inglizcha':l).join(', ')}</strong></div><div><small>Dars davomiyligi</small><strong>50 daqiqa</strong></div><div><small>Bir dars narxi</small><strong>{money(mentor.hourly_price)}</strong></div></div>
-      {user.mentor_listing?.is_public&&<Link className="text-link" href={`/mentors/${user.mentor_listing.id}`}>Ommaviy profilimni ko‘rish →</Link>}
     </Card>;
   }
   return <Card className="form-card">

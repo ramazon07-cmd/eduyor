@@ -1,7 +1,8 @@
 'use client';
+
 import Link from 'next/link';
-import {useEffect,useState} from 'react';
-import {ArrowUpRight,ChevronLeft,ChevronRight,Pause,Play} from 'lucide-react';
+import {useEffect,useRef,useState,type CSSProperties} from 'react';
+import {ArrowUpRight,ChevronLeft,ChevronRight,GraduationCap,Pause,Play} from 'lucide-react';
 import type {Mentor} from '@/lib/types';
 import {Avatar} from './common';
 import {money} from '@/lib/api';
@@ -11,6 +12,7 @@ export function MentorSpotlight({mentors,loading}:{mentors:Mentor[];loading:bool
   const [paused,setPaused]=useState(false);
   const [hovered,setHovered]=useState(false);
   const [focused,setFocused]=useState(false);
+  const gallery=useRef<HTMLDivElement>(null);
   useEffect(()=>{
     if(paused||hovered||focused||mentors.length<2)return;
     const timer=setInterval(()=>setIndex(i=>(i+1)%mentors.length),5000);
@@ -18,11 +20,27 @@ export function MentorSpotlight({mentors,loading}:{mentors:Mentor[];loading:bool
   },[paused,hovered,focused,mentors.length,index]);
   const currentIndex=mentors.length?index%mentors.length:0;
   const mentor=mentors[currentIndex];
-  if(loading)return <div className="spotlight skeleton" role="status" aria-label="Mentorlar yuklanmoqda"/>;
-  if(!mentor)return <div className="spotlight"><span className="eyebrow">MENTORLIK</span><h2>Bu yerda sizning profilingiz bo‘lishi mumkin.</h2><p>Yo‘nalishingizni tanlang va mentorlikka ariza yuboring.</p><Link className="btn btn-primary" href="/dashboard?tab=mentor">Mentor bo‘lish <ArrowUpRight size={18}/></Link></div>;
-  return <section className="spotlight" aria-label="Mentorlar bilan tanishing" aria-roledescription="karusel" onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))setFocused(false);}}>
-    <div className="spotlight-top"><span className="eyebrow">MENTORLAR BILAN TANISHING</span>{mentors.length>1&&<button type="button" onClick={()=>setPaused(p=>!p)} aria-label={paused?'Avtomatik almashtirishni yoqish':'Avtomatik almashtirishni to‘xtatish'}>{paused?<Play size={16}/>:<Pause size={16}/>}</button>}</div>
-    <div className="spotlight-profile" key={mentor.id} aria-live={paused||hovered||focused?'polite':'off'}><Avatar name={mentor.full_name} src={mentor.avatar}/><h2>{mentor.full_name}</h2><p>{mentor.headline}</p><div className="chips">{mentor.subjects.map(s=><span className="chip" key={s.id}>{s.name}</span>)}</div><div className="spotlight-price"><strong>{money(mentor.hourly_price)}</strong><span>{mentor.session_duration_minutes} daqiqalik dars</span></div><Link className="btn btn-primary" href={`/mentors/${mentor.id}`}>Mentor profilini ko‘rish <ArrowUpRight size={18}/></Link></div>
-    {mentors.length>1&&<div className="spotlight-controls"><button type="button" aria-label="Oldingi mentor" onClick={()=>setIndex(i=>(i-1+mentors.length)%mentors.length)}><ChevronLeft size={19}/></button><span>{currentIndex+1} / {mentors.length}</span><button type="button" aria-label="Keyingi mentor" onClick={()=>setIndex(i=>(i+1)%mentors.length)}><ChevronRight size={19}/></button></div>}
+  useEffect(()=>{
+    const container=gallery.current;
+    const selected=container?.querySelector<HTMLElement>('[aria-pressed="true"]');
+    if(container&&selected&&container.scrollWidth>container.clientWidth){
+      container.scrollTo({left:selected.offsetLeft-(container.clientWidth-selected.offsetWidth)/2,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+    }
+  },[currentIndex,mentors.length]);
+  if(loading)return <div className="mentor-showcase showcase-loading" role="status" aria-label="Mentorlar yuklanmoqda"><div className="showcase-fan" aria-hidden="true">{[0,1,2].map(n=><div key={n} className="showcase-placeholder skeleton"/>)}</div></div>;
+  if(!mentor)return <div className="mentor-showcase showcase-empty"><GraduationCap size={45} strokeWidth={1}/><h2>Har bir tajriba — yangi imkoniyat.</h2><p>Yo‘nalishingizni tanlang va birinchi mentorlardan bo‘ling.</p><Link className="text-link" href="/dashboard?tab=mentor">Mentor bo‘lish <ArrowUpRight size={18}/></Link></div>;
+  return <section className="mentor-showcase" aria-label="Mentorlar bilan tanishing" aria-roledescription="karusel" onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))setFocused(false);}}>
+    <div className="showcase-fan" ref={gallery}>
+      {mentors.map((item,slot)=>{
+        const offset=slot-(mentors.length-1)/2;
+        const style={'--card-tilt':`${offset*5}deg`,'--card-lift':`${Math.abs(offset)*13}px`} as CSSProperties;
+        return <button key={item.id} type="button" style={style} className={`showcase-person ${slot===currentIndex?'is-active':''}`} aria-label={`${item.full_name} mentorini tanlash`} aria-pressed={slot===currentIndex} onClick={()=>setIndex(slot)}><span className="gallery-portrait"><Avatar name={item.full_name} src={item.avatar}/><span className="gallery-direction">{item.subjects[0]?.name||'Mentor'}</span></span><span className="gallery-person-caption"><strong>{item.full_name}</strong><span>{item.headline}</span></span></button>;
+      })}
+    </div>
+    <div className="showcase-detail" aria-live={paused||hovered||focused?'polite':'off'}>
+      <div className="showcase-selected"><span className="eyebrow">MENTOR BILAN TANISHING</span><h2>{mentor.full_name}</h2><p>{mentor.headline}</p></div>
+      <div className="showcase-action"><span><strong>{money(mentor.hourly_price)}</strong> / {mentor.session_duration_minutes} daqiqa</span><Link className="text-link" href={`/mentors/${mentor.id}`}>Profilni ko‘rish <ArrowUpRight size={16}/></Link></div>
+      {mentors.length>1&&<div className="showcase-controls"><button type="button" aria-label="Oldingi mentor" onClick={()=>setIndex(i=>(i-1+mentors.length)%mentors.length)}><ChevronLeft size={17}/></button><span>{currentIndex+1}<span> / {mentors.length}</span></span><button type="button" aria-label="Keyingi mentor" onClick={()=>setIndex(i=>(i+1)%mentors.length)}><ChevronRight size={17}/></button><button className="showcase-pause" type="button" onClick={()=>setPaused(p=>!p)} aria-label={paused?'Avtomatik almashtirishni yoqish':'Avtomatik almashtirishni to‘xtatish'}>{paused?<Play size={14}/>:<Pause size={14}/>}</button></div>}
+    </div>
   </section>;
 }

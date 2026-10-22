@@ -1,6 +1,6 @@
 'use client';
 import {useEffect,useState,useCallback,useRef} from 'react';
-import {Search,SlidersHorizontal,ArrowLeft,ArrowRight,X,Globe} from 'lucide-react';
+import {Search,SlidersHorizontal,ArrowLeft,ArrowRight,Globe} from 'lucide-react';
 import {useAuth} from '@/components/auth';
 import {api} from '@/lib/api';
 import type {Mentor,Page,Subject} from '@/lib/types';
@@ -57,28 +57,22 @@ export default function Directory(){
   const showOwn=ownMatches&&page===1;
   const rows=data?.results.filter(m=>!showOwn||m.id!==own?.id)||[];
   const count=(data?.count||0)+(ownMatches?1:0);
-  const active=([
-    ['search',applied.search?`Qidiruv: ${applied.search}`:''],
-    ['subject',applied.subject?(subjects.find(s=>String(s.id)===applied.subject)?.name||'Tanlangan yo‘nalish'):''],
-    ['language',applied.language?(languageNames[applied.language]||applied.language):''],
-  ] as [keyof Filters,string][]).filter(([,label])=>label);
+  const hasFilters=Object.values(applied).some(Boolean);
 
   return <div className="container section">
     <div className="directory-heading"><div><span className="eyebrow">O‘ZINGIZGA MOSINI TOPING</span><h1>Bir maqsad. Mos mentor.</h1><p>Yo‘nalish va ta’lim tili bo‘yicha tanlang.</p></div><span className="directory-symbol" aria-hidden="true">↗</span></div>
     <form className="directory-filters card" onSubmit={e=>{e.preventDefault();apply(draft);}}>
       <div className="directory-search-row"><label className="search-field"><Search size={20}/><Input aria-label="Mentor qidirish" placeholder="Ism, yo‘nalish yoki sarlavha bo‘yicha qidirish" maxLength={160} value={draft.search} onChange={e=>update('search',e.target.value)}/></label><Button><SlidersHorizontal size={17}/>Mentorlarni topish</Button></div>
       <div className="filter-fields">
-        <label><span>Yo‘nalish</span><select value={draft.subject} onChange={e=>apply({...draft,subject:e.target.value})}><option value="">Barcha yo‘nalishlar</option>{subjects.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select></label>
-        <label><span><Globe size={14}/>Ta’lim tili</span><select value={draft.language} onChange={e=>apply({...draft,language:e.target.value})}><option value="">Barcha tillar</option>{Object.entries(languageNames).map(([id,name])=><option key={id} value={id}>{name}</option>)}</select></label>
+        <label><span>Yo‘nalish</span><select aria-label="Yo‘nalish" value={draft.subject} onChange={e=>apply({...draft,subject:e.target.value})}><option value="">Barcha yo‘nalishlar</option>{subjects.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select></label>
+        <label><span><Globe size={14}/>Ta’lim tili</span><select aria-label="Ta’lim tili" value={draft.language} onChange={e=>apply({...draft,language:e.target.value})}><option value="">Barcha tillar</option>{Object.entries(languageNames).map(([id,name])=><option key={id} value={id}>{name}</option>)}</select></label>
       </div>
     </form>
     {subjectError&&<Notice kind="error">{subjectError}<button onClick={loadSubjects}>Qayta urinish</button></Notice>}
     {validation&&<Notice kind="error">{validation}</Notice>}
-    {!!subjects.length&&<div className="directory-subjects" aria-label="Yo‘nalish bo‘yicha tez tanlash"><button type="button" className={!applied.subject?'selected':''} aria-pressed={!applied.subject} onClick={()=>apply({...draft,subject:''})}>Barcha yo‘nalishlar</button>{subjects.map(s=><button type="button" key={s.id} className={applied.subject===String(s.id)?'selected':''} aria-pressed={applied.subject===String(s.id)} onClick={()=>apply({...draft,subject:String(s.id)})}>{s.name}</button>)}</div>}
-    {!!active.length&&<div className="active-filters" aria-label="Faol filtrlar">{active.map(([key,label])=><button type="button" key={key} onClick={()=>apply({...applied,[key]:''})} aria-label={`${label} filtrini olib tashlash`}>{label}<X size={13}/></button>)}<button type="button" className="reset-filters" onClick={reset}>Hammasini tozalash</button></div>}
-    <div className="directory-results-bar"><span className="muted small" role="status">{loading?'Mentorlar qidirilmoqda…':error?'Natijalarni yuklab bo‘lmadi':`${count} ta e’lon${showOwn&&!own?.is_public?' · shaxsiy e’loningiz bilan':''}`}</span></div>
+    <div className="directory-results-bar"><span className="muted small" role="status">{loading?'Mentorlar qidirilmoqda…':error?'Natijalarni yuklab bo‘lmadi':`${count} ta e’lon${showOwn&&!own?.is_public?' · shaxsiy e’loningiz bilan':''}`}</span>{hasFilters&&<button type="button" className="text-link" onClick={reset}>Filtrlarni tozalash</button>}</div>
     {error&&<Notice kind="error">{error}<button onClick={load}>Qayta urinish</button></Notice>}
-    {loading?<div className="mentor-grid" aria-busy="true">{[1,2,3].map(n=><div className="card skeleton" key={n} aria-label="Mentor yuklanmoqda"/>)}</div>:!error&&(rows.length||showOwn)?<div className="mentor-grid">{showOwn&&own&&<MentorCard mentor={own} own={own}/ >}{rows.map(m=><MentorCard key={m.id} mentor={m}/>)}</div>:!error&&<Empty title="Mos mentor topilmadi"><p>Yo‘nalish yoki ta’lim tilini o‘zgartirib ko‘ring.</p><Button variant="outline" onClick={reset}>Filtrlarni tozalash</Button></Empty>}
+    {loading?<div className="mentor-grid" aria-busy="true">{[1,2,3].map(n=><div className="card skeleton" key={n} aria-label="Mentor yuklanmoqda"/>)}</div>:!error&&(rows.length||showOwn)?<div className="mentor-grid">{showOwn&&own&&<MentorCard mentor={own} own={own}/ >}{rows.map(m=><MentorCard key={m.id} mentor={m}/>)}</div>:!error&&<Empty title="Mos mentor topilmadi"><p>Yo‘nalish yoki ta’lim tilini o‘zgartirib ko‘ring.</p></Empty>}
     {data&&data.count>9&&!error&&<div className="pagination"><Button variant="outline" disabled={!data.previous||loading} onClick={()=>apply(applied,page-1)}><ArrowLeft size={16}/>Oldingi</Button><span>{page} / {Math.ceil(data.count/9)}</span><Button variant="outline" disabled={!data.next||loading} onClick={()=>apply(applied,page+1)}>Keyingi<ArrowRight size={16}/></Button></div>}
   </div>;
 }

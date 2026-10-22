@@ -7,6 +7,7 @@ import {api,money,when,statusLabel} from '@/lib/api';
 import type {Booking,PaymentInfo} from '@/lib/types';
 import {useAuth} from '@/components/auth';
 import {Loading,LoginRequired,Notice,Avatar} from '@/components/common';
+import {PaymentReceipt} from '@/components/payment-receipt';
 import {PaymentCard} from '@/components/payment-card';
 import {Card} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
@@ -19,14 +20,14 @@ export default function SessionPage(){
   const [booking,setBooking]=useState<Booking|null>(null);
   const [info,setInfo]=useState<PaymentInfo|null>(null);
   const [error,setError]=useState('');const [success,setSuccess]=useState('');
-  const [busy,setBusy]=useState(false);const [reference,setReference]=useState('');
+  const [busy,setBusy]=useState(false);
   const [meeting,setMeeting]=useState('');const [note,setNote]=useState('');
   const [now,setNow]=useState(Date.now());
   const load=useCallback(async(quiet=false)=>{
     try{
       const b=await api<Booking>(`bookings/${id}/`);
       setBooking(b);
-      if(loadedId.current!==id){setReference(b.payment_reference.startsWith('Bron #')?'':b.payment_reference);setMeeting(b.meeting_url);loadedId.current=id;}
+      if(loadedId.current!==id){setMeeting(b.meeting_url);loadedId.current=id;}
       if(!quiet)setError('');
     }catch(e){if(!quiet)setError((e as Error).message);}
   },[id]);
@@ -69,15 +70,9 @@ export default function SessionPage(){
         <div className="panel-header"><span className="number-badge">01</span><div><h2>{b.payment_status==='submitted'?'Admin tasdig‘ini kutyapmiz':'To‘lovni yuboring'}</h2><p>Talaba to‘laydi: <strong>{money(b.total_price)}</strong></p></div></div>
         <div className="hold-timer"><span><Clock3 size={16}/><b>{remaining} daqiqa qoldi</b></span><small>{when(b.expires_at,tz)} · {tz}</small></div>
         {isStudent?<>
-          {b.payment_status==='submitted'?<div className="payment-submitted" role="status"><span><Check size={24}/></span><h3>To‘lov xabaringiz yuborildi</h3><p>Admin {money(b.total_price)} tushganini tekshiryapti. Natija shu sahifada avtomatik ko‘rinadi.</p><small>Tekshiruv paytida ham yuqoridagi bron muddati amal qiladi.</small></div>:<>
-            {info?<PaymentCard info={info} amount={b.total_price} commissionRate={b.commission_rate}/>:<Loading/>}
-            <form className="form-stack simple-payment-form" onSubmit={e=>{e.preventDefault();void action('payment',{reference},'Xabar yuborildi. Admin to‘lovni tekshiradi.');}}>
-              <details className="optional-payment-reference"><summary>Tranzaksiya raqamini qo‘shish <span>ixtiyoriy</span></summary><label>Bankdagi tranzaksiya raqami<Input value={reference} onChange={e=>setReference(e.target.value)} maxLength={160} placeholder="Bo‘lsa kiriting"/></label></details>
-              <Button disabled={busy||!info?.can_accept_payment}>{busy?'Yuborilmoqda…':'Pul yubordim'}<ArrowRight size={16}/></Button>
-            </form>
-          </>}
-          {b.payment_status==='submitted'&&<details className="optional-payment-reference"><summary>To‘lovga qo‘shimcha ma’lumot berish</summary><form className="form-stack" onSubmit={e=>{e.preventDefault();void action('payment',{reference},'Qo‘shimcha ma’lumot saqlandi.');}}><label>Tranzaksiya raqami · ixtiyoriy<Input value={reference} onChange={e=>setReference(e.target.value)} maxLength={160} placeholder="Bank ilovasidagi raqam"/></label><Button variant="outline" disabled={busy}>{busy?'Saqlanmoqda…':'Ma’lumotni saqlash'}</Button></form></details>}
-          <div className="subtle-info"><ShieldCheck size={16}/><p>“Pul yubordim” admin tekshiruviga xabar yuboradi. Dars pul tushgani tasdiqlangach ochiladi.</p></div>
+          {b.payment_status!=='submitted'&&(info?<PaymentCard info={info} amount={b.total_price} commissionRate={b.commission_rate}/>:<Loading/>)}
+          <PaymentReceipt bookingId={b.id} submitted={b.payment_status==='submitted'} onUploaded={async()=>{await load();}}/>
+          <div className="subtle-info"><ShieldCheck size={16}/><p>Chekni yuboring — admin tekshiradi va tasdiqlaydi. Dars pul tushgani tasdiqlangach ochiladi.</p></div>
         </>:<Notice>O‘quvchining to‘lovi va admin tasdig‘i kutilmoqda. Tasdiqlangach, shu yerga Google Meet havolasini qo‘shasiz.</Notice>}
       </Card>}
       {['refund_required','refunded'].includes(b.payment_status)&&<Notice kind={b.payment_status==='refunded'?'success':'info'}>{b.payment_status==='refund_required'?`To‘liq ${money(b.total_price)} qaytarilishi kerak. Admin qo‘lda qaytaradi.`:'Admin pul qaytarilganini qayd etdi.'}</Notice>}

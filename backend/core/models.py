@@ -153,3 +153,6 @@ class Booking(models.Model):
 
     def __str__(self):
         return f'#{self.pk} · {self.starts_at:%Y-%m-%d %H:%M} · {self.status}'
+
+# Private payment receipts
+from .receipt_models import PaymentReceipt

@@ -22,7 +22,7 @@ function Dashboard(){
   if(loading)return <Loading/>;if(!user)return <LoginRequired next={tab==='mentor'?'/dashboard?tab=mentor':'/dashboard'}/>;
   return <div className="dashboard-page">
     <header className="workspace-heading"><div><span className="eyebrow">{tab==='lessons'?'YANGI BILIMGA YANGI KUN':tab==='mentor'?'TAJRIBANGIZNI ULASHING':'MEHNATINGIZ NATIJASI'}</span><h1>{tab==='lessons'?`Salom, ${user.profile.full_name.split(' ')[0]}`:tab==='mentor'?'Mentor profilim':'Daromadim'}</h1><p>{tab==='lessons'?'O‘rganish va o‘rgatish — bir joyda.':tab==='mentor'?'Bilimingiz kimningdir keyingi qadami bo‘lsin.':'Yakunlangan darslar va mentor ulushingiz.'}</p></div></header>
-      {tab==='lessons'?<Lessons user={user}/>:<div className="workspace-settings-grid"><div>{tab==='mentor'?<MentorForm/>:<Earnings/>}</div><aside className="workspace-rail"><BrandNote/><Link href="/mentors" className="rail-link">O‘zingiz uchun mentor toping <ArrowUpRight size={17}/></Link></aside></div>}
+      {tab==='lessons'?<Lessons user={user}/>:<div className="workspace-settings-grid"><div>{tab==='mentor'?<MentorForm/>:<Earnings/>}</div><aside className="workspace-rail"><BrandNote/></aside></div>}
   </div>;
 }
 function BrandNote(){return <Card className="brand-note"><BrandMark/><h3>Bilimga hamroh.</h3><p>Bitta profil orqali ham o‘rganing, ham o‘rgating.</p><span><Video size={15}/>Google Meet · 50 daqiqa</span></Card>;}
