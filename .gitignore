@@ -16,6 +16,7 @@ backend/media/
 backend/staticfiles/
 .DS_Store
 .vercel/
+.claude/
 EduYor-*/
 PeerMentor-*/
 *.bak
