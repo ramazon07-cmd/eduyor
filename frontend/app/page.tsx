@@ -9,6 +9,7 @@ import {api} from '@/lib/api';
 import type {Mentor,Page,Subject} from '@/lib/types';
 import {MentorCard,Notice} from '@/components/common';
 import {MentorSpotlight} from '@/components/mentor-spotlight';
+import {PromoVideo} from '@/components/promo-video';
 
 const questions=[
   ['Dars qanday o‘tadi?','Dars 50 daqiqa, Google Meet orqali yakkama-yakka o‘tadi. To‘lov tasdiqlangach mentor yuborgan havolani dars sahifasida ko‘rasiz.'],
@@ -54,10 +55,20 @@ export default function Home(){
       </div>
     </section>
 
+    <section id="video" className="container promo-section" aria-labelledby="promo-title">
+      <div className="editorial-section-heading"><h2 id="promo-title">{translate("Bir daqiqada")}<br/><em>{translate("EduYor bilan tanishing.")}</em></h2></div>
+      <div className="promo-bento">
+        <article className="promo-tile"><strong>{translate("50 daqiqa")}</strong><p>{translate("Google Meet orqali yakkama-yakka dars.")}</p></article>
+        <article className="promo-tile"><strong>{translate("30 000–60 000 UZS")}</strong><p>{translate("Bitta dars narxi. Qo‘shimcha to‘lov yo‘q.")}</p></article>
+        <article className="promo-tile promo-tile-cta"><h3>{translate("Birinchi darsingizni bugun band qiling.")}</h3><Link className="btn btn-primary" href="/mentors">{translate("Mentor topish")} <ArrowUpRight size={18}/></Link></article>
+        <PromoVideo/>
+      </div>
+    </section>
+
     <section id="mentorlar" className="container section home-mentors">
       <div className="editorial-section-heading"><h2>{translate("Bir maqsad.")}<br/><em>{translate("Mos mentor.")}</em></h2></div>
       {error&&<Notice kind="error">{translate(error)} <Link href="/mentors">{translate("Qayta urinish")}</Link></Notice>}
-      <div className="mentor-grid">{mentors.slice(0,3).map(mentor=><MentorCard key={mentor.id} mentor={mentor}/>)}{!loaded&&[1,2,3].map(n=><div className="card skeleton" key={n} aria-label={translate("Mentor yuklanmoqda")}/>)}</div>
+      <div className="mentor-grid">{mentors.slice(0,3).map(mentor=><MentorCard key={mentor.id} mentor={mentor} booking/>)}{!loaded&&[1,2,3].map(n=><div className="card skeleton" key={n} aria-label={translate("Mentor yuklanmoqda")}/>)}</div>
       {loaded&&!mentors.length&&!error&&<div className="card empty"><GraduationCap size={32}/><h3>{translate("Birinchi mentor bo‘ling")}</h3><p>{translate("Tajribangizni ulashishdan boshlang.")}</p><Link className="btn btn-primary" href="/dashboard?tab=mentor">{translate("Mentorlikka ariza")} <ArrowUpRight size={17}/></Link></div>}
       <div className="section-center-action"><Link className="text-link" href="/mentors">{translate("Barcha mentorlar")} <ArrowRight size={17}/></Link></div>
     </section>

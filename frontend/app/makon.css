@@ -1,0 +1,200 @@
+/* Final visual layer (loaded last): rounded sans, vivid violet, big rounded hero card, gradient pill buttons.
+   Earlier stylesheets are patch layers; keep new look overrides here instead of editing them again. */
+:root{
+  --mk-violet:#54218b;--mk-violet-light:#6b2fb0;--mk-deep:#3c1878;--mk-ink:#241838;--mk-soft:#f5eefa;
+  --mk-pink:#d80c60;--mk-coral:#ff7a93;--mk-teal:#007c83;--mk-line:#e6dcef;
+  --mk-grad:var(--mk-violet);
+  --mk-hero:radial-gradient(60% 80% at 100% 0%,#d80c6040 0%,transparent 70%),radial-gradient(50% 70% at 0% 100%,#0090a82e 0%,transparent 70%),#3c1878;
+  --brand-purple:var(--mk-violet);--brand-purple-dark:#301253;
+  --primary:var(--mk-violet);--violet:var(--mk-violet);--violet-dark:#3c1878;--navy:var(--mk-deep);--accent:var(--mk-pink);
+  --bg:#fbf9fc;--ink:var(--mk-ink);--muted:#6b6280;--line:#ebe4ef;--pale:var(--mk-soft);--blue-pale:var(--mk-soft);--radius:24px;
+}
+body{font-family:var(--font-sans),"Avenir Next",system-ui,sans-serif;background:var(--bg);color:var(--mk-ink);font-size:16px}
+h1,h2,h3,h4,.wordmark{font-family:inherit;letter-spacing:-.02em}
+:focus-visible{outline:3px solid #9b6cc9;outline-offset:2px}
+
+/* Buttons */
+.btn{border-radius:16px;font-size:15px;font-weight:650;letter-spacing:-.01em;min-height:48px}
+.btn-primary,.landing-site .btn-primary{background:var(--mk-grad);border-color:transparent;color:#fff;border-radius:16px;font-size:15px;box-shadow:none;transition:transform .2s ease,background-color .2s ease}
+.btn-primary:hover,.landing-site .btn-primary:hover{background:var(--mk-deep);transform:translateY(-1px)}
+.btn-primary:active{transform:translateY(0)}
+.btn-outline{border-radius:16px;border-color:var(--line);color:var(--mk-deep)}
+.btn-sm{font-size:14px;min-height:44px}
+.text-link{font-size:15px;color:var(--mk-deep)}
+@media(prefers-reduced-motion:reduce){.btn-primary{transition:none}.btn-primary:hover{transform:none}}
+
+/* Surfaces and fields */
+.card{border-radius:24px;border-color:var(--line)}
+input:not([type=checkbox]):not([type=radio]),select,textarea{border-radius:14px;font-size:16px}
+input:not([type=checkbox]):not([type=radio]):focus,select:focus,textarea:focus{border-color:var(--mk-violet);box-shadow:0 0 0 4px #54218b22;outline:none}
+
+/* Landing */
+.landing-site{--landing-bg:#fff;--landing-panel:var(--mk-soft);--landing-text:var(--mk-ink);--landing-muted:#6b6280;--landing-border:#ebe4ef;--landing-accent:var(--mk-violet)}
+.landing-site h2{color:var(--mk-deep);font-weight:700;letter-spacing:-.03em}
+.landing-site h2 em{font-family:inherit;font-weight:700;letter-spacing:-.03em;color:var(--mk-pink)}
+.landing-site .editorial-hero h1 strong{color:inherit}
+.landing-site .eyebrow{font-size:12px;letter-spacing:.12em;color:var(--mk-pink)}
+.landing-header{position:sticky;top:0;z-index:30;background:#ffffffeb;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.landing-nav-row{min-height:76px}
+.landing-desktop-nav{font-size:15px;font-weight:550;color:var(--mk-ink);gap:6px}
+.landing-desktop-nav a{padding:12px 14px;border-radius:12px}
+.landing-desktop-nav a:hover{background:var(--mk-soft);color:var(--mk-deep)}
+.landing-account{gap:10px}
+.landing-account .btn{min-height:44px;font-size:15px;padding:10px 20px}
+.landing-account .text-link.landing-login{font-size:15px;font-weight:600;padding:10px 18px;border:1px solid var(--line);border-radius:16px;min-height:44px;display:inline-flex;align-items:center}
+.landing-account .text-link.landing-login:hover{background:var(--mk-soft)}
+.account-skeleton{display:block;width:150px;height:44px;border-radius:16px}
+@media(min-width:1081px){
+  .landing-nav-row{grid-template-columns:auto 1fr auto}
+  .landing-nav-row>.logo{grid-column:1;justify-self:start}
+  .landing-desktop-nav{grid-column:2;justify-self:center}
+}
+.landing-footer a{display:inline-flex;align-items:center;min-height:44px}
+.landing-footer nav{font-size:15px;gap:8px 24px}
+.landing-footer>span,.landing-footer p{font-size:14px}
+
+/* Hero: big rounded violet card */
+.landing-site .editorial-hero{width:calc(100% - 32px);max-width:1296px;margin:20px auto 0;padding:72px 32px 36px;border-radius:32px;background:var(--mk-hero);overflow:hidden;position:relative;isolation:isolate}
+.landing-site .editorial-hero h1{color:#fff;font-size:clamp(40px,5.6vw,72px);line-height:1.04;letter-spacing:-.045em;margin-bottom:22px}
+.landing-site .editorial-hero h1>span{font-family:inherit;font-weight:750;letter-spacing:-.045em;font-size:1em;color:#fff}
+.landing-site .editorial-hero h1>strong{font-weight:750;color:#ff9ab0}
+.landing-site .editorial-hero-copy>p{color:#efe7f6;font-size:clamp(16px,1.6vw,19px);line-height:1.6}
+.landing-site .editorial-hero .hero-actions>.btn-primary{background:#fff;color:var(--mk-deep);box-shadow:0 10px 24px -10px #1b0a3a66;min-height:52px;padding:14px 28px;font-size:16px}
+.landing-site .editorial-hero .hero-actions>.btn-primary:hover{background:#f5eefa}
+.landing-site .editorial-hero .hero-actions>.text-link{color:#fff;font-size:16px;font-weight:600;padding:12px 4px;min-height:44px}
+.landing-site .showcase-person{border-color:#ffffff40;background:#fff;box-shadow:0 18px 30px -16px #1b0a3a40;border-radius:20px}
+.landing-site .showcase-person.is-active{border-color:#fff;box-shadow:0 22px 36px -14px #1b0a3a66;border-radius:20px}
+.landing-site .gallery-person-caption>strong{color:var(--mk-ink);font-size:15px}
+.landing-site .gallery-direction{background:#fff;color:var(--mk-deep);border-radius:50px;font-weight:600}
+.landing-site .showcase-detail{border-top-color:#ffffff30;max-width:960px}
+.landing-site .showcase-selected h2{color:#fff;font-size:24px}
+.landing-site .showcase-action>span,.landing-site .showcase-action strong{color:#efe7f6;font-size:15px}
+.landing-site .showcase-action strong{color:#fff}
+.landing-site .showcase-action>.text-link{color:#fff;font-size:15px}
+.landing-site .showcase-controls>button{width:44px;height:44px;background:#ffffff1f;border-color:#ffffff40;color:#fff}
+.landing-site .showcase-controls>button:hover{background:#ffffff38;border-color:#fff}
+.landing-site .showcase-controls>span,.landing-site .showcase-controls>span>span{color:#efe7f6;font-size:14px}
+.landing-site .showcase-controls>.showcase-pause{border-color:#ffffff40}
+.landing-site .showcase-placeholder{border-color:#ffffff30;background:#ffffff1a}
+.landing-site .showcase-empty{background:#ffffff1f;border-color:#ffffff40}
+.landing-site .showcase-empty h2,.landing-site .showcase-empty p,.landing-site .showcase-empty .text-link,.landing-site .showcase-empty>svg{color:#fff}
+
+/* Sections */
+.landing-site .bento-card,.landing-site .mentor-card{border-radius:24px;border-color:var(--line);background:#fff}
+.landing-site .bento-direction-links>a{min-height:44px}
+.landing-site .bento-direction-links svg{flex-shrink:0}
+.landing-site .closing-banner{background:var(--mk-hero);border:0;border-radius:32px;color:#fff}
+.landing-site .closing-banner h2 em{color:var(--mk-coral)}
+.landing-site .closing-banner h2,.landing-site .closing-banner>p,.landing-site .closing-banner>.eyebrow{color:#fff}
+.landing-site .closing-banner>p{font-size:17px;opacity:.92}
+.landing-site .closing-banner .btn-primary{background:#fff;color:var(--mk-deep)}
+.landing-site .faq-list summary{font-size:17px;min-height:44px}
+
+/* Tablet and phone */
+@media(max-width:760px){
+  .landing-site .editorial-hero{width:calc(100% - 24px);margin-top:12px;padding:44px 16px 20px;border-radius:28px}
+  .landing-site .editorial-hero-copy>p{font-size:16px}
+  .landing-site .editorial-hero .hero-actions>.btn{min-height:52px;font-size:16px;width:100%;max-width:340px}
+  .landing-site .showcase-fan{margin:0 -16px}
+  .landing-site .showcase-detail{grid-template-columns:1fr;gap:14px;min-height:0}
+  .landing-site .showcase-selected,.landing-site .showcase-action{grid-column:1;grid-row:auto}
+  .landing-site .showcase-controls{grid-column:1;grid-row:auto;max-width:none;flex-wrap:nowrap;justify-content:flex-start;gap:8px}
+  .landing-menu-button{width:44px;height:44px;flex-shrink:0}
+  .landing-nav-row{flex-wrap:nowrap;min-height:68px}
+  .landing-account{gap:8px;flex-wrap:nowrap}
+  .landing-account .text-link.landing-login,.landing-account .btn{display:none}
+  .landing-mobile-nav a{min-height:48px;font-size:16px}
+}
+
+/* Readability: washed-out lilac greys (about 3:1) become the muted token (about 5:1+); secondary text gets a 13-15px floor. */
+.tiny,.app-main .mentor-headline,.app-breadcrumb,.app-duration,.app-user,.app-footer,.app-footer>a,.private-note,.back-link,.hero-facts,.subject-strip>span,.subject-strip a,.payment-recipient>.small,.app-topbar-actions>.btn-ghost{color:var(--muted)}
+.tiny{font-size:13px}
+.chip{font-size:13px;color:#4f3f6b;border-radius:10px}
+.mentor-headline,.app-main .mentor-headline{font-size:15px;line-height:1.6}
+.small{font-size:14px}
+.app-breadcrumb,.app-duration,.app-user,.app-footer,.private-note,.back-link,.subject-strip a{font-size:14px}
+.input::placeholder,textarea::placeholder,.app-main .input::placeholder{color:#6f6580}
+.mentor-card h3{font-size:22px}
+.mentor-bottom strong{font-size:18px}
+.mentor-card-cta{font-size:14px;min-height:44px;border-radius:12px;background:var(--mk-soft);color:var(--mk-deep)}
+.app-sidebar nav>a{font-size:15px;min-height:44px}
+.app-sidebar .sidebar-note p{color:#e3d6f0}
+
+/* Teach section as a violet call-to-action card */
+.landing-site .editorial-teach{width:calc(100% - 32px);max-width:1296px;margin:40px auto 0;border:0;border-radius:32px;background:var(--mk-hero);padding:88px 32px;color:#fff}
+.landing-site .teach-editorial-copy h2,.landing-site .teach-editorial-copy h2 em{color:#fff}
+.landing-site .teach-editorial-copy h2 em{color:#ff9ab0}
+.landing-site .teach-editorial-copy>p{color:#efe7f6;max-width:520px;margin-left:auto;margin-right:auto}
+.landing-site .teach-editorial-copy .btn-primary{background:#fff;color:var(--mk-deep)}
+.landing-site .teach-editorial-copy .btn-primary:hover{background:#f5eefa}
+@media(max-width:760px){.landing-site .editorial-teach{width:calc(100% - 24px);padding:56px 20px;border-radius:28px}}
+
+/* Topbar avatar: unscoped mobile .avatar rules were inflating it to 57px */
+.app-user>.avatar{width:40px;height:40px;border-radius:12px;font-size:14px;margin:0}
+
+/* Directory filters: full-width selects on phones so option text is not clipped */
+@media(max-width:520px){.filter-fields{grid-template-columns:1fr}.directory-filters select,.directory-filters .input{min-height:48px}}
+
+/* Booking calendar and slots: hard-coded old purples and 3:1 greys */
+.calendar-day{font-size:14px;color:var(--mk-deep);background:var(--mk-soft)}
+.calendar-day:disabled{color:#9a90ab;background:transparent}
+.calendar-day.selected,.calendar-day.selected:hover,.app-main .calendar-day.selected,.app-main .time-slot.selected{background:var(--mk-grad);color:#fff;border-color:transparent}
+.time-slot,.app-main .time-slot{font-size:15px;min-height:44px;color:var(--mk-deep);background:#fff;border:1px solid #dccfe9;border-radius:12px;font-weight:600}
+.time-slot:hover:not(:disabled){border-color:var(--mk-violet);background:var(--mk-soft)}
+.time-slot:disabled{color:#9a90ab;background:#f6f2f8;font-weight:400}
+
+/* Page heading subtitle: was capped at 210px and 3:1 grey */
+.workspace-heading p{font-size:15px;max-width:60ch;color:var(--muted)}
+.workspace-heading>span,.workspace-heading .eyebrow{color:var(--mk-violet)}
+
+/* Two-row tablet header is too tall to keep pinned */
+@media(min-width:761px) and (max-width:1080px){.landing-header{position:static}}
+
+/* Showcase cards are links to the booking flow */
+.landing-site a.showcase-person{color:inherit;text-decoration:none;cursor:pointer}
+.landing-site a.showcase-person:hover{border-color:#fff;transform:translateY(calc(var(--card-lift) - 10px)) rotate(var(--card-tilt))}
+
+/* Promo video bento */
+.promo-section{padding-top:76px;padding-bottom:76px}
+.promo-bento{display:grid;grid-template-columns:1fr 1fr minmax(280px,.9fr);gap:20px}
+.promo-tile{display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-height:220px;padding:32px;border:1px solid var(--mk-line);border-radius:28px;background:var(--mk-soft)}
+.promo-tile strong{font-size:clamp(28px,3.2vw,44px);line-height:1.08;letter-spacing:-.035em;color:var(--mk-deep)}
+.landing-site .promo-tile p{margin:0;font-size:17px;color:#4f4568}
+.promo-tile-cta{grid-column:1/3;flex-direction:row;align-items:center;min-height:0}
+.landing-site .promo-tile-cta h3{margin:0;font-size:clamp(22px,2.4vw,30px);letter-spacing:-.03em;color:var(--mk-deep);max-width:16ch}
+.promo-video{grid-column:3;grid-row:1/3;display:flex;flex-direction:column;margin:0;min-height:440px;overflow:hidden;border:1px solid var(--mk-line);border-radius:28px;background:#241838}
+.promo-video video{display:block;flex:1;min-height:0;width:100%;object-fit:cover;background:#241838}
+.promo-video figcaption{padding:16px 22px;background:#fff;color:var(--mk-ink);font-weight:650}
+.promo-video-empty{position:relative;isolation:isolate;flex:1;display:grid;place-content:center;justify-items:center;gap:14px;padding:24px;text-align:center;background-size:cover;background-position:center}
+.promo-video-empty:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,#3c187880,#241838d9)}
+.promo-video-empty>span{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:#fff;color:var(--mk-deep)}
+.landing-site .promo-video-empty p{margin:0;color:#fff;font-weight:650;font-size:17px}
+@media(max-width:980px){
+  .promo-bento{grid-template-columns:1fr 1fr}
+  .promo-tile-cta{grid-column:1/-1}
+  .promo-video{grid-column:1/-1;grid-row:auto;min-height:380px}
+}
+@media(max-width:620px){
+  .promo-section{padding-top:48px;padding-bottom:48px}
+  .promo-bento{grid-template-columns:1fr;gap:14px}
+  .promo-tile{padding:24px;min-height:0;border-radius:28px}
+  .promo-tile-cta{flex-direction:column;align-items:flex-start}
+  .promo-video{border-radius:28px;min-height:360px}
+}
+
+/* App sidebar brand: square logo tile on the dark rail, tighter wordmark */
+.app-sidebar-brand .logo{gap:10px}
+.app-sidebar-brand .logo>.brand-mark{width:44px;height:44px;padding:6px;border-radius:14px;background:#fff;object-fit:contain}
+.app-sidebar-brand .wordmark{font-size:26px;font-weight:750;letter-spacing:-.03em}
+@media(max-width:760px){.app-sidebar-brand .logo>.brand-mark{width:38px;height:38px;padding:5px;border-radius:12px}.app-sidebar-brand .wordmark{font-size:24px}}
+
+/* App sidebar navigation: active pill carries its own marker (no detached edge bar), pink icon on the active item */
+.app-sidebar nav{gap:4px}
+.app-sidebar nav>a{min-height:46px;border:1px solid transparent;border-radius:12px;font-size:15px;font-weight:550;color:#d9c8ef;transition:background-color .2s ease,color .2s ease,border-color .2s ease,transform .15s ease}
+.app-sidebar nav>a:hover{background:#ffffff10;color:#fff}
+.app-sidebar nav>a:active{transform:scale(.98)}
+.app-sidebar nav>a.active{background:#ffffff17;border-color:#ffffff1f;color:#fff}
+.app-sidebar nav>a.active>svg{color:#ff8aa5}
+.app-sidebar nav>a.active:before,.sidebar-collapsed .app-sidebar nav>a.active:before{display:none}
+.app-sidebar nav>a:focus-visible{outline:3px solid #9b6cc9;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.app-sidebar nav>a{transition:none}.app-sidebar nav>a:active{transform:none}}

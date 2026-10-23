@@ -29,7 +29,6 @@ export function AdminPanelView({controller}:{controller:AdminController}){
  const {operator,tab,summary,data,state,page,query,loading,error,message,busy,review,setSearch,setQuery,setPage,setState,setReview,select,reload,operate,signOut,submitReview}=controller;
  return <div className="control-workspace">
   <aside className="control-sidebar">
-    <div className="control-sidebar-title"><LayoutDashboard size={17}/><span>{translate('Administrator')}</span></div>
     <nav aria-label={translate('Admin menyusi')}>{(Object.keys(names) as Tab[]).map(key=>{const Icon=tabIcons[key];return <button type="button" key={key} className={`control-nav-button ${tab===key?'selected':''}`} aria-current={tab===key?'page':undefined} onClick={()=>select(key)}><Icon size={18}/><span>{translate(names[key])}</span>{key==='mentors'&&!!summary?.mentors&&<b>{summary.mentors}</b>}</button>;})}</nav>
     <div className="control-account"><div className="control-account-person"><span className="control-account-avatar">{operator?operator[0].toUpperCase():'A'}</span><div><strong>{translate('Administrator')}</strong><small>{operator||translate('Hisob tekshirilmoqda…')}</small></div></div><button className="control-logout" type="button" disabled={busy} onClick={signOut}><LogOut size={16}/>{translate('Hisobdan chiqish')}</button></div>
   </aside>
