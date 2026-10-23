@@ -65,6 +65,11 @@ class Subject(models.Model):
         return self.name
 
 
+class DirectoryPublication(models.Model):
+    version = models.CharField(max_length=40, primary_key=True)
+    published_at = models.DateTimeField(auto_now_add=True)
+
+
 class MentorProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='mentor')
     headline = models.CharField(max_length=140)
