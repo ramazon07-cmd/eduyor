@@ -77,4 +77,4 @@ class PaymentAndListingUpdates(TestCase):
             self.assertEqual(b.payout_status,'pending')
             b=services.pay_out(b.pk,'TEST TRANSFER AFTER LESSON')
             self.assertEqual(b.payout_status,'paid')
-        self.assertEqual(b.mentor_net,40000)
+        self.assertEqual(b.mentor_net,35000)

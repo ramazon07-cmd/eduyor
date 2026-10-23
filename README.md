@@ -2,7 +2,7 @@
 
 Next.js App Router + TypeScript + Tailwind, Django/DRF, Uzbek Latin UI. One shared logo/sidebar/card theme across the landing page, directory, booking, dashboard, profile, auth and session/payment pages. Django Admin uses the same brand colors and mark.
 
-New lessons are **50 minutes** and cost **30,000–60,000 UZS**. Platform share: **20%**, mentor share: **80%**. Upcoming active legacy 60-minute bookings are shortened to 50 minutes by migration 0004; past bookings and financial snapshots are preserved. A payment reservation is separately held for 60 minutes.
+New lessons are **50 minutes** and cost **30,000–60,000 UZS**. Platform share: **30%**, mentor share: **70%**. Upcoming active legacy 60-minute bookings are shortened to 50 minutes by migration 0004; past bookings and financial snapshots are preserved. A payment reservation is separately held for 60 minutes.
 
 ## Local run — SQLite
 
@@ -77,3 +77,9 @@ npm run build
 Local SQLite tests explicitly skip the three PostgreSQL concurrency tests. See VERIFICATION.md for actual results and limitations. Deployment configuration and exact server steps are in [DEPLOYMENT.md](DEPLOYMENT.md). API readiness: `/api/health/` (200/503, no account/internal details).
 
 The exact supplied logo is retained under frontend/public/brand/. Uzbek date labels use explicit month names so browsers with incomplete uz locale data do not show “M10”. A price is displayed as “50 000 UZS”.
+
+## EduYor Request
+
+Open `/requests/` from the website menu or dashboard. Signed-in students publish a subject, learning goal and a 30,000–60,000 UZS budget. Approved, active mentors in that subject can propose a price, message and a 50-minute lesson time. Students compare their offers and accept one; the server rechecks availability and creates the normal 60-minute payment reservation at the agreed price. Competing offers are visible only to the student. All interface copy supports Uzbek, English and Russian.
+
+New direct bookings and accepted request offers use a **30% platform / 70% mentor** split. Existing booking snapshots retain their original rates and amounts. Run `python manage.py migrate` to apply migrations 0009 and 0010 before starting this version.

@@ -19,7 +19,7 @@ UTC = dt_timezone.utc
 SESSION_DURATION_MINUTES = 50
 SESSION_DURATION = timedelta(minutes=SESSION_DURATION_MINUTES)
 HOLD_DURATION = timedelta(minutes=60)
-RATE = Decimal('0.20')
+RATE = Decimal('0.30')
 
 
 def lock_users(ids):
@@ -83,12 +83,12 @@ def split_price(price):
 
 
 @transaction.atomic
-def reserve(student,mentor_id,start,objective):
+def reserve(student,mentor_id,start,objective,*,agreed_price=None):
     if student.pk == mentor_id:
         raise ValidationError({'mentor_id':'O‘zingizdan dars band qila olmaysiz.'})
     lock_users([student.pk,mentor_id])
     now = timezone.now()
-    mentor = MentorProfile.objects.select_related('user__profile').filter(user_id=mentor_id,approval='approved',is_paused=False).first()
+    mentor = MentorProfile.objects.select_related('user__profile').filter(user_id=mentor_id,approval='approved',is_paused=False,user__is_active=True).first()
     if not mentor:
         raise Conflict('Mentor hozir band qilish uchun ochiq emas.')
     if start not in candidate_slots(mentor,now):
@@ -97,7 +97,10 @@ def reserve(student,mentor_id,start,objective):
         raise Conflict()
     if not Decimal('30000') <= mentor.hourly_price <= Decimal('60000'):
         raise ValidationError({'hourly_price':'Mentor narxi 30 000–60 000 so‘m oralig‘ida bo‘lishi kerak.'})
-    total,fee,net = split_price(mentor.hourly_price)
+    price = mentor.hourly_price if agreed_price is None else Decimal(agreed_price)
+    if not Decimal('30000') <= price <= Decimal('60000'):
+        raise ValidationError({'price': 'Narx 30 000–60 000 so‘m oralig‘ida bo‘lishi kerak.'})
+    total,fee,net = split_price(price)
     return Booking.objects.create(student=student,mentor_id=mentor_id,starts_at=start,ends_at=start+SESSION_DURATION,objective=objective,total_price=total,platform_fee=fee,mentor_net=net,commission_rate=RATE,expires_at=now+HOLD_DURATION)
 
 

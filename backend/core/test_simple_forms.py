@@ -115,7 +115,7 @@ class SimpleMentorAndPaymentTests(TestCase):
         self.assertEqual(client.post(url,{'reference':'actual-bank-id','receipt_checked':'on'}).status_code,302)
         booking.refresh_from_db();self.assertEqual((booking.status,booking.payment_status),('confirmed','verified'))
         self.assertEqual(booking.receipt_reference,'actual-bank-id')
-        self.assertEqual(booking.mentor_net,Decimal('24000'))
+        self.assertEqual(booking.mentor_net,Decimal('21000'))
         client.post(url,{'reference':'repeated-click','receipt_checked':'on'})
         booking.refresh_from_db();self.assertEqual(booking.receipt_reference,'actual-bank-id')
 

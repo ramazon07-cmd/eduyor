@@ -12,3 +12,6 @@ export type Booking = {id:number;student:number;mentor:number;student_name:strin
 
 export type OwnMentorListing = Mentor & {approval:MentorSettings["approval"];is_paused:boolean;is_public:boolean;has_availability:boolean};
 export type PaymentInfo = {instructions:string;support:string;card_number:string;card_holder:string;bank_name:string;can_accept_payment:boolean;method:string;verification:string;mentor_payout:string};
+
+export type RequestOffer = {id:number;mentor:Mentor;price:string;message:string;starts_at:string;booking:number|null;created_at:string};
+export type LearningRequest = {id:number;student_name:string;is_owner:boolean;title:string;description:string;subject:Subject;budget:string;status:'open'|'matched'|'closed';created_at:string;offer_count:number;offers:RequestOffer[]};

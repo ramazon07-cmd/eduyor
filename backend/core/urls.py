@@ -11,3 +11,12 @@ urlpatterns = [
 # EduYor custom website administration
 from django.urls import include as _control_include, path as _control_path
 urlpatterns += [_control_path('control/', _control_include('core.control_urls'))]
+
+from . import request_api as r
+urlpatterns += [
+    path('requests/', r.RequestListView.as_view()),
+    path('requests/<int:pk>/', r.RequestDetailView.as_view()),
+    path('requests/<int:pk>/close/', r.RequestCloseView.as_view()),
+    path('requests/<int:pk>/offers/', r.RequestOfferView.as_view()),
+    path('requests/<int:pk>/offers/<int:offer_id>/accept/', r.OfferAcceptView.as_view()),
+]

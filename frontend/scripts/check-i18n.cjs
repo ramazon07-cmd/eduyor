@@ -61,3 +61,10 @@ stored='invalid';assert.equal(store.localeSnapshot(),'uz');
 const before=changes;storageEvent('unrelated');assert.equal(changes,before);stop();
 store.setLocale('en');assert.equal(changes,before,'Subscription cleans up');
 console.log('Locale persistence, cross-tab synchronization, invalid values and unavailable storage checks passed.');
+
+assert.equal(t('1 ta taklif','en'),'1 offer');
+assert.equal(t('12 ta taklif','ru'),'Предложений: 12');
+assert.equal(t('Ochiq so‘rovlar','en'),'Open requests');
+assert.equal(t('Tasdiqlash va bron qilish','ru'),'Подтвердить и забронировать');
+assert.equal(t('Student-authored IELTS request','en'),'Student-authored IELTS request');
+console.log('Request navigation, offer counts and booking labels translate correctly.');

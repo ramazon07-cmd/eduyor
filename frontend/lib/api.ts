@@ -1,7 +1,7 @@
 import {dateTime} from './dates';
 export class ApiError extends Error {
   constructor(public status:number,public fields:Record<string,unknown>) {
-    const labels:Record<string,string> = {rating:'Baho',comment:'Izoh',full_name:'Ism',email:'Email',password:'Parol',timezone:'Vaqt zonasi',headline:'Sarlavha',bio:'Bio',subjects:'Yo‘nalishlar',hourly_price:'Narx',min_price:'Eng past narx',max_price:'Eng yuqori narx',language:'Ta’lim tili',ordering:'Saralash',subject:'Yo‘nalish',search:'Qidiruv',objective:'Dars maqsadi',reference:'Tranzaksiya raqami',rules:'Jadval',avatar:'Rasm'};
+    const labels:Record<string,string> = {title:'Sarlavha',description:'Muammo va maqsad',budget:'Budjet',price:'Narx',message:'Taklif izohi',starts_at:'Dars vaqti',scope:'So‘rovlar',rating:'Baho',comment:'Izoh',full_name:'Ism',email:'Email',password:'Parol',timezone:'Vaqt zonasi',headline:'Sarlavha',bio:'Bio',subjects:'Yo‘nalishlar',hourly_price:'Narx',min_price:'Eng past narx',max_price:'Eng yuqori narx',language:'Ta’lim tili',ordering:'Saralash',subject:'Yo‘nalish',search:'Qidiruv',objective:'Dars maqsadi',reference:'Tranzaksiya raqami',rules:'Jadval',avatar:'Rasm'};
     const format = (v:unknown):string => Array.isArray(v)?v.map(format).join(' '):v && typeof v==='object'?Object.entries(v).map(([k,x])=>`${labels[k]||k}: ${format(x)}`).join(' '):String(v);
     super(Object.entries(fields).map(([k,v])=>`${k==='detail'||k==='non_field_errors'?'':(labels[k]||k)+': '}${format(v)}`).join(' '));
   }

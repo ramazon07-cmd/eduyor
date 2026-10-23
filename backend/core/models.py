@@ -119,7 +119,7 @@ class Booking(models.Model):
     expires_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     total_price = models.DecimalField(max_digits=12,decimal_places=0)
-    commission_rate = models.DecimalField(max_digits=3,decimal_places=2,default=Decimal('0.20'))
+    commission_rate = models.DecimalField(max_digits=3,decimal_places=2,default=Decimal('0.30'))
     platform_fee = models.DecimalField(max_digits=12,decimal_places=0)
     mentor_net = models.DecimalField(max_digits=12,decimal_places=0)
     currency = models.CharField(max_length=3,default='UZS')
@@ -156,6 +156,35 @@ class Booking(models.Model):
 
     def __str__(self):
         return f'#{self.pk} · {self.starts_at:%Y-%m-%d %H:%M} · {self.status}'
+
+class LearningRequest(models.Model):
+    student = models.ForeignKey(User, on_delete=models.PROTECT, related_name='learning_requests')
+    subject = models.ForeignKey(Subject, on_delete=models.PROTECT)
+    title = models.CharField(max_length=140)
+    description = models.TextField(max_length=1500)
+    budget = models.DecimalField(max_digits=12, decimal_places=0, validators=[MinValueValidator(30000), MaxValueValidator(60000)])
+    status = models.CharField(max_length=10, choices=[('open', 'open'), ('matched', 'matched'), ('closed', 'closed')], default='open')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at', '-pk']
+        indexes = [models.Index(fields=['status', '-created_at'])]
+        constraints = [models.CheckConstraint(condition=models.Q(budget__gte=30000, budget__lte=60000), name='request_budget_range')]
+
+
+class MentorOffer(models.Model):
+    request = models.ForeignKey(LearningRequest, on_delete=models.CASCADE, related_name='offers')
+    mentor = models.ForeignKey(MentorProfile, on_delete=models.PROTECT, related_name='request_offers')
+    price = models.DecimalField(max_digits=12, decimal_places=0, validators=[MinValueValidator(30000), MaxValueValidator(60000)])
+    message = models.TextField(max_length=1000)
+    starts_at = models.DateTimeField()
+    booking = models.OneToOneField(Booking, null=True, blank=True, on_delete=models.PROTECT, related_name='request_offer')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at', 'pk']
+        constraints = [models.UniqueConstraint(fields=['request', 'mentor'], name='one_offer_per_mentor'), models.CheckConstraint(condition=models.Q(price__gte=30000, price__lte=60000), name='offer_price_range')]
+
 
 # Private payment receipts
 from .receipt_models import PaymentReceipt

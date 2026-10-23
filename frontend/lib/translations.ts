@@ -1384,9 +1384,9 @@ export const translations:Record<string,readonly [string,string]> = {
     "Lesson price · 50 minutes",
     "Цена урока · 50 минут"
   ],
-  "Yangi dars narxining 80% sizga qoladi. Platforma ulushi — 20%.": [
-    "You keep 80% of each new lesson’s price. The platform receives 20%.",
-    "Вы получаете 80% стоимости нового урока. Доля платформы — 20%."
+  "Yangi dars narxining 70% sizga qoladi. Platforma ulushi — 30%.": [
+    "You keep 70% of each new lesson’s price. The platform receives 30%.",
+    "Вы получаете 70% стоимости нового урока. Доля платформы — 30%."
   ],
   "Profilni vaqtincha pauza qilish": [
     "Temporarily pause profile",
@@ -2333,7 +2333,7 @@ export const translations:Record<string,readonly [string,string]> = {
     "Имя"
   ],
   "Sarlavha": [
-    "Headline",
+    "Title",
     "Заголовок"
   ],
   "Narx": [
@@ -2615,5 +2615,345 @@ export const translations:Record<string,readonly [string,string]> = {
   "Kerakli bo‘limni tanlab, yozuvlarni boshqaring.": [
     "Choose a section to manage its records.",
     "Выберите раздел для управления записями."
+  ],
+  "EduYor Request": [
+    "EduYor Request",
+    "EduYor Request"
+  ],
+  "Ochiq": [
+    "Open",
+    "Открыт"
+  ],
+  "Mentor tanlangan": [
+    "Mentor selected",
+    "Ментор выбран"
+  ],
+  "Yopilgan": [
+    "Closed",
+    "Закрыт"
+  ],
+  "Budjet:": [
+    "Budget:",
+    "Бюджет:"
+  ],
+  "Budjet": [
+    "Budget",
+    "Бюджет"
+  ],
+  "Savol sizdan. Yechim mentordan.": [
+    "Your question. A mentor’s solution.",
+    "Ваш вопрос. Решение ментора."
+  ],
+  "Muammongizni yozing, mentorlarning takliflarini solishtiring va o‘zingizga mosini tanlang.": [
+    "Describe your challenge, compare mentor offers and choose the right fit.",
+    "Опишите проблему, сравните предложения менторов и выберите подходящее."
+  ],
+  "So‘rov yaratish": [
+    "Create a request",
+    "Создать запрос"
+  ],
+  "YANGI YORDAM SO‘ROVI": [
+    "NEW LEARNING REQUEST",
+    "НОВЫЙ ЗАПРОС НА ПОМОЩЬ"
+  ],
+  "Nimada yordam kerak?": [
+    "What do you need help with?",
+    "В чём нужна помощь?"
+  ],
+  "Aniq mavzu va kutilgan natijani yozing. Shaxsiy aloqa ma’lumotlarini kiritmang.": [
+    "Describe the topic and your expected outcome. Keep personal contact details private.",
+    "Опишите тему и ожидаемый результат. Не указывайте личные контактные данные."
+  ],
+  "Har bir taklif: 50 daqiqalik onlayn dars. Budjet: 30 000–60 000 UZS.": [
+    "Each offer is a 50-minute online lesson. Budget: 30,000–60,000 UZS.",
+    "Каждое предложение — онлайн-урок на 50 минут. Бюджет: 30 000–60 000 UZS."
+  ],
+  "Masalan, IELTS Writing Task 2 bo‘yicha yordam": [
+    "For example, help with IELTS Writing Task 2",
+    "Например, помощь с IELTS Writing Task 2"
+  ],
+  "Muammo va maqsad": [
+    "Challenge and goal",
+    "Проблема и цель"
+  ],
+  "Nimani tushunmayapsiz va darsdan qanday natija kutyapsiz?": [
+    "What is unclear, and what would you like to achieve in this lesson?",
+    "Что вам непонятно и какого результата вы ждёте от урока?"
+  ],
+  "Eng yuqori budjet (UZS)": [
+    "Maximum budget (UZS)",
+    "Максимальный бюджет (UZS)"
+  ],
+  "So‘rovni e’lon qilish": [
+    "Publish request",
+    "Опубликовать запрос"
+  ],
+  "So‘rovlarni ko‘rsatish": [
+    "Request views",
+    "Показать запросы"
+  ],
+  "Ochiq so‘rovlar": [
+    "Open requests",
+    "Открытые запросы"
+  ],
+  "Mening so‘rovlarim": [
+    "My requests",
+    "Мои запросы"
+  ],
+  "Takliflarim": [
+    "My offers",
+    "Мои предложения"
+  ],
+  "Yo‘nalish bo‘yicha filtrlash": [
+    "Filter by subject",
+    "Фильтр по направлению"
+  ],
+  "Hozircha so‘rov yo‘q": [
+    "No requests yet",
+    "Запросов пока нет"
+  ],
+  "Birinchi so‘rovingizni yarating va mentorlardan taklif oling.": [
+    "Create your first request to receive offers from mentors.",
+    "Создайте первый запрос и получите предложения от менторов."
+  ],
+  "Mos so‘rovni oching va o‘z taklifingizni yuboring.": [
+    "Open a relevant request and send your offer.",
+    "Откройте подходящий запрос и отправьте предложение."
+  ],
+  "Boshqa yo‘nalishni tanlang yoki keyinroq tekshiring.": [
+    "Choose another subject or check back later.",
+    "Выберите другое направление или проверьте позже."
+  ],
+  "{count} ta taklif": [
+    "{count} offers",
+    "Предложений: {count}"
+  ],
+  "So‘rovni ochish": [
+    "View request",
+    "Открыть запрос"
+  ],
+  "Sahifalar": [
+    "Pages",
+    "Страницы"
+  ],
+  "MENTOR UCHUN": [
+    "FOR MENTORS",
+    "ДЛЯ МЕНТОРОВ"
+  ],
+  "Taklifingizni yangilang": [
+    "Update your offer",
+    "Обновите предложение"
+  ],
+  "Yechimingizni taklif qiling": [
+    "Offer your solution",
+    "Предложите решение"
+  ],
+  "Qanday yordam berishingizni yozing va dars vaqtini tanlang.": [
+    "Explain how you can help and choose a lesson time.",
+    "Опишите, как вы поможете, и выберите время урока."
+  ],
+  "Taklif narxi (UZS)": [
+    "Offer price (UZS)",
+    "Цена предложения (UZS)"
+  ],
+  "Budjetdan oshmasin:": [
+    "Stay within the budget:",
+    "Не выше бюджета:"
+  ],
+  "Taklif izohi": [
+    "Offer message",
+    "Описание предложения"
+  ],
+  "Darsda muammoni qanday hal qilasiz?": [
+    "How will you address this challenge in the lesson?",
+    "Как вы решите проблему на уроке?"
+  ],
+  "Dars kuni": [
+    "Lesson date",
+    "Дата урока"
+  ],
+  "Dars vaqti": [
+    "Lesson time",
+    "Время урока"
+  ],
+  "Kamida 24 soat oldin, keyingi 30 kun ichida.": [
+    "At least 24 hours ahead, within the next 30 days.",
+    "Не менее чем за 24 часа, в пределах следующих 30 дней."
+  ],
+  "Bo‘sh vaqtlar yuklanmoqda…": [
+    "Loading available times…",
+    "Загрузка свободного времени…"
+  ],
+  "Taklifingiz yuborildi. O‘quvchi tanlovini shu yerda ko‘rasiz.": [
+    "Offer sent. You can see the student’s decision here.",
+    "Предложение отправлено. Решение ученика появится здесь."
+  ],
+  "Taklifni yangilash": [
+    "Update offer",
+    "Обновить предложение"
+  ],
+  "Taklif yuborish": [
+    "Send offer",
+    "Отправить предложение"
+  ],
+  "Taklif yuborish vaqtni band qilmaydi. O‘quvchi tanlaganda vaqt qayta tekshiriladi.": [
+    "Sending an offer does not reserve the slot. Availability is checked again when the student accepts.",
+    "Отправка предложения не бронирует время. Доступность проверяется повторно при выборе ученика."
+  ],
+  "So‘rovlarga qaytish": [
+    "Back to requests",
+    "К запросам"
+  ],
+  "Mentor tanlandi. Keyingi qadam — to‘lov.": [
+    "Mentor selected. Next step: payment.",
+    "Ментор выбран. Следующий шаг — оплата."
+  ],
+  "Bron 60 daqiqa saqlanadi. Joriy to‘lov va dars holatini tafsilotlardan tekshiring.": [
+    "Reservations are held for 60 minutes. Check lesson details for the current payment and booking status.",
+    "Бронь действует 60 минут. Актуальный статус оплаты и урока смотрите в деталях."
+  ],
+  "O‘quvchi boshqa taklifni tanladi.": [
+    "The student selected another offer.",
+    "Ученик выбрал другое предложение."
+  ],
+  "So‘rovni yopsangiz, yangi takliflar qabul qilinmaydi.": [
+    "Closing the request stops new offers.",
+    "После закрытия запрос не будет принимать предложения."
+  ],
+  "Yopishni tasdiqlash": [
+    "Confirm closure",
+    "Подтвердить закрытие"
+  ],
+  "So‘rovni yopish": [
+    "Close request",
+    "Закрыть запрос"
+  ],
+  "Mentorlardan takliflar": [
+    "Mentor offers",
+    "Предложения менторов"
+  ],
+  "Sizning taklifingiz": [
+    "Your offer",
+    "Ваше предложение"
+  ],
+  "Taklif vaqti eskirgan. Mentor yangilashi kerak.": [
+    "This time is no longer valid. The mentor needs to update it.",
+    "Время предложения устарело. Ментору нужно его обновить."
+  ],
+  "Shu mentorni tanlash": [
+    "Choose this mentor",
+    "Выбрать ментора"
+  ],
+  "Taklifni tasdiqlash": [
+    "Confirm offer",
+    "Подтвердить предложение"
+  ],
+  "Kelishilgan narx:": [
+    "Agreed price:",
+    "Согласованная цена:"
+  ],
+  "Tanlasangiz, shu vaqtga 60 daqiqalik bron ochiladi. Keyingi sahifada to‘lovni amalga oshirasiz.": [
+    "Accepting holds this lesson time for 60 minutes. You can pay on the next page.",
+    "После выбора время урока будет забронировано на 60 минут. Оплатить можно на следующей странице."
+  ],
+  "Tasdiqlash va bron qilish": [
+    "Confirm and reserve",
+    "Подтвердить и забронировать"
+  ],
+  "Hozircha taklif kelmagan": [
+    "No offers yet",
+    "Предложений пока нет"
+  ],
+  "O‘z taklifingizni yuboring": [
+    "Send your offer",
+    "Отправьте предложение"
+  ],
+  "Mentorlar so‘rovingizni ko‘rib, narx va dars vaqtini taklif qiladi.": [
+    "Mentors will review your request and propose a price and lesson time.",
+    "Менторы рассмотрят запрос и предложат цену и время урока."
+  ],
+  "Boshqa mentorlarning takliflari faqat so‘rov egasiga ko‘rinadi.": [
+    "Other mentors’ offers are visible only to the request owner.",
+    "Предложения других менторов видны только автору запроса."
+  ],
+  "Shu yo‘nalishda yordam bera olasizmi?": [
+    "Can you help with this subject?",
+    "Можете помочь по этому направлению?"
+  ],
+  "Taklif yuborish uchun shu yo‘nalishdagi mentor profilingiz tasdiqlangan va faol bo‘lishi kerak.": [
+    "To send an offer, your mentor profile must be approved and active for this subject.",
+    "Для отправки предложения профиль ментора по этому направлению должен быть одобрен и активен."
+  ],
+  "So‘rov yozing va mentorlardan taklif oling": [
+    "Post a request and receive mentor offers",
+    "Создайте запрос и получите предложения менторов"
+  ],
+  "Tanlangan taklif bor. Dars tafsilotlarini oching.": [
+    "An offer has been selected. Open the lesson details.",
+    "Предложение уже выбрано. Откройте детали урока."
+  ],
+  "Faqat shu yo‘nalishdagi tasdiqlangan mentor taklif yubora oladi.": [
+    "Only approved mentors in this subject can send offers.",
+    "Отправлять предложения могут только одобренные менторы этого направления."
+  ],
+  "O‘z so‘rovingizga taklif yubora olmaysiz.": [
+    "You cannot send an offer to your own request.",
+    "Нельзя отправить предложение на собственный запрос."
+  ],
+  "So‘rov yopilgan yoki mentor tanlangan.": [
+    "The request is closed or a mentor has already been selected.",
+    "Запрос закрыт или ментор уже выбран."
+  ],
+  "Taklif narxi budjetdan oshmasin.": [
+    "The offer price must not exceed the budget.",
+    "Цена предложения не должна превышать бюджет."
+  ],
+  "Bu vaqt mavjud emas. Boshqa vaqt tanlang.": [
+    "This time is unavailable. Choose another time.",
+    "Это время недоступно. Выберите другое."
+  ],
+  "Taklifni faqat so‘rov egasi tanlaydi.": [
+    "Only the request owner can accept an offer.",
+    "Выбрать предложение может только автор запроса."
+  ],
+  "Taklif endi mos emas.": [
+    "This offer is no longer eligible.",
+    "Предложение больше не подходит."
+  ],
+  "Narx 30 000–60 000 so‘m oralig‘ida bo‘lishi kerak.": [
+    "The price must be between 30,000 and 60,000 UZS.",
+    "Цена должна быть от 30 000 до 60 000 UZS."
+  ],
+  "So‘rovlar": [
+    "Requests",
+    "Запросы"
+  ],
+  "1 ta taklif": [
+    "1 offer",
+    "1 предложение"
+  ],
+  "Tanlangan taklif": [
+    "Selected offer",
+    "Выбранное предложение"
+  ],
+  "So‘rov yakunlangan": [
+    "Request closed",
+    "Запрос завершён"
+  ],
+  "Bu so‘rov yangi takliflarni qabul qilmaydi.": [
+    "This request is no longer accepting offers.",
+    "Этот запрос больше не принимает предложения."
+  ],
+  "Yo‘nalishni tanlang": [
+    "Choose a subject",
+    "Выберите направление"
+  ],
+  "BILIMINGIZNI ULASHING": [
+    "SHARE YOUR KNOWLEDGE",
+    "ДЕЛИТЕСЬ ЗНАНИЯМИ"
+  ],
+  "Onlayn": [
+    "Online",
+    "Онлайн"
   ]
 };

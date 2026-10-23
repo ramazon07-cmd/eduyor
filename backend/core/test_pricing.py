@@ -26,13 +26,13 @@ class PricingPolicyTests(TestCase):
     def reserve(self):
         return services.reserve(self.student, self.mentor.pk, START, 'SAT')
 
-    def test_inclusive_boundaries_and_decimal_twenty_percent(self):
-        for price, fee, net in [(30000,6000,24000),(60000,12000,48000),(45001,9000,36001)]:
+    def test_inclusive_boundaries_and_decimal_thirty_percent(self):
+        for price, fee, net in [(30000,9000,21000),(60000,18000,42000),(45001,13500,31501)]:
             with self.subTest(price=price):
                 self.profile.hourly_price=price
                 self.profile.save()
                 booking=self.reserve()
-                self.assertEqual((booking.total_price,booking.platform_fee,booking.mentor_net,booking.commission_rate),(Decimal(price),Decimal(fee),Decimal(net),Decimal('0.20')))
+                self.assertEqual((booking.total_price,booking.platform_fee,booking.mentor_net,booking.commission_rate),(Decimal(price),Decimal(fee),Decimal(net),Decimal('0.30')))
                 Booking.objects.filter(pk=booking.pk).delete()
 
     def test_api_price_validation_is_field_level(self):
@@ -54,7 +54,7 @@ class PricingPolicyTests(TestCase):
         booking=self.reserve()
         self.profile.hourly_price=60000;self.profile.save()
         booking=services.verify_payment(booking.pk,'independently-verified')
-        self.assertEqual((booking.total_price,booking.platform_fee,booking.mentor_net),(30000,6000,24000))
+        self.assertEqual((booking.total_price,booking.platform_fee,booking.mentor_net),(30000,9000,21000))
         booking.platform_fee=12000
         with self.assertRaises(ValidationError):booking.save()
 
@@ -78,4 +78,11 @@ class PricingPolicyTests(TestCase):
         migration.normalize_listing_prices(apps,editor)
         migration.normalize_listing_prices(apps,editor)
         booking.refresh_from_db()
-        self.assertEqual((booking.total_price,booking.commission_rate),(30000,Decimal('0.20')))
+        self.assertEqual((booking.total_price,booking.commission_rate),(30000,Decimal('0.30')))
+
+    def test_historical_twenty_percent_snapshot_is_not_repriced(self):
+        old=Booking.objects.create(student=self.student,mentor=self.mentor,starts_at=START,ends_at=START+timedelta(minutes=50),objective='Existing booking',expires_at=NOW+timedelta(hours=1),total_price=50000,commission_rate=Decimal('0.20'),platform_fee=10000,mentor_net=40000)
+        old=services.verify_payment(old.pk,'existing-booking-payment')
+        with patch('core.services.timezone.now',return_value=START+timedelta(hours=2)):
+            old=services.complete(old.pk,self.student)
+        self.assertEqual((old.commission_rate,old.platform_fee,old.mentor_net),(Decimal('0.20'),10000,40000))

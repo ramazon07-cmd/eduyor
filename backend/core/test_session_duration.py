@@ -36,7 +36,7 @@ class FiftyMinuteSessionTests(TestCase):
         self.assertEqual(booking.expires_at-NOW,timedelta(minutes=60))
         response=self.client.get(f'/api/bookings/{booking.pk}/')
         self.assertEqual(response.json()['duration_minutes'],50)
-        self.assertEqual((booking.total_price,booking.platform_fee,booking.mentor_net),(30000,6000,24000))
+        self.assertEqual((booking.total_price,booking.platform_fee,booking.mentor_net),(30000,9000,21000))
 
     def test_public_profiles_and_timezone_slot_ends_agree(self):
         self.assertEqual(self.client.get(f'/api/mentors/{self.teacher.pk}/').json()['session_duration_minutes'],50)

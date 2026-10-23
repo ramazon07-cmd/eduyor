@@ -29,7 +29,7 @@ class LessonFeedbackTests(TestCase):
         data = dict(student=self.student, mentor=self.mentor, starts_at=self.now-timedelta(hours=2),
                     ends_at=self.now-timedelta(minutes=70), expires_at=self.now-timedelta(hours=3),
                     status='completed', payment_status='verified', payout_status='pending',
-                    total_price=30000, platform_fee=6000, mentor_net=24000, objective='Feedback test',
+                    total_price=30000, platform_fee=9000, mentor_net=21000, objective='Feedback test',
                     completed_at=self.now)
         data.update(changes)
         return Booking.objects.create(**data)
