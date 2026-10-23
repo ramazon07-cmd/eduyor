@@ -6,22 +6,32 @@ export class ApiError extends Error {
     super(Object.entries(fields).map(([k,v])=>`${k==='detail'||k==='non_field_errors'?'':(labels[k]||k)+': '}${format(v)}`).join(' '));
   }
 }
-const csrfToken = () => document.cookie.split('; ').find(x=>x.startsWith('csrftoken='))?.split('=').slice(1).join('=');
+async function csrfToken():Promise<string> {
+  const response=await fetch('/api/auth/csrf/',{credentials:'same-origin',cache:'no-store'});
+  if(!response.ok)throw new Error('Xavfsizlik sozlamasini yuklab bo‘lmadi.');
+  const data=await response.json();
+  if(typeof data.csrfToken!=='string'||!data.csrfToken)throw new Error('Xavfsizlik sozlamasini yuklab bo‘lmadi.');
+  return data.csrfToken;
+}
 export async function api<T>(path:string,init:RequestInit = {}):Promise<T> {
-  const method = init.method || 'GET';
-  const headers = new Headers(init.headers);
-  if (!['GET','HEAD','OPTIONS'].includes(method.toUpperCase())) {
-    if (!csrfToken()) {
-      const bootstrap = await fetch('/api/auth/csrf/',{credentials:'same-origin',cache:'no-store'});
-      if (!bootstrap.ok) throw new Error('Xavfsizlik sozlamasini yuklab bo‘lmadi.');
-    }
-    headers.set('X-CSRFToken',decodeURIComponent(csrfToken()||''));
-    if (!(init.body instanceof FormData)) headers.set('Content-Type','application/json');
+  const method=(init.method||'GET').toUpperCase();
+  const headers=new Headers(init.headers);
+  const writes=!['GET','HEAD','OPTIONS'].includes(method);
+  if(writes){
+    headers.set('X-CSRFToken',await csrfToken());
+    if(!(init.body instanceof FormData))headers.set('Content-Type','application/json');
   }
-  const response = await fetch(`/api/${path}`,{...init,headers,credentials:'same-origin',cache:'no-store'});
-  const data = await response.json().catch(()=>({detail:'Server bilan aloqa amalga oshmadi.'}));
-  if (!response.ok) throw new ApiError(response.status,data);
-  return data as T;
+  for(let attempt=0;attempt<2;attempt++){
+    const response=await fetch(`/api/${path}`,{...init,headers,credentials:'same-origin',cache:'no-store'});
+    const data=await response.json().catch(()=>({detail:'Server bilan aloqa amalga oshmadi.'}));
+    // A CSRF rejection happens before the view runs, so retrying it cannot duplicate a mutation.
+    if(writes&&attempt===0&&response.status===403&&data.code==='csrf_failed'){
+      headers.set('X-CSRFToken',await csrfToken());continue;
+    }
+    if(!response.ok)throw new ApiError(response.status,data);
+    return data as T;
+  }
+  throw new Error('Xavfsizlik sozlamasini yuklab bo‘lmadi.');
 }
 export const money = (amount:string|number) => `${new Intl.NumberFormat('en-GB',{maximumFractionDigits:0}).format(Number(amount)).replaceAll(',',' ')} UZS`;
 export const when = dateTime;

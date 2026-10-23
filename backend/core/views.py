@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
+from django.middleware.csrf import get_token
 from django.views.decorators.http import require_GET
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -26,7 +27,7 @@ from .subjects import SUBJECT_NAMES, SUBJECT_SEARCH_LABELS
 
 def csrf_failure(request,reason=''):
     if request.path.startswith('/api/'):
-        return JsonResponse({'detail':'Xavfsizlik tokeni noto‘g‘ri yoki eskirgan. Sahifani yangilang.'},status=403)
+        return JsonResponse({'detail':'Xavfsizlik tokeni noto‘g‘ri yoki eskirgan. Sahifani yangilang.', 'code':'csrf_failed'},status=403)
     from django.views.csrf import csrf_failure as default_failure
     return default_failure(request,reason=reason)
 
@@ -34,7 +35,9 @@ def csrf_failure(request,reason=''):
 @require_GET
 @ensure_csrf_cookie
 def csrf(request):
-    return JsonResponse({'detail':'CSRF tayyor.'})
+    response = JsonResponse({'detail':'CSRF tayyor.', 'csrfToken':get_token(request)})
+    response['Cache-Control'] = 'private, no-store'
+    return response
 
 
 @method_decorator(csrf_protect,name='dispatch')

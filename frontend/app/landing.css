@@ -222,3 +222,57 @@
 .landing-site .bento-online{background:#eaf8f8}
 .landing-site .bento-online .feature-label{color:var(--brand-teal)}
 .landing-site .closing-banner{background:#f2eafa}
+
+/* Minimal landing: fewer labels, readable essentials and flat surfaces. */
+.landing-site{--landing-bg:#fdfcfb;--landing-panel:#f7f4f9;--landing-border:#eae6ed;--landing-muted:#776e7e}
+.landing-site .btn-primary{border-radius:6px;font-size:14px;box-shadow:none}
+.landing-site .btn-primary:hover{transform:none}
+.editorial-hero{padding-top:88px;padding-bottom:56px}
+.editorial-hero h1{margin-top:0;margin-bottom:24px}
+.editorial-hero-copy>p{font-size:17px;margin-bottom:30px}
+.editorial-hero .hero-actions>.text-link{font-size:14px}
+.showcase-fan{padding-top:58px;padding-bottom:36px}
+.showcase-person,.showcase-person.is-active{box-shadow:none;border-radius:10px}
+.gallery-person-caption{min-height:0;padding:16px 12px}
+.gallery-person-caption>strong{font-size:14px}
+.gallery-direction{font-size:12px;border-radius:5px}
+.showcase-selected h2{margin:0;font-size:23px}
+.showcase-action>span,.showcase-action .text-link{font-size:14px}
+.landing-site .editorial-section-heading{margin-bottom:40px}
+.editorial-features,.landing-site .home-mentors,.editorial-how{padding-top:76px;padding-bottom:76px}
+.landing-site .bento-card{border:1px solid #eae6ed;border-radius:10px;box-shadow:none;background:#fff}
+.bento-photo .bento-copy h3{margin:0;font-size:27px}
+.bento-directions .bento-copy h3{margin-top:0}
+.bento-direction-links{gap:0}
+.bento-direction-links>a{border:0;border-bottom:1px solid #eae6ed;border-radius:0;min-height:63px;flex-direction:row;align-items:center;justify-content:space-between;padding:15px 0;background:transparent;margin-right:20px;transform:none}
+.bento-direction-links>a:hover{transform:none}
+.bento-direction-links>a>span{font-size:15px}
+.bento-direction-links>a>svg{align-self:center}
+.landing-site .mentor-card{box-shadow:none;border-radius:10px;background:#fff}
+.landing-site .mentor-top>.tiny{display:none}
+.landing-site .mentor-headline{font-size:14px}
+.landing-site .mentor-card .chip{font-size:12px;border-radius:5px}
+.landing-site .mentor-card-cta{font-size:14px;border-radius:6px}
+.editorial-steps p{font-size:16px;line-height:1.8}
+.editorial-teach{display:block;text-align:center;padding-top:76px;padding-bottom:76px;border-top:1px solid #eae6ed}
+.teach-editorial-copy{max-width:640px;margin:0 auto}
+.teach-editorial-copy>p{font-size:17px;line-height:1.8}
+.teach-editorial-copy .btn{margin-top:24px}
+.landing-site .faq-section{padding-top:76px;padding-bottom:90px}
+.landing-site .faq-list details{border:0;border-bottom:1px solid #eae6ed;border-radius:0;background:transparent}
+.landing-site .faq-list summary{font-size:17px}
+.landing-site .faq-list p{font-size:16px;line-height:1.8}
+.landing-desktop-nav,.landing-footer nav,.landing-footer>span{font-size:13px}
+@media(max-width:760px){
+ .editorial-hero{padding-top:52px;padding-bottom:36px}
+ .editorial-hero h1{font-size:43px;letter-spacing:-1.8px}
+ .editorial-hero-copy>p{font-size:16px}
+ .gallery-person-caption>strong{font-size:13px}
+ .showcase-fan{padding-top:40px;padding-bottom:30px}
+ .showcase-detail{min-height:0;padding-bottom:20px}
+ .editorial-features,.landing-site .home-mentors,.editorial-how,.editorial-teach{padding-top:50px;padding-bottom:50px}
+ .feature-bento{grid-template-columns:1fr}
+ .bento-photo,.bento-directions{grid-column:auto}
+ .landing-site .faq-section{padding-top:50px;padding-bottom:60px}
+ .landing-footer nav{font-size:14px}
+}

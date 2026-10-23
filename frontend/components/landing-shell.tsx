@@ -29,6 +29,6 @@ export function LandingShell({children}:{children:ReactNode}){
     </header>
     {error&&<div className="container"><Notice kind="error">{translate(error)}</Notice></div>}
     <main id="page-content" className="landing-main">{children}</main>
-    <footer className="container landing-footer"><div><Logo/><p>{translate("O‘rganing. Ulashing. Birga o‘sing.")}</p></div><nav aria-label={translate("Pastki menyu")}><Link href="/mentors">{translate("Mentor topish")}</Link><Link href="/dashboard?tab=mentor">{translate("Mentor bo‘lish")}</Link><Link href="/#savollar">{translate("Savollar va javoblar")}</Link></nav><span>© {new Date().getFullYear()} {translate("EduYor")}</span></footer>
+    <footer className="container landing-footer"><div><Logo/></div><nav aria-label={translate("Pastki menyu")}><Link href="/mentors">{translate("Mentor topish")}</Link><Link href="/dashboard?tab=mentor">{translate("Mentor bo‘lish")}</Link><Link href="/#savollar">{translate("Savollar va javoblar")}</Link></nav><span>© {new Date().getFullYear()} {translate("EduYor")}</span></footer>
   </div>;
 }
