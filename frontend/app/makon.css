@@ -198,3 +198,15 @@ input:not([type=checkbox]):not([type=radio]):focus,select:focus,textarea:focus{b
 .app-sidebar nav>a.active:before,.sidebar-collapsed .app-sidebar nav>a.active:before{display:none}
 .app-sidebar nav>a:focus-visible{outline:3px solid #9b6cc9;outline-offset:2px}
 @media(prefers-reduced-motion:reduce){.app-sidebar nav>a{transition:none}.app-sidebar nav>a:active{transform:none}}
+
+/* A moving five-card window keeps every mentor in the circular spotlight. */
+.landing-site .showcase-carousel{display:block;overflow:hidden;min-height:365px;scroll-snap-type:none}
+.landing-site .showcase-carousel .showcase-person{position:absolute;top:54px;left:50%;width:calc((100% - 150px)/5);max-width:181px;transition:transform .65s cubic-bezier(.22,.68,0,1),opacity .45s,border-color .3s;transform:translateX(calc(-50% + var(--card-slot)*112%)) translateY(var(--card-lift)) rotate(var(--card-tilt));z-index:1;opacity:1}
+.landing-site .showcase-carousel .showcase-person.is-active{transform:translateX(calc(-50% + var(--card-slot)*112%)) translateY(-14px) rotate(var(--card-tilt));z-index:2}
+.landing-site .showcase-carousel .showcase-person:hover{transform:translateX(calc(-50% + var(--card-slot)*112%)) translateY(calc(var(--card-lift) - 10px)) rotate(var(--card-tilt))}
+.landing-site .showcase-carousel .showcase-person[data-visible="false"]{opacity:0;pointer-events:none}
+@media(max-width:760px){
+  .landing-site .showcase-carousel{min-height:310px}
+  .landing-site .showcase-carousel .showcase-person{width:142px;max-width:142px;top:42px}
+}
+@media(prefers-reduced-motion:reduce){.landing-site .showcase-carousel .showcase-person{transition:none}}

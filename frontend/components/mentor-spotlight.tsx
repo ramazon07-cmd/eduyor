@@ -2,7 +2,7 @@
 import {useI18n} from '@/components/i18n';
 
 import Link from 'next/link';
-import {useEffect,useRef,useState,type CSSProperties} from 'react';
+import {useEffect,useState,type CSSProperties} from 'react';
 import {ArrowUpRight,ChevronLeft,ChevronRight,GraduationCap,Pause,Play} from 'lucide-react';
 import type {Mentor} from '@/lib/types';
 import {Avatar} from './common';
@@ -16,7 +16,6 @@ export function MentorSpotlight({mentors,loading}:{mentors:Mentor[];loading:bool
   const [paused,setPaused]=useState(false);
   const [hovered,setHovered]=useState(false);
   const [focused,setFocused]=useState(false);
-  const gallery=useRef<HTMLDivElement>(null);
   useEffect(()=>{
     if(paused||hovered||focused||mentors.length<2)return;
     const timer=setInterval(()=>setIndex(i=>(i+1)%mentors.length),5000);
@@ -24,21 +23,15 @@ export function MentorSpotlight({mentors,loading}:{mentors:Mentor[];loading:bool
   },[paused,hovered,focused,mentors.length,index]);
   const currentIndex=mentors.length?index%mentors.length:0;
   const mentor=mentors[currentIndex];
-  useEffect(()=>{
-    const container=gallery.current;
-    const selected=container?.querySelector<HTMLElement>('[aria-current="true"]');
-    if(container&&selected&&container.scrollWidth>container.clientWidth){
-      container.scrollTo({left:selected.offsetLeft-(container.clientWidth-selected.offsetWidth)/2,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
-    }
-  },[currentIndex,mentors.length]);
   if(loading)return <div className="mentor-showcase showcase-loading" role="status" aria-label={translate("Mentorlar yuklanmoqda")}><div className="showcase-fan" aria-hidden="true">{[0,1,2].map(n=><div key={n} className="showcase-placeholder skeleton"/>)}</div></div>;
   if(!mentor)return <div className="mentor-showcase showcase-empty"><GraduationCap size={45} strokeWidth={1}/><h2>{translate("Har bir tajriba — yangi imkoniyat.")}</h2><p>{translate("Yo‘nalishingizni tanlang va birinchi mentorlardan bo‘ling.")}</p><Link className="text-link" href="/dashboard?tab=mentor">{translate("Mentor bo‘lish")} <ArrowUpRight size={18}/></Link></div>;
   return <section className="mentor-showcase" aria-label={translate("Mentorlar bilan tanishing")} aria-roledescription="karusel" onMouseEnter={()=>setHovered(true)} onMouseLeave={()=>setHovered(false)} onFocusCapture={()=>setFocused(true)} onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget))setFocused(false);}}>
-    <div className="showcase-fan" ref={gallery}>
+    <div className="showcase-fan showcase-carousel">
       {mentors.map((item,slot)=>{
-        const offset=slot-(mentors.length-1)/2;
-        const style={'--card-tilt':`${offset*5}deg`,'--card-lift':`${Math.abs(offset)*13}px`} as CSSProperties;
-        return <Link key={item.id} href={mentorHref(item.id)} style={style} className={`showcase-person ${slot===currentIndex?'is-active':''}`} aria-label={translate(`${item.full_name} bilan darsga yozilish`)} aria-current={slot===currentIndex?'true':undefined}><span className="gallery-portrait"><Avatar name={item.full_name} src={item.avatar}/><span className="gallery-direction">{translate(item.subjects[0]?.name||'Mentor')}</span></span><span className="gallery-person-caption"><strong>{item.full_name}</strong></span></Link>;
+        const offset=(slot-currentIndex+mentors.length+Math.floor(mentors.length/2))%mentors.length-Math.floor(mentors.length/2);
+        const visible=Math.abs(offset)<=2;
+        const style={'--card-slot':offset,'--card-tilt':`${offset*5}deg`,'--card-lift':`${Math.abs(offset)*13}px`} as CSSProperties;
+        return <Link key={item.id} href={mentorHref(item.id)} style={style} aria-hidden={!visible} tabIndex={visible?0:-1} data-visible={visible} className={`showcase-person ${slot===currentIndex?'is-active':''}`} aria-label={translate(`${item.full_name} bilan darsga yozilish`)} aria-current={slot===currentIndex?'true':undefined}><span className="gallery-portrait"><Avatar name={item.full_name} src={item.avatar}/><span className="gallery-direction">{translate(item.subjects[0]?.name||'Mentor')}</span></span><span className="gallery-person-caption"><strong>{item.full_name}</strong></span></Link>;
       })}
     </div>
     <div className="showcase-detail" aria-live={paused||hovered||focused?'polite':'off'}>

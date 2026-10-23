@@ -26,7 +26,17 @@ export default function Home(){
   const [loaded,setLoaded]=useState(false);
   useEffect(()=>{
     let active=true;
-    api<Page<Mentor>>('mentors/').then(data=>{if(active)setMentors(data.results);}).catch(()=>{if(active)setError('Mentorlarni yuklab bo‘lmadi.');}).finally(()=>{if(active)setLoaded(true);});
+    (async()=>{
+      const all:Mentor[]=[];
+      let page=1;
+      while(active){
+        const data=await api<Page<Mentor>>(`mentors/?page=${page}`);
+        all.push(...data.results);
+        if(!data.next)break;
+        page+=1;
+      }
+      if(active)setMentors(all);
+    })().catch(()=>{if(active)setError('Mentorlarni yuklab bo‘lmadi.');}).finally(()=>{if(active)setLoaded(true);});
     api<Subject[]>('subjects/').then(data=>{if(active)setSubjects(data);}).catch(()=>{});
     return()=>{active=false;};
   },[]);
@@ -37,7 +47,7 @@ export default function Home(){
         <p>{translate("Sizga mos mentor bilan keyingi qadamingizni qo‘ying.")}</p>
         <div className="hero-actions"><Link className="btn btn-primary" href="/mentors">{translate("Mentoringizni toping")} <ArrowUpRight size={18}/></Link><Link className="text-link" href="/dashboard?tab=mentor">{translate("Men ham mentor bo‘laman")} <ArrowRight size={16}/></Link></div>
       </div>
-      <MentorSpotlight mentors={mentors.slice(0,5)} loading={!loaded}/>
+      <MentorSpotlight mentors={mentors} loading={!loaded}/>
     </section>
 
     <section className="container editorial-features" aria-labelledby="features-title">
