@@ -8,7 +8,7 @@ import {ArrowUpRight,Menu,X} from 'lucide-react';
 import {Logo,Notice} from './common';
 import {useAuth} from './auth';
 
-const navigation=[['/#qanday-ishlaydi','Qanday ishlaydi?'],['/#mentorlar','Mentorlar'],['/#mentor-bolish','Mentor bo‘lish'],['/requests','EduYor Request'],['/#savollar','Savollar']];
+const navigation=[['/#qanday-ishlaydi','Qanday ishlaydi?'],['/#mentorlar','Mentorlar'],['/#mentor-bolish','Mentor bo‘lish'],['/#savollar','Savollar']];
 
 export function LandingShell({children}:{children:ReactNode}){
   const {t:translate}=useI18n();
