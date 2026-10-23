@@ -14,6 +14,10 @@ def avatar_media(request, path):
         filename = Path(safe_join(settings.MEDIA_ROOT, path))
         if not path.startswith('avatars/') or filename.suffix != '.jpg':
             raise Http404
+        # Curated portraits ship with the release and survive ephemeral hosting restarts.
+        if not filename.is_file() and path.startswith('avatars/curated/'):
+            from .peer_mentors import ASSET_DIR
+            filename = Path(safe_join(ASSET_DIR, path.removeprefix('avatars/curated/')))
         response = FileResponse(filename.open('rb'), content_type='image/jpeg')
     except (SuspiciousFileOperation, OSError):
         raise Http404

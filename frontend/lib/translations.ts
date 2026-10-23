@@ -2955,5 +2955,7 @@ export const translations:Record<string,readonly [string,string]> = {
   "Onlayn": [
     "Online",
     "Онлайн"
-  ]
+  ],
+  "Yon menyuni kengaytirish": ["Expand sidebar", "Развернуть боковое меню"],
+  "Yon menyuni ixchamlash": ["Collapse sidebar", "Свернуть боковое меню"]
 };
