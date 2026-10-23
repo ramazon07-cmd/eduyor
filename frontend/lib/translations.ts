@@ -2316,10 +2316,6 @@ export const translations:Record<string,readonly [string,string]> = {
     "Lesson #{number}",
     "Урок №{number}"
   ],
-  "EduYor — Birga o‘sing": [
-    "EduYor — Grow together",
-    "EduYor — Растите вместе"
-  ],
   "1 ta e’lon": [
     "1 listing",
     "Объявлений: 1"
@@ -2956,6 +2952,32 @@ export const translations:Record<string,readonly [string,string]> = {
     "Online",
     "Онлайн"
   ],
+  "Darsga yozilish": ["Book a lesson", "Записаться на урок"],
+  "{name} bilan darsga yozilish": ["Book a lesson with {name}", "Записаться на урок к {name}"],
+  "Video tez orada qo‘shiladi.": ["The video is coming soon.", "Видео скоро появится."],
+  "EduYor tanishtiruv videosi": ["EduYor intro video", "Вводное видео EduYor"],
+  "EduYor darsi qanday o‘tadi": ["How an EduYor lesson works", "Как проходит урок в EduYor"],
+  "Bir daqiqada": ["In one minute", "За одну минуту"],
+  "EduYor bilan tanishing.": ["Meet EduYor.", "Познакомьтесь с EduYor."],
+  "30 000–60 000 UZS": ["30,000–60,000 UZS", "30 000–60 000 UZS"],
+  "Google Meet orqali yakkama-yakka dars.": ["One-to-one lesson over Google Meet.", "Индивидуальный урок в Google Meet."],
+  "Bitta dars narxi. Qo‘shimcha to‘lov yo‘q.": ["The price of one lesson. No extra fees.", "Цена одного урока. Без доплат."],
+  "Birinchi darsingizni bugun band qiling.": ["Book your first lesson today.", "Запишитесь на первый урок сегодня."],
+  "Mentor profili": ["Mentor profile", "Профиль ментора"],
+  "Faollik": ["Status", "Активность"],
+  "Faol": ["Active", "Активен"],
+  "Profil yo‘q": ["No profile", "Нет профиля"],
+  "Profilda bor": ["In your profile", "Есть в профиле"],
+  "Profilda yo‘q": ["Not in your profile", "Нет в профиле"],
+  "Taklif yuborish uchun uchala shart bajarilishi kerak:": ["All three conditions are needed to send an offer:", "Чтобы отправить предложение, нужны все три условия:"],
+  "Kirgan akkaunt:": ["Signed in as:", "Вы вошли как:"],
+  "Sizda hali taklif yo‘q": ["You have no offer yet", "У вас пока нет предложения"],
+  "Taklif yuborish shartlarini quyida ko‘ring.": ["See the conditions for sending an offer below.", "Условия отправки предложения указаны ниже."],
+  "Avval sanani tanlang.": ["Choose a day first.", "Сначала выберите день."],
+  "EduYor | Birga o‘sing": ["EduYor | Grow together", "EduYor | Растём вместе"],
+  "Boshqaruv paneli": ["Admin panel", "Панель управления"],
+  "So‘rov": ["Request", "Запрос"],
+  "Bu sahifa topilmadi yoki sizga ochiq emas.": ["This page was not found or is not available to you.", "Страница не найдена или недоступна для вас."],
   "Yon menyuni kengaytirish": ["Expand sidebar", "Развернуть боковое меню"],
   "Yon menyuni ixchamlash": ["Collapse sidebar", "Свернуть боковое меню"]
 };

@@ -1,0 +1,390 @@
+{
+  "mentors": [
+    {
+      "key": "sat",
+      "account_aliases": [
+        "demo.sat@example.invalid",
+        "peer.akbarshoh@example.invalid"
+      ],
+      "profile": {
+        "full_name": "Akbarshoh Turobov",
+        "school": "Rustam Bosimov International School",
+        "study_level": "Class 11",
+        "timezone": "Asia/Tashkent"
+      },
+      "avatar": "avatars/curated/directory-v1-sat-98b6f5feb12d509c.png",
+      "avatar_sha256": "98b6f5feb12d509c1ab134700a0cdbc7448e334777d942a3eab0853bd7d075d8",
+      "mentor": {
+        "headline": "SAT Math: masalalarni bosqichma-bosqich yechamiz",
+        "bio": "Algebra, geometriya va matnli masalalar ustida ishlash uchun namuna dars rejasi.",
+        "experience": "",
+        "teaching_languages": "O‘zbekcha, English",
+        "hourly_price": "40000",
+        "approval": "approved",
+        "is_paused": false
+      },
+      "subjects": [
+        "SAT"
+      ],
+      "availability": [
+        {
+          "weekday": 0,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 1,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 2,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 3,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 4,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 5,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 6,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        }
+      ],
+      "blocked_dates": []
+    },
+    {
+      "key": "ielts",
+      "account_aliases": [
+        "demo.ielts@example.invalid",
+        "demo.peer.ielts@example.invalid"
+      ],
+      "profile": {
+        "full_name": "Ruxsora Yakubova",
+        "school": "Rustam Bosimov International School",
+        "study_level": "Class 11",
+        "timezone": "Asia/Tashkent"
+      },
+      "avatar": "avatars/curated/directory-v1-ielts-f8de318b20c07a5c.png",
+      "avatar_sha256": "f8de318b20c07a5cdfa0216b20bf675dfbcbeccbae7ef2a70df2bc24b5ad130a",
+      "mentor": {
+        "headline": "IELTS: speaking va writing mashg‘ulotlari",
+        "bio": "Speaking savollarini mashq qilish, essay tuzilishini tushunish va yozma ishni birga tahlil qilish.",
+        "experience": "",
+        "teaching_languages": "O‘zbekcha, English",
+        "hourly_price": "45000",
+        "approval": "approved",
+        "is_paused": false
+      },
+      "subjects": [
+        "IELTS"
+      ],
+      "availability": [
+        {
+          "weekday": 0,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 1,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 2,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 3,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 4,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 5,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 6,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        }
+      ],
+      "blocked_dates": []
+    },
+    {
+      "key": "admissions",
+      "account_aliases": [
+        "demo.admissions@example.invalid",
+        "demo.peer.admissions@example.invalid"
+      ],
+      "profile": {
+        "full_name": "Saidakmal Jalilov",
+        "school": "Rustam Bosimov International School",
+        "study_level": "Class 11",
+        "timezone": "Asia/Tashkent"
+      },
+      "avatar": "avatars/curated/directory-v1-admissions-90f1b6fd8362a67e.jpg",
+      "avatar_sha256": "90f1b6fd8362a67e9f42fd9fcc4856bf747b25a269e4c04a5a6211c412c379fc",
+      "mentor": {
+        "headline": "Admissions: universitet arizangizni tartibga keltiring",
+        "bio": "Universitet tanlash, ariza taqvimi, personal statement tuzilishi va hujjatlar ro‘yxati ustida ishlash.",
+        "experience": "",
+        "teaching_languages": "O‘zbekcha, English",
+        "hourly_price": "60000",
+        "approval": "approved",
+        "is_paused": false
+      },
+      "subjects": [
+        "University Admissions"
+      ],
+      "availability": [
+        {
+          "weekday": 0,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 1,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 2,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 3,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 4,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 5,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 6,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        }
+      ],
+      "blocked_dates": []
+    },
+    {
+      "key": "ramazon",
+      "account_aliases": [
+        "directory.ramazon@example.invalid"
+      ],
+      "profile": {
+        "full_name": "Ramazon Ergashev",
+        "school": "Rustam bosimov",
+        "study_level": "Class 11",
+        "timezone": "Asia/Tashkent"
+      },
+      "avatar": "avatars/curated/directory-v1-ramazon-70499f8096069ee3.jpg",
+      "avatar_sha256": "70499f8096069ee314638822e06f41712c518fa9b8d90e6012618f33fcb56e2e",
+      "mentor": {
+        "headline": "Matematika: mantiqni tushuning, masalani bosqichma-bosqich yeching",
+        "bio": "Mashg‘ulotlarda maktab matematikasidagi tushunarsiz mavzularni birga ko‘rib chiqamiz, masalalarni bosqichma-bosqich tahlil qilamiz va mustaqil yechish uchun mashq qilamiz. Maqsadim — formulani yodlash bilan cheklanmay, uni qachon va nima uchun qo‘llashni tushunishingizga yordam berish.",
+        "experience": "",
+        "teaching_languages": "O‘zbekcha",
+        "hourly_price": "30000",
+        "approval": "approved",
+        "is_paused": false
+      },
+      "subjects": [
+        "IELTS",
+        "SAT"
+      ],
+      "availability": [],
+      "blocked_dates": []
+    },
+    {
+      "key": "programs",
+      "account_aliases": [
+        "demo.programs@example.invalid",
+        "demo.peer.programs@example.invalid"
+      ],
+      "profile": {
+        "full_name": "Javohir Muhammadov",
+        "school": "Rustam Bosimov International School",
+        "study_level": "Class 11",
+        "timezone": "Asia/Tashkent"
+      },
+      "avatar": "avatars/curated/directory-v1-programs-dd952cfe81d4f0fa.png",
+      "avatar_sha256": "dd952cfe81d4f0fa3c357beb0a51a411836779a7fbd27daafc450df7288fb760",
+      "mentor": {
+        "headline": "International Programs: xalqaro imkoniyatlarni o‘rganing",
+        "bio": "Almashinuv, yozgi maktab va xalqaro dasturlarni izlash, talablarini solishtirish va arizani rejalash. Bu yo‘nalish universitetga qabul bo‘yicha Admissions yo‘nalishidan alohida.",
+        "experience": "",
+        "teaching_languages": "O‘zbekcha, English",
+        "hourly_price": "50000",
+        "approval": "approved",
+        "is_paused": false
+      },
+      "subjects": [
+        "International Programs"
+      ],
+      "availability": [
+        {
+          "weekday": 0,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 1,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 2,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 3,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 4,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 5,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 6,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        }
+      ],
+      "blocked_dates": []
+    },
+    {
+      "key": "chinese",
+      "account_aliases": [
+        "demo.chinese@example.invalid",
+        "demo.peer.chinese@example.invalid"
+      ],
+      "profile": {
+        "full_name": "Durdona Mardiyeva",
+        "school": "Rustam Bosimov International School",
+        "study_level": "Class 11",
+        "timezone": "Asia/Tashkent"
+      },
+      "avatar": "avatars/curated/directory-v1-chinese-71d9d6ec23508be7.png",
+      "avatar_sha256": "71d9d6ec23508be7c4de10e2423f168002e17ea60f603c7a9bd76715b47f80ef",
+      "mentor": {
+        "headline": "Xitoy tili: pinyin va dastlabki suhbatlardan boshlaymiz",
+        "bio": "My Chinese language journey has been both a learning and teaching experience. After achieving a score of 215 on the HSK exam within one year of studying Chinese, I began teaching Chinese at a school. So far, two of my students have earned HSK certificates, and another is preparing to take the exam next week. I am continuing to improve my own Chinese skills while helping others succeed.",
+        "experience": "",
+        "teaching_languages": "O‘zbekcha, English",
+        "hourly_price": "40000",
+        "approval": "approved",
+        "is_paused": false
+      },
+      "subjects": [
+        "Chinese"
+      ],
+      "availability": [
+        {
+          "weekday": 0,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 1,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 2,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 3,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 4,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 5,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        },
+        {
+          "weekday": 6,
+          "start_time": "18:00:00",
+          "end_time": "21:00:00"
+        }
+      ],
+      "blocked_dates": []
+    },
+    {
+      "key": "osiyo",
+      "account_aliases": [
+        "peer.osiyo.nematova@example.invalid"
+      ],
+      "profile": {
+        "full_name": "Osiyo Nematova",
+        "school": "Rustam Bosimov International School",
+        "study_level": "Class 11",
+        "timezone": "Asia/Tashkent"
+      },
+      "avatar": "avatars/curated/directory-v1-osiyo-6781169487fd2d5a.jpg",
+      "avatar_sha256": "6781169487fd2d5a62a05aec03f55583b4bbcc6fee49d3059b540b206c944450",
+      "mentor": {
+        "headline": "Chinese: intermediate level (HSK 4)",
+        "bio": "Dont have hsk yet , but my level is intermidate - HSK4\r\nAchivements : Aside from B2 i think i have no other stuff , maybe i got second place in IT two times\r\nExperince: if with chinese , i have learnt quite lots of stuff , and also by teaching i gained alot of experince , like understanding students , their sturuggles and hrlp solving em",
+        "experience": "Through learning Chinese, I have gained a lot of knowledge. Teaching has also given me experience in understanding students, their struggles, and helping them work through those challenges.",
+        "teaching_languages": "O‘zbekcha, English",
+        "hourly_price": "40000",
+        "approval": "approved",
+        "is_paused": false
+      },
+      "subjects": [
+        "Chinese"
+      ],
+      "availability": [],
+      "blocked_dates": []
+    }
+  ],
+  "retired_accounts": [
+    "demo.peer.mathematics@example.invalid",
+    "demo.mathematics@example.invalid"
+  ]
+}

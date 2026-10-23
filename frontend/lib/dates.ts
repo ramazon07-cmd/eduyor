@@ -9,3 +9,12 @@ export function dateTime(value:string,timeZone:string,locale:Locale='uz'){
   const part=(name:string)=>parts.find(p=>p.type===name)?.value||'';
   return `${part('day')} ${months[Number(part('month'))-1]} ${part('year')}, ${part('hour')}:${part('minute')}`;
 }
+const weekdaysUz=['Ya','Du','Se','Ch','Pa','Ju','Sh'];
+const monthsUzShort=['yan','fev','mar','apr','may','iyn','iyl','avg','sen','okt','noy','dek'];
+// Compact chip parts for a YYYY-MM-DD day: weekday, day number, short month.
+export function dayChipParts(date:string,locale:Locale='uz'){
+  const [year,month,day]=date.split('-').map(Number);const value=new Date(year,month-1,day);
+  if(locale==='uz')return {weekday:weekdaysUz[value.getDay()],day,month:monthsUzShort[month-1]};
+  const format=(options:Intl.DateTimeFormatOptions)=>new Intl.DateTimeFormat(localeTags[locale],options).format(value);
+  return {weekday:format({weekday:'short'}),day,month:format({month:'short'}).replace('.','')};
+}

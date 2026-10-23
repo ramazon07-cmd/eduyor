@@ -2,13 +2,21 @@
 
 - Frontend: https://eduyor.vercel.app (Vercel project `eduyor`, root `frontend`, production branch `main`).
 - Backend: https://eduyor-api.onrender.com (Render service `eduyor-api`, root `backend`, Python 3.12.8).
-- Database: Render PostgreSQL `eduyor-db`, Frankfurt. Production starts with a fresh database; local SQLite is not imported.
+- Database: Render PostgreSQL `eduyor-db`, Frankfurt. Private local SQLite data is not imported. The approved public mentor directory is published from the bundled release described below.
 - Vercel production environment: `DJANGO_API_ORIGIN=https://eduyor-api.onrender.com`. Rebuild after changing this value. Next.js proxies `/api/` and `/media/`, preserving same-origin browser sessions and CSRF cookies.
 - Render: `DJANGO_SETTINGS_MODULE=config.settings_render`, strong generated `DJANGO_SECRET_KEY`, explicit `DJANGO_ALLOWED_HOSTS`, HTTPS `CSRF_TRUSTED_ORIGINS`, and the internal `DATABASE_URL`. Secrets belong only in provider environment settings.
 - Build: `bash build.sh`; start: `gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --access-logfile -`; health: `/api/health/`. WhiteNoise serves collected static files; normalized JPEG avatars are served by the backend.
 - Free-tier limits: Render sleeps when idle, so the first request can be slow. The free database expires **November 20, 2026**. Uploaded avatars use ephemeral disk and can disappear on restart/redeploy; configure persistent media storage before relying on uploads. Upgrade the database before expiration for continued use.
 - Vercel and Render deploy from GitHub automatically. Render builds backend changes from `main`; its dashboard also provides “Deploy latest commit” for manual retries.
 - Django admin: https://eduyor-api.onrender.com/admin/ . Create an administrator deliberately; no demo accounts or default production passwords are seeded.
+
+## Approved mentor directory
+
+`backend/build.sh` runs `python manage.py publish_mentor_directory` after database migrations. This publishes the seven profiles frozen in `backend/core/directory_releases/v1.json`, including biographies, subjects, prices, school, study level, availability and the exact supplied portrait bytes. Each portrait is bundled under `backend/core/mentor_assets/` with a content hash in its filename; `/media/avatars/curated/` serves it even when Render's uploaded-media disk is empty.
+
+Existing reserved seed accounts are updated in place to preserve IDs and booking relationships. The obsolete reserved mathematics listing is paused. An existing mentor with the same full name is reused only when the match is unambiguous. Other accounts, passwords, permissions, bookings and payments are preserved. New directory accounts have unusable passwords and no admin access; no private emails, password hashes or full database dump are shipped.
+
+`DirectoryPublication` records successful publication in the same transaction. Subsequent deployments preserve admin edits instead of resetting the directory. Missing/corrupt portraits abort the publication and build so it can be retried. For another hosting setup, run `python backend/manage.py publish_mentor_directory` after `migrate`. Future content updates should ship a new versioned release.
 
 The following VPS instructions are retained as an alternative hosting reference.
 
