@@ -221,30 +221,12 @@ summary:focus-visible{outline:3px solid #ed4366;outline-offset:5px;border-radius
 @media(max-width:600px){.language-switcher{gap:4px;padding:6px 8px}.language-switcher select{font-size:12px;min-width:60px}.app-topbar{flex-wrap:wrap;row-gap:12px}.app-topbar-actions{margin-left:auto}.app-duration{display:none}.landing-account{gap:8px}}
 @media(max-width:380px){.landing-nav-row{flex-wrap:wrap;row-gap:12px}.landing-account{margin-left:auto}}
 
-/* Collapsible navigation: labelled menu on desktop, compact icon rail on demand. */
+/* Shared topbar navigation controls. Folding behavior lives in app-sidebar.css. */
 .app-topbar-leading{display:flex;align-items:center;gap:14px;min-width:0}
 .app-sidebar-toggle{display:none;align-items:center;justify-content:center;width:36px;height:36px;padding:0;border:1px solid #e8dfee;border-radius:10px;background:#faf7fd;color:#75538e;cursor:pointer;flex-shrink:0;transition:background .18s,color .18s}
 .app-sidebar-toggle:hover{background:#efe5f8;color:#54218b}
 .app-sidebar-toggle:focus-visible,.app-menu-toggle:focus-visible{outline:3px solid #ff7866;outline-offset:4px}
 .app-nav-label{white-space:nowrap}
-@media(min-width:761px){
-  .app-shell{--app-sidebar-width:222px;grid-template-columns:var(--app-sidebar-width) minmax(0,1fr);background:linear-gradient(to right,#340861 var(--app-sidebar-width),#fff var(--app-sidebar-width));transition:grid-template-columns .22s ease}
-  .app-sidebar-toggle{display:inline-flex}
-  .app-sidebar{overflow:visible}
-  .app-sidebar nav>a{gap:11px}
-  .app-sidebar nav>a>svg{flex-shrink:0}
-  .app-shell.sidebar-collapsed{--app-sidebar-width:80px}
-  .sidebar-collapsed .app-sidebar{padding-left:12px;padding-right:12px}
-  .sidebar-collapsed .app-sidebar-brand{justify-content:center;margin:0 0 36px}
-  .sidebar-collapsed .app-sidebar-brand .logo{gap:0}
-  .sidebar-collapsed .app-sidebar-brand .wordmark{display:none}
-  .sidebar-collapsed .app-sidebar nav>a{justify-content:center;padding:12px 0;gap:0}
-  .sidebar-collapsed .app-nav-label{display:none}
-  .sidebar-collapsed .app-sidebar nav>a.active:before{left:-12px}
-  .sidebar-collapsed .sidebar-account{justify-content:center;padding:16px 0 0}
-  .sidebar-collapsed .sidebar-account>span:not(.avatar),.sidebar-collapsed .sidebar-account>svg{display:none}
-  .sidebar-collapsed .sidebar-account .avatar{flex-shrink:0}
-}
-@media(min-width:761px) and (max-width:1200px){.app-shell{--app-sidebar-width:190px}}
+@media(min-width:761px){.app-sidebar-toggle{display:inline-flex}}
 @media(max-width:760px){.app-topbar-leading{max-width:100%}.app-sidebar nav>a{gap:11px}.app-nav-label{white-space:normal}}
-@media(prefers-reduced-motion:reduce){.app-shell,.app-sidebar-toggle{transition:none}}
+@media(prefers-reduced-motion:reduce){.app-sidebar-toggle{transition:none}}
