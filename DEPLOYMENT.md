@@ -18,6 +18,8 @@ Existing reserved seed accounts are updated in place to preserve IDs and booking
 
 `DirectoryPublication` records successful publication in the same transaction. Subsequent deployments preserve admin edits instead of resetting the directory. Missing/corrupt portraits abort the publication and build so it can be retried. For another hosting setup, run `python backend/manage.py publish_mentor_directory` after `migrate`. Future content updates should ship a new versioned release.
 
+The build then runs `publish_mentor_bios`, which applies `directory_releases/bios-v2.json` once to Ruxsora, Durdona and Osiyo. It updates only `bio` and clears the duplicated legacy `experience` text. Photos, pricing and other profile fields stay intact; later admin edits are preserved. A missing or ambiguous mentor rolls back the entire update.
+
 The following VPS instructions are retained as an alternative hosting reference.
 
 # EduYor deployment — one Linux VPS, one HTTPS origin

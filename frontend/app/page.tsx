@@ -66,7 +66,7 @@ export default function Home(){
     </section>
 
     <section id="video" className="container promo-section" aria-labelledby="promo-title">
-      <div className="editorial-section-heading"><h2 id="promo-title">{translate("Bir daqiqada")}<br/><em>{translate("EduYor bilan tanishing.")}</em></h2></div>
+      <div className="editorial-section-heading"><h2 id="promo-title">{translate("Bir daqiqada")}<br/><em>{translate("EduYor qanday ishlaydi?")}</em></h2></div>
       <div className="promo-bento">
         <article className="promo-tile"><strong>{translate("50 daqiqa")}</strong><p>{translate("Google Meet orqali yakkama-yakka dars.")}</p></article>
         <article className="promo-tile"><strong>{translate("30 000–60 000 UZS")}</strong><p>{translate("Bitta dars narxi. Qo‘shimcha to‘lov yo‘q.")}</p></article>

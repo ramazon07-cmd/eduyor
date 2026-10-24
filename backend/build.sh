@@ -5,3 +5,4 @@ python manage.py check --deploy --fail-level ERROR
 python manage.py collectstatic --noinput
 python manage.py migrate --noinput
 python manage.py publish_mentor_directory
+python manage.py publish_mentor_bios

@@ -2958,7 +2958,7 @@ export const translations:Record<string,readonly [string,string]> = {
   "EduYor tanishtiruv videosi": ["EduYor intro video", "Вводное видео EduYor"],
   "EduYor darsi qanday o‘tadi": ["How an EduYor lesson works", "Как проходит урок в EduYor"],
   "Bir daqiqada": ["In one minute", "За одну минуту"],
-  "EduYor bilan tanishing.": ["Meet EduYor.", "Познакомьтесь с EduYor."],
+  "EduYor qanday ishlaydi?": ["How does EduYor work?", "Как работает EduYor?"],
   "30 000–60 000 UZS": ["30,000–60,000 UZS", "30 000–60 000 UZS"],
   "Google Meet orqali yakkama-yakka dars.": ["One-to-one lesson over Google Meet.", "Индивидуальный урок в Google Meet."],
   "Bitta dars narxi. Qo‘shimcha to‘lov yo‘q.": ["The price of one lesson. No extra fees.", "Цена одного урока. Без доплат."],

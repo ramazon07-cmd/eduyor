@@ -3,7 +3,7 @@ import json
 import tempfile
 from pathlib import Path
 
-from django.core.management import call_command
+from django.core.management import call_command, CommandError
 from django.test import TestCase, override_settings
 from rest_framework.test import APIClient
 
@@ -72,3 +72,37 @@ class DirectoryPublicationTests(TestCase):
                 call_command('publish_mentor_directory')
         self.assertFalse(DirectoryPublication.objects.exists())
         self.assertFalse(User.objects.exists())
+
+    def test_bio_update_clears_duplicates_preserves_portraits_and_later_edits(self):
+        call_command('publish_mentor_directory')
+        original = list(MentorProfile.objects.order_by('pk').values(
+            'user_id', 'hourly_price', 'headline', 'user__profile__avatar',
+        ))
+        osiyo = MentorProfile.objects.get(user__profile__full_name='Osiyo Nematova')
+        osiyo.experience = 'Duplicated legacy experience'
+        osiyo.save()
+        call_command('publish_mentor_bios')
+        updates = json.loads((Path(__file__).parent / 'directory_releases/bios-v2.json').read_text())
+        client = APIClient()
+        for expected in updates:
+            mentor = MentorProfile.objects.get(user__profile__full_name=expected['name'])
+            self.assertEqual(client.get(f'/api/mentors/{mentor.user_id}/').json()['bio'], expected['bio'])
+            self.assertEqual(mentor.experience, '')
+        self.assertEqual(original, list(MentorProfile.objects.order_by('pk').values(
+            'user_id', 'hourly_price', 'headline', 'user__profile__avatar',
+        )))
+        osiyo.refresh_from_db()
+        osiyo.bio = 'Later admin edit'
+        osiyo.save()
+        call_command('publish_mentor_bios')
+        osiyo.refresh_from_db()
+        self.assertEqual(osiyo.bio, 'Later admin edit')
+
+    def test_missing_bio_target_rolls_back_all_edits(self):
+        call_command('publish_mentor_directory')
+        MentorProfile.objects.filter(user__profile__full_name='Osiyo Nematova').delete()
+        original = list(MentorProfile.objects.order_by('pk').values('bio', 'experience'))
+        with self.assertRaises(CommandError):
+            call_command('publish_mentor_bios')
+        self.assertFalse(DirectoryPublication.objects.filter(version='bios-v2').exists())
+        self.assertEqual(original, list(MentorProfile.objects.order_by('pk').values('bio', 'experience')))
