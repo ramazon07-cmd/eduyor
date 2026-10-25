@@ -51,18 +51,22 @@ def wall_utc(day, t, tz):
 
 
 def candidate_slots(mentor, now=None, minimum_notice=timedelta(hours=24)):
-    """Every valid local whole-hour slot is offered; no mentor schedule is required.
-
-    Existing bookings still remove conflicts in available_slots/reserve. Legacy
-    availability/blocked-date records are preserved but no longer used.
-    """
+    """Offer only mentor-published weekly windows, excluding blocked dates."""
     now = now or timezone.now()
     tz = ZoneInfo(mentor.user.profile.timezone)
     first = now.astimezone(tz).date()
+    rules = list(mentor.availability.all())
+    blocked = set(mentor.blocked_dates.values_list('date', flat=True))
     slots = []
     for offset in range(31):
         day = first + timedelta(days=offset)
+        if day in blocked:
+            continue
         for hour in range(24):
+            local_start = datetime.combine(day, time(hour))
+            local_end = local_start + SESSION_DURATION
+            if not any(r.weekday == day.weekday() and r.start_time <= local_start.time() and local_end.time() <= r.end_time for r in rules):
+                continue
             start = wall_utc(day, time(hour), tz)
             if start is not None and now + minimum_notice <= start <= now + timedelta(days=30):
                 slots.append(start)
@@ -170,7 +174,8 @@ def verify_payment(pk,receipt_reference):
         valid = b.status == 'pending_payment' and b.expires_at > now
         mentor = MentorProfile.objects.select_related('user__profile').get(user_id=b.mentor_id)
         valid = valid and mentor.approval == 'approved' and not mentor.is_paused
-        valid = valid and b.starts_at in candidate_slots(mentor,b.created_at,minimum_notice=timedelta(0)) and b.starts_at > now
+        # Published schedule edits do not invalidate an already reserved lesson.
+        valid = valid and b.starts_at > now
         valid = valid and not conflicts([b.student_id,b.mentor_id],b.starts_at,b.ends_at,now,exclude=b.pk)
         if valid:
             b.status,b.payment_status = 'confirmed','verified'

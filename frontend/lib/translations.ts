@@ -2981,3 +2981,335 @@ export const translations:Record<string,readonly [string,string]> = {
   "Yon menyuni kengaytirish": ["Expand sidebar", "Развернуть боковое меню"],
   "Yon menyuni ixchamlash": ["Collapse sidebar", "Свернуть боковое меню"]
 };
+
+// Homework, tests and mentor availability.
+Object.assign(translations, {
+  "Vazifalar va testlar": [
+    "Homework & tests",
+    "Задания и тесты"
+  ],
+  "Bo‘sh vaqtlarim": [
+    "My availability",
+    "Моё расписание"
+  ],
+  "DARS JADVALI": [
+    "LESSON SCHEDULE",
+    "РАСПИСАНИЕ ЗАНЯТИЙ"
+  ],
+  "Studentlar faqat siz belgilagan bo‘sh vaqtlardan tanlaydi.": [
+    "Students choose only from the available times you publish.",
+    "Ученики выбирают только из опубликованных вами свободных часов."
+  ],
+  "AMALIYOT VA NATIJA": [
+    "PRACTICE & PROGRESS",
+    "ПРАКТИКА И РЕЗУЛЬТАТ"
+  ],
+  "Bilimingizni amalda sinang. Har bir natija — keyingi qadam.": [
+    "Put your knowledge into practice. Every result is a step forward.",
+    "Проверяйте знания на практике. Каждый результат — шаг вперёд."
+  ],
+  "Topshiriq yaratish": [
+    "Create assignment",
+    "Создать задание"
+  ],
+  "Jami topshiriqlar": [
+    "Total assignments",
+    "Всего заданий"
+  ],
+  "Topshirilgan": [
+    "Submitted",
+    "Сдано"
+  ],
+  "O‘rtacha natija": [
+    "Average score",
+    "Средний результат"
+  ],
+  "Studentlarim vazifalari": [
+    "My students’ assignments",
+    "Задания моих учеников"
+  ],
+  "Topshiriqlarim": [
+    "My assignments",
+    "Мои задания"
+  ],
+  "Topshiriq holati": [
+    "Assignment status",
+    "Статус задания"
+  ],
+  "Topshirish kerak": [
+    "To do",
+    "Нужно сдать"
+  ],
+  "Baholangan": [
+    "Graded",
+    "Оценено"
+  ],
+  "Hozircha topshiriq yo‘q": [
+    "No assignments yet",
+    "Заданий пока нет"
+  ],
+  "Student tanlab, birinchi homework yoki testni yarating.": [
+    "Choose a student and create your first assignment or test.",
+    "Выберите ученика и создайте первое задание или тест."
+  ],
+  "Mentoringiz topshiriq berganida shu yerda ko‘rinadi.": [
+    "Assignments from your mentor will appear here.",
+    "Здесь появятся задания от вашего ментора."
+  ],
+  "Uy vazifasi": [
+    "Homework",
+    "Домашнее задание"
+  ],
+  "Test": [
+    "Test",
+    "Тест"
+  ],
+  "Yangi topshiriq": [
+    "New assignment",
+    "Новое задание"
+  ],
+  "Hali student yo‘q": [
+    "No students yet",
+    "Пока нет учеников"
+  ],
+  "To‘lovi tasdiqlangan darsingizdagi studentlarga topshiriq berishingiz mumkin.": [
+    "You can assign work to students with a verified lesson payment.",
+    "Вы можете давать задания ученикам с подтверждённой оплатой урока."
+  ],
+  "Student": [
+    "Student",
+    "Ученик"
+  ],
+  "Topshiriq turi": [
+    "Assignment type",
+    "Тип задания"
+  ],
+  "Ko‘rsatmalar": [
+    "Instructions",
+    "Инструкции"
+  ],
+  "Topshirish muddati": [
+    "Deadline",
+    "Срок сдачи"
+  ],
+  "Maksimal ball": [
+    "Maximum score",
+    "Максимальный балл"
+  ],
+  "Muddat qurilmangiz vaqt zonasida kiritiladi.": [
+    "Enter the deadline in your device’s time zone.",
+    "Введите срок в часовом поясе вашего устройства."
+  ],
+  "Test savollari": [
+    "Test questions",
+    "Вопросы теста"
+  ],
+  "Har savolda bitta to‘g‘ri javob. Savollar teng ballga ega.": [
+    "One correct answer per question. All questions have equal weight.",
+    "В каждом вопросе один правильный ответ. Все вопросы равноценны."
+  ],
+  "Savol": [
+    "Question",
+    "Вопрос"
+  ],
+  "Savol matni": [
+    "Question text",
+    "Текст вопроса"
+  ],
+  "To‘g‘ri javob": [
+    "Correct answer",
+    "Правильный ответ"
+  ],
+  "Variant": [
+    "Option",
+    "Вариант"
+  ],
+  "Savolni o‘chirish": [
+    "Remove question",
+    "Удалить вопрос"
+  ],
+  "Savol qo‘shish": [
+    "Add question",
+    "Добавить вопрос"
+  ],
+  "Topshiriqni yuborish": [
+    "Assign work",
+    "Отправить задание"
+  ],
+  "ball": [
+    "points",
+    "баллов"
+  ],
+  "Student javobi": [
+    "Student’s answer",
+    "Ответ ученика"
+  ],
+  "Javoblar": [
+    "Answers",
+    "Ответы"
+  ],
+  "Mentor izohi": [
+    "Mentor feedback",
+    "Комментарий ментора"
+  ],
+  "Ishni baholash": [
+    "Review submission",
+    "Оценить работу"
+  ],
+  "Ball": [
+    "Score",
+    "Балл"
+  ],
+  "Bahoni saqlash": [
+    "Save grade",
+    "Сохранить оценку"
+  ],
+  "Student hali javob yubormagan.": [
+    "The student has not submitted an answer yet.",
+    "Ученик ещё не отправил ответ."
+  ],
+  "Topshirish muddati tugagan.": [
+    "The submission deadline has passed.",
+    "Срок сдачи истёк."
+  ],
+  "Javobingiz": [
+    "Your answer",
+    "Ваш ответ"
+  ],
+  "Javob bir marta yuboriladi. Yuborishdan oldin tekshiring.": [
+    "You can submit once. Check your answers before sending.",
+    "Отправить можно один раз. Проверьте ответы перед отправкой."
+  ],
+  "Javobni yuborish": [
+    "Submit answer",
+    "Отправить ответ"
+  ],
+  "Mentor jadvali · keyingi 30 kun · kamida 24 soat oldin": [
+    "Mentor’s schedule · next 30 days · at least 24 hours ahead",
+    "Расписание ментора · следующие 30 дней · минимум за 24 часа"
+  ]
+});
+
+// Weekly availability editor.
+Object.assign(translations, {
+  "Qachon dars bera olasiz?": [
+    "When can you teach?",
+    "Когда вы можете преподавать?"
+  ],
+  "Kunlarni yoqing va bo‘sh vaqtingizni belgilang.": [
+    "Enable your teaching days and set your available hours.",
+    "Включите дни занятий и укажите свободные часы."
+  ],
+  "Dam olish": [
+    "Unavailable",
+    "Выходной"
+  ],
+  "Vaqt qo‘shish": [
+    "Add hours",
+    "Добавить время"
+  ],
+  "Boshqa kunlarga nusxalash": [
+    "Copy to other days",
+    "Скопировать на другие дни"
+  ],
+  "Qaysi kunlarga qo‘llaymiz?": [
+    "Apply hours to which days?",
+    "На какие дни применить?"
+  ],
+  "Tanlangan kunlardagi vaqtlar almashtiriladi.": [
+    "Hours on the selected days will be replaced.",
+    "Время выбранных дней будет заменено."
+  ],
+  "Qo‘llash": [
+    "Apply",
+    "Применить"
+  ],
+  "Sanani olib tashlash": [
+    "Remove date",
+    "Удалить дату"
+  ],
+  "Saqlanmagan o‘zgarishlar": [
+    "Unsaved changes",
+    "Есть несохранённые изменения"
+  ],
+  "Har hafta takrorlanadi · darslar to‘liq soatda boshlanadi.": [
+    "Repeats weekly · lessons start on the hour.",
+    "Повторяется еженедельно · уроки начинаются в начале часа."
+  ],
+  "Dars beradigan kamida bitta kunni yoqing.": [
+    "Enable at least one day when you can teach.",
+    "Включите хотя бы один день для занятий."
+  ],
+  "Tugash vaqti boshlanishdan keyin bo‘lsin.": [
+    "End time must be after start time.",
+    "Время окончания должно быть позже начала."
+  ],
+  "Dars uchun kamida 50 daqiqa ajrating.": [
+    "Allow at least 50 minutes for a lesson.",
+    "Выделите на урок не менее 50 минут."
+  ],
+  "Bu kundagi vaqtlar kesishmasin.": [
+    "Hours on this day must not overlap.",
+    "Интервалы этого дня не должны пересекаться."
+  ],
+  "Jadvalda ko‘pi bilan 35 ta vaqt oralig‘i bo‘lishi mumkin.": [
+    "A schedule can have up to 35 time blocks.",
+    "В расписании может быть до 35 интервалов."
+  ]
+});
+
+// Assignment review without numeric scores.
+Object.assign(translations, {
+  "Tekshirildi": [
+    "Reviewed",
+    "Проверено"
+  ],
+  "Ishni tekshirish": [
+    "Review submission",
+    "Проверить работу"
+  ],
+  "Tekshirildi deb belgilash": [
+    "Mark as reviewed",
+    "Отметить как проверенное"
+  ],
+  "Har savolda bitta to‘g‘ri javobni belgilang.": [
+    "Select one correct answer for each question.",
+    "Укажите один правильный ответ для каждого вопроса."
+  ],
+  "To‘g‘ri": [
+    "Correct",
+    "Верно"
+  ],
+  "Noto‘g‘ri": [
+    "Incorrect",
+    "Неверно"
+  ]
+});
+
+// Paginated learning and explicit feedback edits.
+Object.assign(translations, {
+  "Topshiriq sahifalari": [
+    "Assignment pages",
+    "Страницы заданий"
+  ],
+  "Yana studentlar": [
+    "More students",
+    "Ещё ученики"
+  ],
+  "Izohni tahrirlash": [
+    "Edit feedback",
+    "Изменить комментарий"
+  ],
+  "Izohni saqlash": [
+    "Save feedback",
+    "Сохранить комментарий"
+  ],
+  "Izoh boshqa oynada o‘zgartirilgan. Yangilab, qayta urinib ko‘ring.": [
+    "Feedback was changed in another window. Refresh and try again.",
+    "Комментарий изменён в другом окне. Обновите страницу и попробуйте снова."
+  ],
+  "Juda ko‘p so‘rov. Birozdan keyin qayta urining.": [
+    "Too many requests. Try again shortly.",
+    "Слишком много запросов. Повторите чуть позже."
+  ]
+});

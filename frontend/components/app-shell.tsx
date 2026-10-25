@@ -18,16 +18,17 @@ const links=[
   {href:'/dashboard',label:'Darslarim',icon:BookOpen,key:'lessons'},
   {href:'/dashboard?tab=mentor',label:'Mentor profilim',icon:GraduationCap,key:'mentor'},
   {href:'/dashboard?tab=earnings',label:'Daromadim',icon:Wallet,key:'earnings'},
+  {href:'/homework',label:'Vazifalar va testlar',icon:BookOpen,key:'homework'},
   {href:'/requests',label:'EduYor Request',icon:MessageSquare,key:'requests'},
   {href:'/mentors',label:'Mentor topish',icon:Search,key:'directory'},
 ];
 function Navigation({close}:{close:()=>void}){
   const {t:translate}=useI18n();
   const path=usePathname().replace(/\/+$/, '')||'/';const params=useSearchParams();
-  const active=(path==='/'||path==='/dashboard/home')?'home':path.startsWith('/mentors')?'directory':path.startsWith('/requests')?'requests':path.startsWith('/dashboard')?(['mentor','earnings'].includes(params.get('tab')||'')?params.get('tab'):'lessons'):path.startsWith('/sessions')?'lessons':'';
+  const active=(path==='/'||path==='/dashboard/home')?'home':path.startsWith('/mentors')?'directory':path.startsWith('/homework')?'homework':path.startsWith('/requests')?'requests':path.startsWith('/dashboard')?(['mentor','earnings'].includes(params.get('tab')||'')?params.get('tab'):'lessons'):path.startsWith('/sessions')?'lessons':'';
   return <nav aria-label={translate("Asosiy menyu")}>{links.map(item=><Link key={item.key} href={item.href} className={active===item.key?'active':''} aria-current={active===item.key?'page':undefined} onClick={close} aria-label={translate(item.label)}><item.icon size={19} aria-hidden="true"/><span className="app-nav-label">{translate(item.label)}</span></Link>)}</nav>;
 }
-function sectionName(path:string){if(path.startsWith('/requests'))return 'EduYor Request';if(path==='/dashboard/home')return 'Bosh sahifa';if(path==='/')return 'Bilimga hamroh';if(path.startsWith('/mentors/'))return 'Mentor bilan dars';if(path==='/mentors')return 'Mentorlar';if(path.startsWith('/sessions/'))return 'Dars tafsilotlari';if(path==='/profile')return 'Profilim';if(path==='/login')return 'Kirish';if(path==='/register')return 'Ro‘yxatdan o‘tish';return 'Shaxsiy kabinet';}
+function sectionName(path:string){if(path.startsWith('/homework'))return 'Vazifalar va testlar';if(path.startsWith('/requests'))return 'EduYor Request';if(path==='/dashboard/home')return 'Bosh sahifa';if(path==='/')return 'Bilimga hamroh';if(path.startsWith('/mentors/'))return 'Mentor bilan dars';if(path==='/mentors')return 'Mentorlar';if(path.startsWith('/sessions/'))return 'Dars tafsilotlari';if(path==='/profile')return 'Profilim';if(path==='/login')return 'Kirish';if(path==='/register')return 'Ro‘yxatdan o‘tish';return 'Shaxsiy kabinet';}
 
 export function AppShell({children}:{children:ReactNode}){
   const {t:translate}=useI18n();

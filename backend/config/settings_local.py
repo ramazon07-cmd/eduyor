@@ -16,3 +16,8 @@ if os.getenv('TEST_SQLITE') != '1':
     local_name = existing['NAME'] if existing['ENGINE'] == 'django.db.backends.sqlite3' else BASE_DIR/'db.sqlite3'
     DATABASES = {'default':{'ENGINE':'django.db.backends.sqlite3','NAME':local_name,'OPTIONS':{'timeout':20}}}
 
+
+# Acquire SQLite's write reservation before atomic blocks read quota/booking rows.
+# This avoids deferred read-to-write upgrade failures during parallel local polls.
+if DATABASES['default']['ENGINE'] == 'django.db.backends.sqlite3':
+    DATABASES['default'].setdefault('OPTIONS', {})['transaction_mode'] = 'IMMEDIATE'

@@ -18,7 +18,7 @@ function encodeFilters(filters:Filters,page=1){const params=new URLSearchParams(
 
 export default function Directory(){
   const {t:translate}=useI18n();
-  const {user,loading:authLoading,refresh}=useAuth();
+  const {user,refresh}=useAuth();
   const requestId=useRef(0);
   const [data,setData]=useState<Page<Mentor>|null>(null);
   const [subjects,setSubjects]=useState<Subject[]>([]);
@@ -40,12 +40,12 @@ export default function Directory(){
     return()=>window.removeEventListener('popstate',restore);
   },[loadSubjects]);
   const load=useCallback(async()=>{
-    if(query===null||authLoading)return;
+    if(query===null)return;
     const request=++requestId.current;setLoading(true);setError('');
     try{const result=await api<Page<Mentor>>(`mentors/?${query}&exclude_self=1`);if(request===requestId.current)setData(result);}
     catch(e){if(request===requestId.current){setError((e as Error).message);setData(null);}}
     finally{if(request===requestId.current)setLoading(false);}
-  },[query,authLoading,user?.id]);
+  },[query,user?.id]);
   useEffect(()=>{void load();return()=>{requestId.current++;};},[load]);
   function apply(filters:Filters,nextPage=1){
     setValidation('');setDraft(filters);

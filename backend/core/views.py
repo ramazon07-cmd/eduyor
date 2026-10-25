@@ -19,7 +19,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.throttling import UserRateThrottle
 from rest_framework import serializers
 from .models import User, Profile, MentorProfile, Subject, AvailabilityRule, BlockedDate, Booking, validate_timezone
-from .serializers import RegistrationSerializer, ProfileSerializer, PublicMentorSerializer, MentorSettingsSerializer, SubjectSerializer, ScheduleSerializer, BookingCreateSerializer, BookingSerializer, LessonFeedbackSerializer, MentorFilterSerializer, BookingFilterSerializer
+from .serializers import RegistrationSerializer, ProfileSerializer, PublicMentorSerializer, MentorSettingsSerializer, SubjectSerializer, RuleSerializer, ScheduleSerializer, BookingCreateSerializer, BookingSerializer, LessonFeedbackSerializer, MentorFilterSerializer, BookingFilterSerializer
 from . import services
 from .payments import payment_info
 from .subjects import SUBJECT_NAMES, SUBJECT_SEARCH_LABELS
@@ -61,8 +61,8 @@ def current_user(user):
             'approval': mentor.approval,
             'is_paused': mentor.is_paused,
             'is_public': mentor.approval == 'approved' and not mentor.is_paused and user.is_active,
-            'has_availability': True,
-            'availability_mode': 'always_available',
+            'has_availability': mentor.availability.exists(),
+            'availability_mode': 'weekly',
         }
     return {'id':user.pk,'email':user.email,'profile':ProfileSerializer(user.profile).data,'mentor':MentorSettingsSerializer(mentor).data if mentor else None,'mentor_listing':listing}
 
@@ -194,8 +194,20 @@ class MentorSettingsView(SecureView):
 
 class ScheduleView(SecureView):
     def get(self,request):
-        get_object_or_404(MentorProfile,user=request.user)
-        return Response({'mode':'always_available','rules':[],'blocked_dates':[],'timezone':request.user.profile.timezone})
+        mentor = get_object_or_404(MentorProfile,user=request.user)
+        return Response({'mode':'weekly','rules':RuleSerializer(mentor.availability.all(),many=True).data,'blocked_dates':list(mentor.blocked_dates.values_list('date',flat=True)),'timezone':request.user.profile.timezone})
+
+    def put(self,request):
+        data = ScheduleSerializer(data=request.data)
+        data.is_valid(raise_exception=True)
+        with transaction.atomic():
+            services.lock_users([request.user.pk])
+            mentor = get_object_or_404(MentorProfile,user=request.user)
+            mentor.availability.all().delete()
+            mentor.blocked_dates.all().delete()
+            AvailabilityRule.objects.bulk_create([AvailabilityRule(mentor=mentor,**rule) for rule in data.validated_data['rules']])
+            BlockedDate.objects.bulk_create([BlockedDate(mentor=mentor,date=day) for day in set(data.validated_data['blocked_dates'])])
+        return self.get(request)
 
 
 class SlotsView(SecureView):

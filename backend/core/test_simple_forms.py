@@ -26,6 +26,10 @@ class SimpleMentorAndPaymentTests(TestCase):
         cls.subject=Subject.objects.get_or_create(name='SAT')[0]
         cls.mentor=MentorProfile.objects.create(user=cls.teacher,headline='SAT mentor',bio='Bio',experience='Achievements',hourly_price=30000,teaching_languages='English',approval='approved')
         cls.mentor.subjects.add(cls.subject)
+        from datetime import time
+        from .models import AvailabilityRule
+        for day in range(7):
+            AvailabilityRule.objects.create(mentor=cls.mentor, weekday=day, start_time=time(0), end_time=time(23, 59))
 
     def setUp(self):
         self.clock=patch('core.services.timezone.now',return_value=NOW)

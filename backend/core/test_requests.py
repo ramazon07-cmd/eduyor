@@ -20,6 +20,10 @@ class LearningRequestTests(TestCase):
         for user in [cls.teacher, cls.teacher2]:
             mentor = MentorProfile.objects.create(user=user, headline='Mentor', bio='Bio', teaching_languages='English', hourly_price=60000, approval='approved')
             mentor.subjects.add(cls.subject)
+            from datetime import time
+            from .models import AvailabilityRule
+            for day in range(7):
+                AvailabilityRule.objects.create(mentor=mentor, weekday=day, start_time=time(0), end_time=time(23, 59))
 
     def setUp(self):
         self.now = timezone.now()

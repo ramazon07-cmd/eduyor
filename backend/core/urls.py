@@ -20,3 +20,12 @@ urlpatterns += [
     path('requests/<int:pk>/offers/', r.RequestOfferView.as_view()),
     path('requests/<int:pk>/offers/<int:offer_id>/accept/', r.OfferAcceptView.as_view()),
 ]
+
+from . import learning_api as learning
+urlpatterns += [
+    path('learning/students/', learning.LearningStudentsView.as_view()),
+    path('assignments/', learning.AssignmentListView.as_view()),
+    path('assignments/<int:pk>/', learning.AssignmentDetailView.as_view()),
+    path('assignments/<int:pk>/submit/', learning.AssignmentSubmitView.as_view()),
+    path('assignments/<int:pk>/review/', learning.AssignmentReviewView.as_view()),
+]

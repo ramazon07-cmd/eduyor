@@ -19,6 +19,10 @@ class PricingPolicyTests(TestCase):
         self.subject = Subject.objects.get_or_create(name='SAT')[0]
         self.profile = MentorProfile.objects.create(user=self.mentor, headline='SAT', bio='Demo', experience='Demo', teaching_languages='O‘zbekcha', hourly_price=30000, approval='approved')
         self.profile.subjects.add(self.subject)
+        from datetime import time
+        from .models import AvailabilityRule
+        for day in range(7):
+            AvailabilityRule.objects.create(mentor=self.profile, weekday=day, start_time=time(0), end_time=time(23, 59))
         self.clock = patch('core.services.timezone.now', return_value=NOW)
         self.clock.start()
         self.addCleanup(self.clock.stop)

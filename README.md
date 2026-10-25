@@ -57,7 +57,7 @@ Restart `npm run dev` in frontend/. The installer preserves existing settings.py
 - Admin independently checks the bank statement, records a verified receipt reference and confirms within the reservation deadline. Late received funds require a manual full refund.
 - A confirmed mentor supplies a validated HTTPS Google Meet link. Only participants/admin see it after payment verification. A student sees the link on the session page and receives an in-app notice.
 - After the lesson ends, the student confirms it happened; time passing alone does not prove completion. Admin manually pays the mentor only for verified, completed, undisputed sessions and records the transfer reference.
-- Every account can learn and teach. No self-booking, user cancellation or mentor availability form. Both participants are checked across both roles before a slot is reserved or confirmed.
+- Every account can learn and teach. Mentors publish weekly availability and blocked dates; students choose an available slot. No self-booking or user cancellation. Both participants are checked across both roles before a slot is reserved or confirmed.
 
 New slots start on whole hours in the mentor timezone, leaving ten minutes between new 50-minute lessons. At least 24 hours' notice; next 30 days. UTC timestamps are stored; the viewer sees their own timezone. The API owns prices, approval, verification, commissions and payouts. Money uses Decimal; snapshots are immutable. Past 60-minute sessions retain their historical duration; upcoming active legacy sessions use 50 minutes after migration 0004.
 
@@ -74,7 +74,7 @@ npm run typecheck
 npm run build
 ```
 
-Local SQLite tests explicitly skip the three PostgreSQL concurrency tests. See VERIFICATION.md for actual results and limitations. Deployment configuration and exact server steps are in [DEPLOYMENT.md](DEPLOYMENT.md). API readiness: `/api/health/` (200/503, no account/internal details).
+Local SQLite tests explicitly skip the six PostgreSQL concurrency tests. See VERIFICATION.md for actual results and limitations. Deployment configuration and exact server steps are in [DEPLOYMENT.md](DEPLOYMENT.md). API readiness: `/api/health/` (200/503, no account/internal details).
 
 The exact supplied logo is retained under frontend/public/brand/. Uzbek date labels use explicit month names so browsers with incomplete uz locale data do not show “M10”. A price is displayed as “50 000 UZS”.
 
@@ -83,3 +83,22 @@ The exact supplied logo is retained under frontend/public/brand/. Uzbek date lab
 Open `/requests/` from the website menu or dashboard. Signed-in students publish a subject, learning goal and a 30,000–60,000 UZS budget. Approved, active mentors in that subject can propose a price, message and a 50-minute lesson time. Students compare their offers and accept one; the server rechecks availability and creates the normal 60-minute payment reservation at the agreed price. Competing offers are visible only to the student. All interface copy supports Uzbek, English and Russian.
 
 New direct bookings and accepted request offers use a **30% platform / 70% mentor** split. Existing booking snapshots retain their original rates and amounts. Run `python manage.py migrate` to apply migrations 0009 and 0010 before starting this version.
+
+
+## Homework, tests and mentor availability
+
+Run `python3 backend/manage.py migrate` after updating (through migration 0014). Open **Vazifalar va testlar** (`/homework`) to see assignments and submission status. An approved, active mentor switches to **Dars beraman**, chooses a student with a verified confirmed/completed lesson, and assigns homework or a multiple-choice test with a deadline. Homework uses a written answer; mentors leave feedback and mark it reviewed. Tests have 2–6 choices per question and one correct choice. The server checks each submitted answer and hides answer keys from students. Each assignment accepts one submission before its deadline. There are no points, maximum scores or percentage averages. Migration 0013 removes the numeric score fields while preserving review status and written feedback.
+
+Mentors set weekly windows and blocked dates inside **Mentor profilim → Qachon dars bera olasiz?** (`/dashboard?tab=mentor#availability`). The legacy `/availability` link redirects there. An empty schedule offers no slots. New reservations must fit entirely within a published window; starts remain on whole hours, 24 hours ahead, up to 30 days out. Existing reservations survive subsequent schedule edits. A live reservation immediately removes the slot for everyone else; an expired unpaid hold releases it. PostgreSQL participant locks serialize simultaneous booking attempts, including bookings accepted from requests. SQLite remains a development-only concurrency limitation.
+
+The weekly availability editor shows all seven days with on/off switches, compact time ranges, extra intervals and a copy-to-days action. Date exceptions are collapsed by default. Invalid or overlapping ranges show inline errors before saving.
+
+### Learning production checks
+
+Apply migration 0014 before deploying the frontend and backend together. Assignment lists now use `{count,next,previous,results,summary}` with 20 items per page and `role=learning|teaching|all`, `status=pending|review|reviewed|all` filters. Lists contain summary data; `/api/assignments/<id>/` returns private task details. Student pickers use 50-item pages. Summary counts span all pages of the selected role.
+
+All learning endpoints share database-backed per-user quotas across workers: 120 reads/minute and 60 writes/hour, configurable with Django settings `LEARNING_READ_LIMIT` and `LEARNING_WRITE_LIMIT`. Throttled responses include HTTP 429 and `Retry-After`. No extra service is required. Each account has at most two quota records.
+
+Homework review requires `expected_reviewed_at` (null for the first review, the returned timestamp for later edits). Identical retries return the stored review; stale edits with different feedback return HTTP 409. The frontend keeps reviewed work read-only until **Izohni tahrirlash** is selected. Visible list/detail pages refresh every 20 seconds and on focus; polling stops while hidden and does not reset answer drafts.
+
+Run `npm --prefix frontend run check:learning` for synthetic UI render checks. Run the full Django suite against the existing PostgreSQL staging/test environment before release; SQLite skips the six actual-concurrency checks (three booking, three learning). No new PostgreSQL server is started by these changes. The learning API and frontend changes should be released together.

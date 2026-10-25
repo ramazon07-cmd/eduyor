@@ -20,6 +20,10 @@ class ReceiptTests(TestCase):
         self.other = User.objects.create_user('receipt-other@example.invalid', None)
         self.admin = User.objects.create_superuser('receipt-admin@example.invalid', None)
         MentorProfile.objects.create(user=self.teacher, headline='SAT', bio='Bio', hourly_price=30000, teaching_languages='English', approval='approved')
+        from datetime import time
+        from .models import AvailabilityRule
+        for day in range(7):
+            AvailabilityRule.objects.create(mentor=self.teacher.mentor, weekday=day, start_time=time(0), end_time=time(23, 59))
         self.booking = services.reserve(self.student, self.teacher.pk, START, 'Test')
         self.url = f'/api/control/receipts/{self.booking.pk}/'
         self.client = APIClient()

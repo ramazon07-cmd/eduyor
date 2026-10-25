@@ -95,12 +95,12 @@ class BookingTests(TestCase):
         b.refresh_from_db()
         self.assertEqual(b.status,'expired')
 
-    def test_timezone_conversion_and_all_day_slots(self):
+    def test_timezone_conversion_and_published_slots(self):
         slots=s.available_slots(self.b.mentor,now=NOW)
         self.assertIn(START,slots)
         self.assertEqual(START.astimezone(ZoneInfo('Asia/Tashkent')).hour,18)
-        self.assertIn(START+timedelta(hours=3),slots)
-        self.assertIn(START.replace(hour=19),slots)  # midnight in Tashkent
+        self.assertNotIn(START+timedelta(hours=3),slots)
+        self.assertNotIn(START.replace(hour=19),slots)  # midnight is outside published hours
         result=self.client.get(f'/api/mentors/{self.b.pk}/slots/?timezone=Europe/London').json()
         slot=next(x for x in result['slots'] if x['starts_at']==START.isoformat())
         self.assertEqual(slot['time'],'14:00')
@@ -110,10 +110,9 @@ class BookingTests(TestCase):
         self.assertIsNone(s.wall_utc(datetime(2026,3,8).date(),time(2,30),ZoneInfo('America/New_York')))
         self.assertIsNone(s.wall_utc(datetime(2026,11,1).date(),time(1,30),ZoneInfo('America/New_York')))
 
-    def test_legacy_windows_ignored_but_listing_pause_enforced(self):
-        self.b.mentor.availability.all().delete()
+    def test_blocked_dates_and_listing_pause_enforced(self):
         BlockedDate.objects.create(mentor=self.b.mentor,date=START.astimezone(ZoneInfo('Asia/Tashkent')).date())
-        self.assertIn(START,s.available_slots(self.b.mentor,now=NOW))
+        self.assertNotIn(START,s.available_slots(self.b.mentor,now=NOW))
         self.b.mentor.is_paused=True;self.b.mentor.save()
         self.assertEqual(self.client.get(f'/api/mentors/{self.b.pk}/').status_code,404)
         with self.assertRaises(Conflict):self.reserve()
@@ -229,10 +228,10 @@ class BookingTests(TestCase):
         for url in ['http://meet.google.com/abc-defg-hij','https://meet.google.com.evil.test/abc-defg-hij','https://meet.google.com@evil.test/abc-defg-hij','https://meet.google.com/abc-defg-hij?x=1']:
             with self.assertRaises(ValidationError):s.set_meeting(b.pk,self.b,url)
 
-    def test_schedule_editing_disabled(self):
+    def test_schedule_rejects_invalid_windows(self):
         for rules in [[{'weekday':0,'start_time':'20:00','end_time':'18:00'}],[{'weekday':0,'start_time':'18:00','end_time':'20:00'},{'weekday':0,'start_time':'19:00','end_time':'21:00'}]]:
-            self.assertEqual(self.client.put('/api/mentor/availability/',{'rules':rules,'blocked_dates':[]},format='json').status_code,405)
-        self.assertEqual(self.client.get('/api/mentor/availability/').json()['mode'],'always_available')
+            self.assertEqual(self.client.put('/api/mentor/availability/',{'rules':rules,'blocked_dates':[]},format='json').status_code,400)
+        self.assertEqual(self.client.get('/api/mentor/availability/').json()['mode'],'weekly')
 
     def test_clients_cannot_set_finances_or_approval(self):
         response=self.client.post('/api/bookings/',{'mentor_id':self.b.pk,'starts_at':START.isoformat(),'objective':'test','payment_status':'verified','total_price':'1','commission_rate':'0'},format='json')

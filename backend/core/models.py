@@ -193,3 +193,41 @@ class MentorOffer(models.Model):
 
 # Private payment receipts
 from .receipt_models import PaymentReceipt
+
+
+class Assignment(models.Model):
+    mentor = models.ForeignKey(User, on_delete=models.PROTECT, related_name='assigned_tasks')
+    student = models.ForeignKey(User, on_delete=models.PROTECT, related_name='learning_tasks')
+    title = models.CharField(max_length=160)
+    instructions = models.TextField(max_length=6000)
+    kind = models.CharField(max_length=12, choices=[('homework', 'Homework'), ('test', 'Test')])
+    deadline = models.DateTimeField()
+    questions = models.JSONField(default=list, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['deadline', '-pk']
+        indexes = [models.Index(fields=['mentor', 'deadline', '-id'], name='assignment_mentor_deadline'), models.Index(fields=['student', 'deadline', '-id'], name='assignment_student_deadline')]
+        constraints = [
+            models.CheckConstraint(condition=~models.Q(student=models.F('mentor')), name='assignment_no_self'),
+        ]
+
+
+class Submission(models.Model):
+    assignment = models.OneToOneField(Assignment, on_delete=models.CASCADE, related_name='submission')
+    answer = models.TextField(max_length=12000, blank=True)
+    answers = models.JSONField(default=list, blank=True)
+    feedback = models.TextField(max_length=3000, blank=True)
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+
+
+class LearningRateLimit(models.Model):
+    """Two bounded quota rows per user, shared by all application workers."""
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    bucket = models.CharField(max_length=5, choices=[('read', 'Read'), ('write', 'Write')])
+    window_started_at = models.DateTimeField()
+    requests = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['user', 'bucket'], name='learning_quota_user_bucket')]
