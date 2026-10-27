@@ -1,4 +1,6 @@
+import re
 from datetime import timedelta
+from django.db.models import Avg, Count
 from io import BytesIO
 from uuid import uuid4
 from PIL import Image, ImageOps
@@ -15,6 +17,9 @@ class RegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(min_length=8,max_length=128,write_only=True,trim_whitespace=False)
     full_name = serializers.CharField(max_length=120)
+    account_type = serializers.ChoiceField(choices=['student','parent'],default='student')
+    phone = serializers.RegexField(r'^\+?[0-9 ()-]{7,20}$',required=False,allow_blank=True,error_messages={'invalid':'Telefon raqamini to‘g‘ri kiriting.'})
+    ref = serializers.CharField(max_length=20,required=False,allow_blank=True)
 
     def validate(self,data):
         data['email'] = data['email'].lower()
@@ -30,13 +35,29 @@ class RegistrationSerializer(serializers.Serializer):
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['full_name','avatar','school','study_level','learning_goals','timezone']
+        fields = ['full_name','avatar','school','study_level','learning_goals','timezone','account_type','phone','email_verified']
+        # Chosen at registration; admin can correct it.
+        read_only_fields = ['account_type','email_verified']
+
+    def validate_phone(self,value):
+        if value and not re.fullmatch(r'\+?[0-9 ()-]{7,20}',value):
+            raise serializers.ValidationError('Telefon raqamini to‘g‘ri kiriting.')
+        return value
 
     def validate_avatar(self,file):
         return prepare_avatar(file)
 
 
 def prepare_avatar(file, max_size=2*1024*1024):
+    return resized_image(file, 600, 'RGB', 'JPEG', max_size)
+
+
+def prepare_logo(file):
+    # Logos keep their transparency, so they are stored as WebP rather than JPEG.
+    return resized_image(file, 512, 'RGBA', 'WEBP')
+
+
+def resized_image(file, size, mode, out_format, max_size=2*1024*1024):
     if not file:
         return file
     if file.size > max_size:
@@ -46,13 +67,13 @@ def prepare_avatar(file, max_size=2*1024*1024):
             if image.format not in ['JPEG','PNG','WEBP'] or image.width*image.height > 16_000_000:
                 raise ValueError()
             image.load()
-            image = ImageOps.exif_transpose(image).convert('RGB')
-            image.thumbnail((600,600))
+            image = ImageOps.exif_transpose(image).convert(mode)
+            image.thumbnail((size,size))
             out = BytesIO()
-            image.save(out,format='JPEG',quality=85)
+            image.save(out,format=out_format,quality=85)
     except Exception:
         raise serializers.ValidationError('JPEG, PNG yoki WebP rasm yuklang.')
-    return ContentFile(out.getvalue(),name=f'{uuid4().hex}.jpg')
+    return ContentFile(out.getvalue(),name=f'{uuid4().hex}.{"jpg" if out_format == "JPEG" else out_format.lower()}')
 
 
 class SubjectSerializer(serializers.ModelSerializer):
@@ -64,6 +85,17 @@ class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
         fields = ['id','name']
+
+
+def public_center(center):
+    # Unreviewed center names stay private.
+    if not center or center.approval != 'approved':
+        return None
+    return {**{key: getattr(center, key) for key in ('id', 'name', 'kind', 'city', 'address', 'description')}, 'logo': logo_url(center)}
+
+
+def logo_url(center):
+    return center.logo.url if center.logo else None
 
 
 def combined_bio(bio, experience):
@@ -84,6 +116,11 @@ class PublicMentorSerializer(serializers.ModelSerializer):
     def get_session_duration_minutes(self, obj):
         return SESSION_DURATION_MINUTES
 
+    center = serializers.SerializerMethodField()
+
+    def get_center(self, obj):
+        return public_center(obj.center)
+
     bio = serializers.SerializerMethodField()
 
     def get_bio(self, obj):
@@ -99,7 +136,40 @@ class PublicMentorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MentorProfile
-        fields = ['id','full_name','avatar','school','study_level','timezone','headline','bio','subjects','teaching_languages','hourly_price','session_duration_minutes','is_demo']
+        fields = ['id','full_name','avatar','school','study_level','timezone','headline','bio','subjects','teaching_languages','hourly_price','session_duration_minutes','is_demo','center']
+
+
+class MentorDetailSerializer(PublicMentorSerializer):
+    """Profile-page extras. Computed per mentor, so keep it off the list endpoint."""
+    lessons_completed = serializers.SerializerMethodField()
+    rating_average = serializers.SerializerMethodField()
+    rating_count = serializers.SerializerMethodField()
+    weekdays = serializers.SerializerMethodField()
+    member_since = serializers.SerializerMethodField()
+
+    def _feedback(self, obj):
+        if not hasattr(obj, '_feedback_stats'):
+            obj._feedback_stats = Booking.objects.filter(mentor_id=obj.user_id, feedback_rating__isnull=False).aggregate(avg=Avg('feedback_rating'), n=Count('pk'))
+        return obj._feedback_stats
+
+    def get_lessons_completed(self, obj):
+        return Booking.objects.filter(mentor_id=obj.user_id, status='completed').count()
+
+    def get_rating_average(self, obj):
+        avg = self._feedback(obj)['avg']
+        return round(avg, 1) if avg is not None else None
+
+    def get_rating_count(self, obj):
+        return self._feedback(obj)['n']
+
+    def get_weekdays(self, obj):
+        return sorted(set(obj.availability.values_list('weekday', flat=True)))
+
+    def get_member_since(self, obj):
+        return obj.user.date_joined.year
+
+    class Meta(PublicMentorSerializer.Meta):
+        fields = PublicMentorSerializer.Meta.fields + ['lessons_completed', 'rating_average', 'rating_count', 'weekdays', 'member_since']
 
 
 class MentorSettingsSerializer(serializers.ModelSerializer):
@@ -156,6 +226,7 @@ class BookingCreateSerializer(serializers.Serializer):
     mentor_id = serializers.IntegerField(min_value=1)
     starts_at = serializers.DateTimeField()
     objective = serializers.CharField(max_length=1500)
+    use_tokens = serializers.BooleanField(default=False)
 
 
 class LessonFeedbackSerializer(serializers.Serializer):
@@ -177,7 +248,7 @@ class BookingSerializer(serializers.ModelSerializer):
     meeting_url = serializers.SerializerMethodField()
     class Meta:
         model = Booking
-        fields = ['id','student','mentor','student_name','mentor_name','starts_at','ends_at','duration_minutes','objective','status','expires_at','total_price','commission_rate','platform_fee','mentor_net','currency','payment_status','payment_reference','payout_status','meeting_url','disputed','issue_note','resolution_note','completed_at','feedback_rating','feedback_comment','feedback_submitted_at']
+        fields = ['id','student','mentor','student_name','mentor_name','starts_at','ends_at','duration_minutes','objective','status','expires_at','total_price','commission_rate','platform_fee','mentor_net','currency','payment_status','payment_reference','payout_status','meeting_url','disputed','issue_note','resolution_note','completed_at','feedback_rating','feedback_comment','feedback_submitted_at','paid_with_tokens','center_fee']
         read_only_fields = fields
 
     def get_meeting_url(self,b):
@@ -187,6 +258,7 @@ class BookingSerializer(serializers.ModelSerializer):
 class MentorFilterSerializer(serializers.Serializer):
     search = serializers.CharField(max_length=160, required=False, allow_blank=True, default='')
     subject = serializers.IntegerField(min_value=1, max_value=2147483647, required=False)
+    center = serializers.IntegerField(min_value=1, max_value=2147483647, required=False)
     language = serializers.ChoiceField(choices=['', 'uz', 'en', 'ru'], required=False, default='', error_messages={'invalid_choice': 'Ta’lim tilini ro‘yxatdan tanlang.'})
     min_price = serializers.DecimalField(max_digits=12, decimal_places=0, min_value=0, required=False)
     max_price = serializers.DecimalField(max_digits=12, decimal_places=0, min_value=0, required=False)

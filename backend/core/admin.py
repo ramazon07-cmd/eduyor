@@ -10,7 +10,7 @@ from django.utils.html import format_html
 from django.urls import path, reverse
 from django.core.exceptions import PermissionDenied, ValidationError as DjangoValidationError
 from rest_framework.exceptions import APIException
-from .models import User, Profile, MentorProfile, Subject, AvailabilityRule, BlockedDate, Booking
+from .models import User, Profile, MentorProfile, Subject, AvailabilityRule, BlockedDate, Booking, FamilyLink, LearningCenter
 from . import services
 
 
@@ -38,13 +38,37 @@ class UserAdmin(BaseUserAdmin):
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ['full_name','school','timezone']
+    list_display = ['full_name','account_type','school','timezone']
+    list_filter = ['account_type']
     search_fields = ['full_name','user__email']
     readonly_fields = ['user']
     def save_model(self,request,obj,form,change):
         with transaction.atomic():
             services.lock_users([obj.user_id])
             super().save_model(request,obj,form,change)
+
+
+@admin.register(FamilyLink)
+class FamilyLinkAdmin(admin.ModelAdmin):
+    # Support can review and remove parent links; codes are created only by parents.
+    list_display = ['parent','child','linked_at','created_at']
+    search_fields = ['parent__email','child__email','parent__profile__full_name','child__profile__full_name']
+    readonly_fields = ['parent','child','code','linked_at','created_at']
+
+
+@admin.register(LearningCenter)
+class LearningCenterAdmin(admin.ModelAdmin):
+    list_display = ['name','kind','city','approval','owner','created_at']
+    list_filter = ['approval','kind']
+    search_fields = ['name','owner__email','owner__profile__full_name']
+    readonly_fields = ['owner','invite_code','created_at']
+    actions = ['approve','reject']
+    @admin.action(description='Approve selected learning centers')
+    def approve(self,request,queryset):
+        queryset.update(approval='approved')
+    @admin.action(description='Reject selected learning centers')
+    def reject(self,request,queryset):
+        queryset.update(approval='rejected')
 
 
 @admin.register(MentorProfile)

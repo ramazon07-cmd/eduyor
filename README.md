@@ -102,3 +102,19 @@ All learning endpoints share database-backed per-user quotas across workers: 120
 Homework review requires `expected_reviewed_at` (null for the first review, the returned timestamp for later edits). Identical retries return the stored review; stale edits with different feedback return HTTP 409. The frontend keeps reviewed work read-only until **Izohni tahrirlash** is selected. Visible list/detail pages refresh every 20 seconds and on focus; polling stops while hidden and does not reset answer drafts.
 
 Run `npm --prefix frontend run check:learning` for synthetic UI render checks. Run the full Django suite against the existing PostgreSQL staging/test environment before release; SQLite skips the six actual-concurrency checks (three booking, three learning). No new PostgreSQL server is started by these changes. The learning API and frontend changes should be released together.
+
+## Parent accounts
+
+Run `python3 backend/manage.py migrate` after updating (through migration 0015). On **Ro‘yxatdan o‘tish**, a parent chooses **Farzandim uchun**; the account opens **Farzandlarim** (`/family`) instead of the learning dashboard. The account type is fixed at registration; admins can correct it on the profile in Django Admin.
+
+A parent gets an 8-character link code. The child signs in to their own account and enters it under **Profilim → Ota-ona bilan ulash**; this is the child's consent. A code works once, and a parent has at most one open code. Either side can remove the link at any time, and admins can review links under **Family links**. Parenthood is not verified, so the child keeps control of the link.
+
+A linked parent sees a summary only: lesson counts, the next five and last five lessons (mentor, time, status, objective, price while awaiting payment), assignment counts, the latest ten assignments with status, mentor feedback and the number of correct test answers. Meeting links, payment references, written answers, chosen test options and answer keys are never sent to the parent. Parent accounts cannot reserve lessons, directly or by accepting request offers, so a lesson is never booked under the wrong account; the child books and pays from their own account.
+
+## Learning centers
+
+Run `python3 backend/manage.py migrate` after updating (through migration 0016). A learning center groups mentors under one brand. It never changes lessons, prices, payments or the **30% platform / 70% mentor** split: every lesson is still reserved and paid with one mentor.
+
+Any non-parent account can apply from **O‘quv markazlari → Markazim** (`/centers/manage`) as an online team of mentors or an existing offline center (offline needs a city and an address). A mentor who applies teaches in the center automatically. Admins approve or reject applications in Django Admin under **Learning centers**; edits to the name, type, description, city or address send an approved center back for review.
+
+The owner shares an 8-character code; a mentor (any approval state) enters it on the same page to join. A person belongs to one center at a time, as owner or member. A member can leave; the owner can remove a member, which also replaces the code. Approved centers appear at `/centers` and `/centers/<id>` with their approved, active mentors, and an approved center's name is shown on its mentors' profiles. The mentor directory API accepts `?center=<id>`.

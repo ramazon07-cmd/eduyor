@@ -19,9 +19,11 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.throttling import UserRateThrottle
 from rest_framework import serializers
 from .models import User, Profile, MentorProfile, Subject, AvailabilityRule, BlockedDate, Booking, validate_timezone
-from .serializers import RegistrationSerializer, ProfileSerializer, PublicMentorSerializer, MentorSettingsSerializer, SubjectSerializer, RuleSerializer, ScheduleSerializer, BookingCreateSerializer, BookingSerializer, LessonFeedbackSerializer, MentorFilterSerializer, BookingFilterSerializer
+from .serializers import RegistrationSerializer, ProfileSerializer, PublicMentorSerializer, MentorDetailSerializer, MentorSettingsSerializer, SubjectSerializer, RuleSerializer, ScheduleSerializer, BookingCreateSerializer, BookingSerializer, LessonFeedbackSerializer, MentorFilterSerializer, BookingFilterSerializer
 from . import services
 from .payments import payment_info
+from . import email_codes
+from .codes import clean_code, new_code
 from .subjects import SUBJECT_NAMES, SUBJECT_SEARCH_LABELS
 
 
@@ -63,6 +65,7 @@ def current_user(user):
             'is_public': mentor.approval == 'approved' and not mentor.is_paused and user.is_active,
             'has_availability': mentor.availability.exists(),
             'availability_mode': 'weekly',
+            'standing': services.mentor_standing(mentor,timezone.now()),
         }
     return {'id':user.pk,'email':user.email,'profile':ProfileSerializer(user.profile).data,'mentor':MentorSettingsSerializer(mentor).data if mentor else None,'mentor_listing':listing}
 
@@ -78,11 +81,54 @@ class RegisterView(SecureView):
             with transaction.atomic():
                 user = User.objects.create_user(d['email'],d['password'])
                 user.profile.full_name = d['full_name']
+                user.profile.account_type = d['account_type']
+                user.profile.phone = d.get('phone','')
+                user.profile.email_verified = False
+                # An unknown invite code never blocks sign-up.
+                code = clean_code(d.get('ref',''))
+                user.profile.referred_by = User.objects.filter(profile__referral_code=code).first() if code else None
                 user.profile.save()
         except IntegrityError:
             raise ValidationError({'email':'Bu email ro‘yxatdan o‘tgan.'})
+        email_codes.send_code(user)
         login(request,user)
         return Response(current_user(user),status=201)
+
+
+class VerifyEmailView(SecureView):
+    throttle_classes = [AuthThrottle]
+    def post(self,request):
+        email_codes.verify_code(request.user,request.data.get('code',''))
+        return Response(current_user(User.objects.get(pk=request.user.pk)))
+
+
+class ResendEmailCodeView(SecureView):
+    throttle_classes = [AuthThrottle]
+    def post(self,request):
+        if request.user.profile.email_verified:
+            return Response({'detail':'Email allaqachon tasdiqlangan.'})
+        if not email_codes.send_code(request.user):
+            raise ValidationError({'detail':'Kodni yuborib bo‘lmadi. Birozdan keyin qayta urinib ko‘ring.'})
+        return Response({'detail':'Yangi kod emailingizga yuborildi.'})
+
+
+class ReferralView(SecureView):
+    def get(self,request):
+        with transaction.atomic():
+            profile = Profile.objects.select_for_update().get(user=request.user)
+            if not profile.referral_code:
+                profile.referral_code = new_code(Profile,'referral_code')
+                profile.save(update_fields=['referral_code'])
+        now = timezone.now()
+        balance = services.token_balance(request.user.pk)
+        return Response({
+            'code':profile.referral_code,
+            'balance':balance,
+            'tokens_per_lesson':services.TOKENS_PER_LESSON,
+            'invited':Profile.objects.filter(referred_by=request.user).count(),
+            'rewarded':request.user.token_entries.filter(reason='referral').count(),
+            'can_redeem':balance >= services.TOKENS_PER_LESSON and services.token_lessons_this_month(request.user.pk,now) < services.TOKEN_LESSONS_PER_MONTH,
+        })
 
 
 class LoginView(SecureView):
@@ -127,7 +173,8 @@ class SubjectsView(SecureView):
 
 
 def public_mentors():
-    return MentorProfile.objects.filter(approval='approved',is_paused=False,user__is_active=True).select_related('user__profile').prefetch_related('subjects')
+    # Mentors hidden for students leaving stay bookable by link but leave search and rankings.
+    return MentorProfile.objects.filter(approval='approved',is_paused=False,user__is_active=True).exclude(hidden_until__gt=timezone.now()).select_related('user__profile','center').prefetch_related('subjects')
 
 
 class MentorListView(SecureView):
@@ -148,6 +195,8 @@ class MentorListView(SecureView):
             qs = qs.filter(Q(user__profile__full_name__icontains=term)|Q(headline__icontains=term)|Q(subjects__name__icontains=term)|Q(subjects__name__in=direction_names))
         if params.get('subject'):
             qs = qs.filter(subjects=params['subject'])
+        if params.get('center'):
+            qs = qs.filter(center_id=params['center'],center__approval='approved')
         if params['language']:
             # Token boundaries avoid matching "en" inside "French". The field
             # remains free text; recognize common English/Uzbek/Russian labels.
@@ -168,7 +217,7 @@ class MentorListView(SecureView):
 class MentorDetailView(SecureView):
     permission_classes = [AllowAny]
     def get(self,request,pk):
-        return Response(PublicMentorSerializer(get_object_or_404(public_mentors(),user_id=pk)).data)
+        return Response(MentorDetailSerializer(get_object_or_404(public_mentors(),user_id=pk)).data)
 
 
 class MentorSettingsView(SecureView):
@@ -257,11 +306,11 @@ class BookingListView(SecureView):
         data = BookingCreateSerializer(data=request.data)
         data.is_valid(raise_exception=True)
         d = data.validated_data
-        if not payment_info()['can_accept_payment']:
+        if not d['use_tokens'] and not payment_info()['can_accept_payment']:
             raise ValidationError({'detail':'To‘lov rekvizitlari sozlanmagan. Administratorga murojaat qiling.'})
         if not User.objects.filter(pk=d['mentor_id'],is_active=True).exists():
             raise ValidationError({'mentor_id':'Mentor topilmadi.'})
-        obj = services.reserve(request.user,d['mentor_id'],d['starts_at'],d['objective'])
+        obj = services.reserve(request.user,d['mentor_id'],d['starts_at'],d['objective'],use_tokens=d['use_tokens'])
         return Response(BookingSerializer(obj).data,status=201)
 
 

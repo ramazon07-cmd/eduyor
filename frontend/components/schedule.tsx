@@ -1,7 +1,6 @@
 'use client';
 import {useCallback,useEffect,useState} from 'react';
-import Link from 'next/link';
-import {CalendarDays,Check,Copy,Globe,Plus,X} from 'lucide-react';
+import {CalendarDays,Check,Copy,Plus,X} from 'lucide-react';
 import {useI18n} from '@/components/i18n';
 import {api} from '@/lib/api';
 import type {Rule,Schedule} from '@/lib/types';
@@ -58,7 +57,6 @@ export function ScheduleForm(){
   }
   return <Card className="form-card availability-editor">
     <header className="availability-heading"><div><span className="availability-caption"><CalendarDays size={16}/>{t('DARS JADVALI')}</span><h2>{t('Qachon dars bera olasiz?')}</h2><p>{t('Kunlarni yoqing va bo‘sh vaqtingizni belgilang.')}</p></div><span className="availability-duration">50 {t('daqiqa')}</span></header>
-    <div className="availability-timezone"><Globe size={15}/><span>{data.timezone}</span><Link href="/profile">{t('O‘zgartirish')}</Link></div>
     {error&&<Notice kind="error">{t(error)}</Notice>}
     <form onSubmit={save}>
       <fieldset className="availability-fields" disabled={busy}><legend className="sr-only">{t('Haftalik jadval')}</legend>

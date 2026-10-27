@@ -12,13 +12,12 @@ import {Button} from '@/components/ui/button';
 type Filters={search:string;subject:string;language:string};
 const defaults:Filters={search:'',subject:'',language:''};
 const languageNames:Record<string,string>={uz:'O‘zbekcha',en:'Inglizcha',ru:'Ruscha'};
-const languagePatterns:Record<string,RegExp>={uz:/(^|[^a-zа-я])(o[‘’ʻʼ'`]?zbek(cha)?|uzbek|uz)([^a-zа-я]|$)/i,en:/(^|[^a-zа-я])(english|ingliz(cha)?|en)([^a-zа-я]|$)/i,ru:/(^|[^a-zа-я])(rus(cha)?|russian|русский|ru)([^a-zа-я]|$)/i};
 function readFilters(params:URLSearchParams):Filters{return Object.fromEntries(Object.entries(defaults).map(([key,value])=>[key,params.get(key)||value])) as Filters;}
 function encodeFilters(filters:Filters,page=1){const params=new URLSearchParams();Object.entries(filters).forEach(([key,value])=>{if(value&&value!==defaults[key as keyof Filters])params.set(key,value);});if(page>1)params.set('page',String(page));return params.toString();}
 
 export default function Directory(){
   const {t:translate}=useI18n();
-  const {user,refresh}=useAuth();
+  const {user}=useAuth();
   const requestId=useRef(0);
   const [data,setData]=useState<Page<Mentor>|null>(null);
   const [subjects,setSubjects]=useState<Subject[]>([]);
@@ -32,7 +31,6 @@ export default function Directory(){
   const applied=readFilters(params);
   const page=Math.max(1,Number(params.get('page'))||1);
 
-  useEffect(()=>{if(user?.id)void refresh();},[user?.id,refresh]);
   const loadSubjects=useCallback(()=>{setSubjectError('');api<Subject[]>('subjects/').then(setSubjects).catch(()=>setSubjectError('Yo‘nalishlarni yuklab bo‘lmadi.'));},[]);
   useEffect(()=>{
     function restore(){const params=new URLSearchParams(window.location.search);setDraft(readFilters(params));setQuery(encodeFilters(readFilters(params),Math.max(1,Number(params.get('page'))||1)));setValidation('');}
@@ -53,12 +51,8 @@ export default function Directory(){
   }
   function reset(){apply({...defaults});}
   function update(key:keyof Filters,value:string){setDraft(f=>({...f,[key]:value}));setValidation('');}
-  const own=user?.mentor_listing;
-  const term=applied.search.toLowerCase().trim();
-  const ownMatches=!!own&&(!term||[own.full_name,own.headline,...own.subjects.map(s=>s.name)].join(' ').toLowerCase().includes(term))&&(!applied.subject||own.subjects.some(s=>String(s.id)===applied.subject))&&(!applied.language||!!languagePatterns[applied.language]?.test(own.teaching_languages));
-  const showOwn=ownMatches&&page===1;
-  const rows=data?.results.filter(m=>!showOwn||m.id!==own?.id)||[];
-  const count=(data?.count||0)+(ownMatches?1:0);
+  const rows=data?.results||[];
+  const count=data?.count||0;
   const hasFilters=Object.values(applied).some(Boolean);
 
   return <div className="container section">
@@ -72,9 +66,9 @@ export default function Directory(){
     </form>
     {subjectError&&<Notice kind="error">{translate(subjectError)}<button onClick={loadSubjects}>{translate("Qayta urinish")}</button></Notice>}
     {validation&&<Notice kind="error">{translate(validation)}</Notice>}
-    <div className="directory-results-bar"><span className="muted small" role="status">{translate(loading?'Mentorlar qidirilmoqda…':error?'Natijalarni yuklab bo‘lmadi':`${count} ta e’lon${showOwn&&!own?.is_public?' · shaxsiy e’loningiz bilan':''}`)}</span>{hasFilters&&<button type="button" className="text-link" onClick={reset}>{translate("Filtrlarni tozalash")}</button>}</div>
+    <div className="directory-results-bar"><span className="muted small" role="status">{translate(loading?'Mentorlar qidirilmoqda…':error?'Natijalarni yuklab bo‘lmadi':`${count} ta e’lon`)}</span>{hasFilters&&<button type="button" className="text-link" onClick={reset}>{translate("Filtrlarni tozalash")}</button>}</div>
     {error&&<Notice kind="error">{translate(error)}<button onClick={load}>{translate("Qayta urinish")}</button></Notice>}
-    {loading?<div className="mentor-grid" aria-busy="true">{[1,2,3].map(n=><div className="card skeleton" key={n} aria-label={translate("Mentor yuklanmoqda")}/>)}</div>:!error&&(rows.length||showOwn)?<div className="mentor-grid">{showOwn&&own&&<MentorCard mentor={own} own={own}/ >}{rows.map(m=><MentorCard key={m.id} mentor={m}/>)}</div>:!error&&<Empty title={translate("Mos mentor topilmadi")}><p>{translate("Yo‘nalish yoki ta’lim tilini o‘zgartirib ko‘ring.")}</p></Empty>}
+    {loading?<div className="mentor-grid" aria-busy="true">{[1,2,3].map(n=><div className="card skeleton" key={n} aria-label={translate("Mentor yuklanmoqda")}/>)}</div>:!error&&rows.length?<div className="mentor-grid">{rows.map(m=><MentorCard key={m.id} mentor={m}/>)}</div>:!error&&<Empty title={translate("Mos mentor topilmadi")}><p>{translate("Yo‘nalish yoki ta’lim tilini o‘zgartirib ko‘ring.")}</p></Empty>}
     {data&&data.count>9&&!error&&<div className="pagination"><Button variant="outline" disabled={!data.previous||loading} onClick={()=>apply(applied,page-1)}><ArrowLeft size={16}/>{translate("Oldingi")}</Button><span>{page} / {Math.ceil(data.count/9)}</span><Button variant="outline" disabled={!data.next||loading} onClick={()=>apply(applied,page+1)}>{translate("Keyingi")}<ArrowRight size={16}/></Button></div>}
   </div>;
 }

@@ -1,4 +1,5 @@
 'use client';
+import {BadgeCheck} from 'lucide-react';
 import {useI18n} from '@/components/i18n';
 import Link from 'next/link';
 import {useEffect,useState} from 'react';
@@ -9,6 +10,7 @@ import {Avatar,Notice} from './common';
 import {Card} from './ui/card';
 import {Input} from './ui/input';
 import {Button} from './ui/button';
+import './mentor-settings.css';
 const initial:MentorSettings={headline:'',bio:'',subjects:[],teaching_languages:'O‘zbekcha',hourly_price:'30000',is_paused:false,approval:'pending'};
 const languages=['O‘zbekcha','English','Ruscha'];
 const prices=['30000','35000','40000','45000','50000','55000','60000'];
@@ -37,14 +39,16 @@ export function MentorForm(){
   }
   if(user?.mentor&&!editing){
     const mentor=user.mentor;
+    const status=mentor.is_paused?'Pauzada':mentor.approval==='approved'?'Tasdiqlangan':mentor.approval==='rejected'?'Rad etilgan':'Admin tekshiruvida';
     return <Card className="form-card mentor-profile-preview">
-      <div className="section-heading"><div className="mentor-profile-identity"><Avatar name={user.profile.full_name} src={user.profile.avatar}/><div><h2>{user.profile.full_name}</h2><p>{mentor.headline}</p></div></div><Button onClick={()=>{setForm(mentor);setSuccess('');setEditing(true);}}>{translate("O‘zgartirish")}</Button></div>
+      <div className="mps-head"><Avatar name={user.profile.full_name} src={user.profile.avatar}/><div className="mps-who"><h2>{user.profile.full_name}</h2><p>{mentor.headline}</p><span className={`mps-status ${mentor.approval==='approved'&&!mentor.is_paused?'ok':''}`}>{mentor.approval==='approved'&&!mentor.is_paused&&<BadgeCheck size={15} aria-hidden/>}{translate(status)}</span></div><Button variant="outline" onClick={()=>{setForm(mentor);setSuccess('');setEditing(true);}}>{translate("O‘zgartirish")}</Button></div>
       {success&&<Notice kind="success">{translate(success)}</Notice>}
-      <Notice kind={mentor.approval==='approved'?'success':'info'}>{translate(mentor.is_paused?'Profilingiz pauzada.':mentor.approval==='approved'?'Mentor profilingiz tasdiqlangan.':mentor.approval==='rejected'?'Ariza rad etilgan. Ma’lumotlarni yangilab qayta yuboring.':'Arizangiz admin tekshiruvida.')}</Notice>
-      <h3>{translate("Men haqimda")}</h3><p className="preserve">{mentor.bio}</p>
-      <h3>{translate("Yo‘nalishlar")}</h3><div className="chips">{subjects.filter(s=>mentor.subjects.includes(s.id)).map(s=><span key={s.id} className="chip">{translate(s.name)}</span>)}</div>
+      <StandingNotice/>
+      {mentor.approval==='rejected'&&<Notice>{translate('Ariza rad etilgan. Ma’lumotlarni yangilab qayta yuboring.')}</Notice>}
       {error&&<Notice kind="error">{translate(error)}</Notice>}
-      <div className="mentor-profile-facts"><div><small>{translate("Ta’lim tillari")}</small><strong>{chosenLanguages(mentor.teaching_languages).map(l=>translate(l==='English'?'Inglizcha':l)).join(', ')}</strong></div><div><small>{translate("Dars davomiyligi")}</small><strong>{translate("50 daqiqa")}</strong></div><div><small>{translate("Bir dars narxi")}</small><strong>{money(mentor.hourly_price)}</strong></div></div>
+      <section className="mps-section"><h3>{translate("Men haqimda")}</h3><p className="preserve mps-bio">{mentor.bio}</p></section>
+      <section className="mps-section"><h3>{translate("Yo‘nalishlar")}</h3><div className="chips">{subjects.filter(s=>mentor.subjects.includes(s.id)).map(s=><span key={s.id} className="chip">{translate(s.name)}</span>)}</div></section>
+      <dl className="mps-facts"><div><dt>{translate("Ta’lim tillari")}</dt><dd>{chosenLanguages(mentor.teaching_languages).map(l=>translate(l==='English'?'Inglizcha':l)).join(', ')}</dd></div><div><dt>{translate("Dars davomiyligi")}</dt><dd>{translate("50 daqiqa")}</dd></div><div><dt>{translate("Bir dars narxi")}</dt><dd>{money(mentor.hourly_price)}</dd></div></dl>
     </Card>;
   }
   return <Card className="form-card">
@@ -57,10 +61,19 @@ export function MentorForm(){
       <label>{translate("O‘zingiz, tajribangiz va yutuqlaringiz haqida")}<textarea value={form.bio} onChange={e=>update('bio',e.target.value)} maxLength={3000} rows={5} required placeholder={translate("Qaysi yo‘nalishda yordam berasiz? Tajribangiz va haqiqiy natijalaringizni qisqacha yozing.")}/><small>{form.bio.length} {translate("/ 3000 belgi")}</small></label>
       <fieldset className="subject-fieldset"><legend>{translate("Qaysi yo‘nalishlarda dars berasiz?")}</legend><div className="checkbox-chips">{subjectsLoading&&<span role="status">{translate("Yo‘nalishlar yuklanmoqda…")}</span>}{!subjectsLoading&&!subjects.length&&<Notice>{translate("Yo‘nalishlar hozir mavjud emas.")}<button type="button" onClick={loadSubjects}>{translate("Qayta yuklash")}</button></Notice>}{subjects.map(s=><label key={s.id} className={form.subjects.includes(s.id)?'checked':''}><input type="checkbox" checked={form.subjects.includes(s.id)} onChange={e=>update('subjects',e.target.checked?[...form.subjects,s.id]:form.subjects.filter(id=>id!==s.id))}/>{translate(s.name)}</label>)}</div></fieldset>
       <fieldset className="subject-fieldset"><legend>{translate("Ta’lim tillari")} <span className="muted">{translate("· bir nechtasini tanlash mumkin")}</span></legend><div className="checkbox-chips language-choices">{languageOptions.map(language=><label key={language} className={selectedLanguages.includes(language)?'checked':''}><input type="checkbox" checked={selectedLanguages.includes(language)} onChange={e=>update('teaching_languages',(e.target.checked?[...selectedLanguages,language]:selectedLanguages.filter(item=>item!==language)).join(', '))}/>{translate(language==='English'?'Inglizcha':language)}</label>)}</div></fieldset>
-      <label>{translate("Dars narxi · 50 daqiqa")}<select value={form.hourly_price} onChange={e=>update('hourly_price',e.target.value)} required>{priceOptions.map(price=><option key={price} value={price}>{money(price)}</option>)}</select><small>{translate("Yangi dars narxining 70% sizga qoladi. Platforma ulushi — 30%.")}</small></label>
+      <label>{translate("Dars narxi · 50 daqiqa")}<select value={form.hourly_price} onChange={e=>update('hourly_price',e.target.value)} required>{priceOptions.map(price=><option key={price} value={price}>{money(price)}</option>)}</select><small>{translate("Platforma ulushi 10% dan boshlanadi va 35-darsdan keyin har darsda 0.2% kamayib, 3% gacha tushadi.")}</small></label>
       {user?.mentor&&<label className="check-row"><input type="checkbox" checked={form.is_paused} onChange={e=>update('is_paused',e.target.checked)}/>{translate("Profilni vaqtincha pauza qilish")}</label>}
       <small>{translate("Ma’lumot va yo‘nalishlar o‘zgarsa, profil qayta tekshiriladi. Dars vaqtini student tanlaydi.")}</small>
       <div className="form-actions">{user?.mentor&&<Button type="button" variant="outline" disabled={busy} onClick={()=>{setForm(user.mentor!);setError('');setEditing(false);}}>{translate("Bekor qilish")}</Button>}<Button disabled={busy||!subjects.length}>{translate(busy?'Saqlanmoqda…':user?.mentor?'O‘zgarishlarni saqlash':'Ariza yuborish')}</Button></div>
     </form>
   </Card>;
+}
+
+const standingText={warning:'Ogohlantirish: 3 ta student ketsa, yangi darslarda komissiya 5% oshadi.',higher_fee:'Yangi darslarda komissiya 5% oshirilgan. 5 ta student ketsa, profil 30 kunga qidiruvdan yashiriladi.',hidden:'Profilingiz 30 kunga qidiruvdan yashirilgan. Yana 3 ta student ketsa, profil to‘xtatiladi.',removed:'Ko‘p student birinchi darsdan keyin ketgani uchun profil to‘xtatildi. Administratorga murojaat qiling.'} as const;
+
+// Students who did not come back after a first lesson, counted over 30 days.
+function StandingNotice(){
+  const {t}=useI18n();const standing=useAuth().user?.mentor_listing?.standing;
+  if(!standing||standing.level==='ok')return null;
+  return <Notice kind={standing.level==='warning'?'info':'error'}>{t(standingText[standing.level])} {t('30 kunda birinchi darsdan keyin qaytmaganlar:')} <strong>{standing.churned}</strong></Notice>;
 }

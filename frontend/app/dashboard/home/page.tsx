@@ -2,6 +2,7 @@
 import {useI18n} from '@/components/i18n';
 
 import Link from 'next/link';
+import {useRouter} from 'next/navigation';
 import {useEffect,useState} from 'react';
 import {ArrowUpRight,BookOpen,CalendarDays,Clock3,Video} from 'lucide-react';
 import {useAuth} from '@/components/auth';
@@ -15,8 +16,10 @@ export default function StudentHome(){
   const [data,setData]=useState<{total:number;completed:number;pending:number;upcoming:Booking[]}|null>(null);
   const [error,setError]=useState('');
   const [retry,setRetry]=useState(0);
+  const router=useRouter();const parent=user?.profile.account_type==='parent';
+  useEffect(()=>{if(parent)router.replace('/family');},[parent,router]);
   useEffect(()=>{
-    if(!user)return;
+    if(!user||parent)return;
     let active=true;
     setData(null);setError('');
     async function load(){
@@ -38,7 +41,7 @@ export default function StudentHome(){
     void load().catch(e=>{if(active)setError(e.message);});
     return()=>{active=false;};
   },[user?.id,retry]);
-  if(loading)return <Loading/>;
+  if(loading||parent)return <Loading/>;
   if(!user)return <LoginRequired next="/dashboard/home"/>;
   const next=data?.upcoming[0];
   return <div className="student-home">

@@ -1,0 +1,27 @@
+.board-page{max-width:900px;margin-inline:auto}
+.board-list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+/* Fixed stat columns keep lessons and ratings aligned down the whole list. */
+.board-row{display:grid;grid-template-columns:34px 36px minmax(0,1fr) 128px 104px;align-items:center;gap:14px;padding:16px 20px;border:1px solid var(--line);border-radius:16px;background:#fff;color:inherit;transition:border-color .2s,background .2s}
+.board-row:hover{border-color:#d3bfe8;background:#fcfaff}
+.board-list>li:first-child .board-row{border-color:#f0dfae;background:#fffcf3}
+.board-rank{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex-shrink:0;border-radius:10px;background:#f6f3fa;color:#6f5986;font-weight:700;font-variant-numeric:tabular-nums}
+.board-rank.r1{background:#fdf3d8;color:#8a6410}
+.board-rank.r2{background:#eef0f4;color:#4f5868}
+.board-rank.r3{background:#f8e9df;color:#8c5332}
+.board-row>.avatar{width:36px;height:36px;font-size:13px}
+.board-icon{display:flex;align-items:center;justify-content:center;width:33px;height:33px;flex-shrink:0;border-radius:11px;background:#efe4fa;color:#63289e}
+.board-name{display:grid;gap:2px;min-width:0}
+.board-name strong{font-size:15px;overflow-wrap:anywhere}
+.board-name small{overflow:hidden;font-size:12px;text-overflow:ellipsis;white-space:nowrap}
+.board-stat{display:grid;justify-items:end;gap:1px;text-align:right}
+.board-stat strong{display:inline-flex;align-items:center;gap:5px;font-size:20px;line-height:1.2;font-variant-numeric:tabular-nums}
+.board-stat small{font-size:12px;white-space:nowrap}
+.board-rating strong svg{color:#d99a00;fill:#d99a00}
+.board-lessons{padding-right:18px;border-right:1px solid var(--line)}
+.board-note{margin-top:18px;font-size:12px}
+@media(max-width:600px){
+  .board-row{grid-template-columns:34px 36px minmax(0,1fr) auto;row-gap:12px;padding:14px}
+  .board-stat{grid-row:2;justify-items:start;text-align:left}
+  .board-lessons{grid-column:3;padding-right:0;border-right:0}
+  .board-rating{grid-column:4}
+}

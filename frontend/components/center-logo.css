@@ -1,0 +1,3 @@
+/* Logos come in any shape, so they sit whole on white inside the existing mark. */
+.has-logo{overflow:hidden;background:#fff!important;padding:4px}
+.has-logo>img{display:block;width:100%;height:100%;object-fit:contain}
