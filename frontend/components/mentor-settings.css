@@ -1,0 +1,17 @@
+/* Own mentor profile card (dashboard). Brand tokens from makon.css. Radius scale: 14px small, 22px outer. */
+.mentor-profile-preview{display:flex;flex-direction:column;gap:24px}
+.mps-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:18px;align-items:center}
+.mps-head>.avatar{width:84px;height:84px;margin:0;border-radius:22px;font-size:28px}
+.mps-who h2{margin:0 0 4px;font-size:26px;letter-spacing:-.02em;overflow-wrap:anywhere}
+.mps-who p{margin:0 0 10px;color:var(--mk-violet-light);font-size:15px;line-height:1.5}
+.mps-status{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;font-size:12px;font-weight:650;background:var(--mk-soft);color:var(--mk-deep)}
+.mps-status.ok{background:#e4f5f3;color:#005f65}
+.mps-section h3{margin:0 0 10px;font-size:14px;color:var(--mk-deep)}
+.mps-bio{margin:0;max-width:70ch;font-size:15px;line-height:1.8;color:var(--mk-ink)}
+.mps-section .chips{margin:0;gap:8px}
+.mentor-profile-preview .chip{padding:7px 14px;font-size:13px;font-weight:600;color:var(--mk-deep);background:#fff;border:1px solid var(--mk-line);border-radius:999px}
+.mps-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0}
+.mps-facts>div{display:grid;gap:3px;padding:14px 16px;background:var(--mk-soft);border-radius:14px;min-width:0}
+.mps-facts dt{font-size:12px;color:var(--muted)}
+.mps-facts dd{margin:0;font-size:16px;font-weight:700;letter-spacing:-.01em;color:var(--mk-deep);overflow-wrap:anywhere}
+@media(max-width:760px){.mps-head{grid-template-columns:auto 1fr}.mps-head>.btn{grid-column:1/-1;justify-self:start}.mps-facts{grid-template-columns:1fr}}

@@ -1,67 +1,92 @@
-/* A fixed-width panel folds into its left hinge while the workspace expands. */
+/* Desktop sidebar collapses into an icon rail; icons keep their x-position so only labels move. */
 .app-sidebar-stage{min-width:0}
 @media(min-width:761px){
   .app-shell{
     --sidebar-open-width:248px;
-    --sidebar-duration:640ms;
-    --sidebar-ease:cubic-bezier(.22,.8,.25,1);
+    --sidebar-rail-width:76px;
+    --sidebar-duration:320ms;
+    --sidebar-ease:cubic-bezier(.32,.72,0,1);
     grid-template-columns:var(--sidebar-open-width) minmax(0,1fr);
     background:#fff;
     isolation:isolate;
-    transition:grid-template-columns var(--sidebar-duration) var(--sidebar-ease);
   }
-  .app-shell.sidebar-collapsed{grid-template-columns:0 minmax(0,1fr)}
-  .app-sidebar-stage{
-    position:sticky;
-    top:0;
-    height:100dvh;
-    perspective:1200px;
-    perspective-origin:left center;
-    z-index:2;
-  }
+  [data-sidebar=collapsed] .app-shell{grid-template-columns:var(--sidebar-rail-width) minmax(0,1fr)}
+  .app-shell{transition:grid-template-columns var(--sidebar-duration) var(--sidebar-ease)}
+  .app-sidebar-stage{position:sticky;top:0;height:100dvh;z-index:2}
   .app-sidebar-stage .app-sidebar{
     position:relative;
     top:0;
-    width:var(--sidebar-open-width);
+    width:100%;
     height:100%;
     padding:28px 16px 20px;
     overflow-x:hidden;
     overflow-y:auto;
-    transform-origin:left center;
-    transform:rotateY(0deg);
-    backface-visibility:hidden;
-    filter:blur(0);
-    opacity:1;
-    transition:transform var(--sidebar-duration) var(--sidebar-ease),filter var(--sidebar-duration) var(--sidebar-ease),opacity var(--sidebar-duration) var(--sidebar-ease),visibility var(--sidebar-duration);
+    scrollbar-width:none;
   }
-  .app-sidebar::after{
-    content:'';
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    background:linear-gradient(90deg,transparent 15%,#13062380);
+  /* Clip the brand row: the logo link is as wide as its hidden wordmark and would cover the topbar toggle. */
+  .app-sidebar-stage .app-sidebar-brand{margin:0 0 34px;overflow:hidden}
+  .app-sidebar-stage .app-sidebar nav{gap:5px}
+  .app-sidebar-stage .app-sidebar nav>a{gap:11px;min-height:46px;padding:12px;font-size:14px;white-space:nowrap}
+  .app-sidebar nav>a>svg,.app-sidebar-brand .brand-mark,.sidebar-account .avatar{flex-shrink:0}
+  .app-sidebar-stage .sidebar-account{margin-top:auto;padding:18px 6px 0;white-space:nowrap}
+  .app-sidebar-stage .sidebar-account strong{max-width:140px}
+  .app-body{position:relative;z-index:1;min-width:0}
+
+  /* Expand: labels slide in one after another once the rail has started widening.
+     Collapse: they slip left and fade together before the rail narrows. */
+  .app-sidebar .wordmark,.app-sidebar .app-nav-label,.sidebar-account>span:not(.avatar),.sidebar-account>svg{
+    transition:opacity 220ms ease var(--label-delay,90ms),transform 320ms var(--sidebar-ease) var(--label-delay,90ms),visibility 0s;
+  }
+  .app-sidebar .wordmark{--label-delay:60ms}
+  .app-sidebar nav>a{--label-delay:calc(90ms + var(--i,0) * 22ms)}
+  .sidebar-account{--label-delay:calc(90ms + 10 * 22ms)}
+  [data-sidebar=collapsed] .app-sidebar .wordmark,
+  [data-sidebar=collapsed] .app-sidebar .app-nav-label,
+  [data-sidebar=collapsed] .sidebar-account>span:not(.avatar),
+  [data-sidebar=collapsed] .sidebar-account>svg{
     opacity:0;
-    transition:opacity var(--sidebar-duration) var(--sidebar-ease);
+    visibility:hidden;
+    transform:translateX(-8px);
+    transition:opacity 110ms ease,transform 160ms ease,visibility 0s linear 110ms;
   }
-  .sidebar-collapsed .app-sidebar{
-    transform:rotateY(-100deg);
-    filter:blur(5px);
+
+  /* The toggle glyph turns over when the panel changes direction. */
+  .app-sidebar-toggle svg{animation:sidebar-toggle-turn 320ms var(--sidebar-ease)}
+  @keyframes sidebar-toggle-turn{from{transform:rotate(-90deg) scale(.6);opacity:0}to{transform:none;opacity:1}}
+
+  /* Rail tooltips; the rail drops its scroll clipping so they can sit over the page. */
+  [data-sidebar=collapsed] .app-sidebar-stage .app-sidebar{overflow:visible}
+  .app-sidebar [data-label]{position:relative}
+  .app-sidebar [data-label]::after{
+    content:attr(data-label);
+    position:absolute;
+    left:calc(100% + 14px);
+    top:50%;
+    padding:7px 11px;
+    border-radius:9px;
+    background:#1f0a38;
+    color:#fff;
+    font-size:13px;
+    font-weight:550;
+    line-height:1.2;
+    white-space:nowrap;
+    box-shadow:0 8px 24px #1f0a3838;
     opacity:0;
     visibility:hidden;
     pointer-events:none;
+    transform:translate(-4px,-50%);
+    transition:opacity 120ms ease,transform 120ms ease,visibility 0s linear 120ms;
   }
-  .sidebar-collapsed .app-sidebar::after{opacity:1}
-  .app-sidebar-stage .app-sidebar-brand{margin:0 8px 34px}
-  .app-sidebar-stage .app-sidebar nav{gap:5px}
-  .app-sidebar-stage .app-sidebar nav>a{gap:11px;min-height:46px;padding:12px;font-size:14px;white-space:nowrap}
-  .app-sidebar nav>a>svg{flex-shrink:0}
-  .app-sidebar-stage .sidebar-account{margin-top:auto;padding-top:18px}
-  .app-sidebar-stage .sidebar-account strong{max-width:140px}
-  .app-body{position:relative;z-index:1;min-width:0}
+  [data-sidebar=collapsed] .app-sidebar [data-label]:is(:hover,:focus-visible)::after{
+    opacity:1;
+    visibility:visible;
+    transform:translate(0,-50%);
+    transition:opacity 120ms ease 60ms,transform 120ms ease 60ms,visibility 0s;
+  }
 }
 @media(min-width:761px) and (max-width:1200px){.app-shell{--sidebar-open-width:232px}}
-@media(max-width:760px){.app-sidebar-stage{position:relative}.app-sidebar-stage .app-sidebar{height:auto}}
+@media(max-width:760px){.app-shell{grid-template-rows:auto 1fr}.app-sidebar-stage{position:relative}.app-sidebar-stage .app-sidebar{height:auto}.app-sidebar [data-label]::after{content:none}}
 @media(prefers-reduced-motion:reduce){
-  .app-shell,.app-sidebar-stage .app-sidebar,.app-sidebar::after{transition:none}
-  .sidebar-collapsed .app-sidebar{transform:none;filter:none}
+  .app-shell,.app-sidebar .wordmark,.app-sidebar .app-nav-label,.sidebar-account>span:not(.avatar),.sidebar-account>svg,.app-sidebar [data-label]::after{transition:none}
+  .app-sidebar-toggle svg{animation:none}
 }

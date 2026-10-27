@@ -93,6 +93,7 @@ body{background:#faf6fd}
 .app-main .completion-card{background:#f5f0fb;border-color:#e8e4f6;border-radius:22px}
 .app-main .funds-flow{background:#fef2f5;border-color:#f1d3d9}
 .app-main .earnings-intro{background:#f4edfc;border-color:#ece2f7}
+.app-main .mentor-earnings{margin:24px 0;scroll-margin-top:24px}
 .app-main .earning-card{background:#f6f4fc;border-color:#eae6f7}
 .app-main .earning-card:nth-child(2n){background:#fceff4;border-color:#f4e3eb}
 .app-main .earning-highlight{background:#fde5ea;border-color:#f7ccd5;color:#803545}

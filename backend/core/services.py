@@ -9,17 +9,35 @@ from decimal import Decimal, ROUND_HALF_UP
 from zoneinfo import ZoneInfo
 from urllib.parse import urlsplit
 from django.db import transaction
-from django.db.models import Q, Sum
+from django.db.models import Q, Sum, Exists, OuterRef
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError, PermissionDenied
-from .models import User, MentorProfile, Booking
+from .models import User, Profile, MentorProfile, Booking, TokenEntry
 from .errors import Conflict
 
 UTC = dt_timezone.utc
 SESSION_DURATION_MINUTES = 50
 SESSION_DURATION = timedelta(minutes=SESSION_DURATION_MINUTES)
 HOLD_DURATION = timedelta(minutes=60)
-RATE = Decimal('0.30')
+# Commission falls with the mentor's successful lessons: 10% for the first 35,
+# then 0.2 points less per lesson, never below 3%.
+BASE_RATE = Decimal('0.10')
+MIN_RATE = Decimal('0.03')
+RATE_STEP = Decimal('0.002')
+FULL_RATE_LESSONS = 35
+# Center lessons: the platform takes at most 7%, the owner an agreed 0-40%.
+CENTER_RATE = Decimal('0.07')
+MAX_CENTER_SHARE = 40
+# A student "leaves" when their first lesson with a mentor gets no follow-up
+# booking within a week and no 4-5 star rating. Counted over 30 days.
+CHURN_GRACE = timedelta(days=7)
+CHURN_WINDOW = timedelta(days=30)
+WARNING_CHURNS, FEE_CHURNS, HIDE_CHURNS, REMOVE_AFTER_HIDE = 2, 3, 5, 3
+PENALTY_RATE = Decimal('0.05')
+HIDE_DURATION = timedelta(days=30)
+TOKENS_PER_LESSON = 10
+REFERRAL_TOKENS_PER_MONTH = 10
+TOKEN_LESSONS_PER_MONTH = 1
 
 
 def lock_users(ids):
@@ -80,19 +98,77 @@ def available_slots(mentor, viewer=None, now=None):
     return [s for s in candidate_slots(mentor,now) if not any(a < s+SESSION_DURATION and b > s for a,b in busy)]
 
 
-def split_price(price):
+def successful_lessons(mentor_id):
+    return Booking.objects.filter(mentor_id=mentor_id,status='completed',payment_status='verified',disputed=False).count()
+
+
+def commission_rate(lessons):
+    return max(MIN_RATE, BASE_RATE - max(0, lessons-FULL_RATE_LESSONS)*RATE_STEP)
+
+
+def month_start(now):
+    return now.replace(day=1,hour=0,minute=0,second=0,microsecond=0)
+
+
+def token_balance(user_id):
+    return TokenEntry.objects.filter(user_id=user_id).aggregate(x=Sum('amount'))['x'] or 0
+
+
+def token_lessons_this_month(user_id, now):
+    return TokenEntry.objects.filter(user_id=user_id,reason='lesson',created_at__gte=month_start(now)).count() - TokenEntry.objects.filter(user_id=user_id,reason='refund',created_at__gte=month_start(now)).count()
+
+
+def split_price(price, rate, center_share=0):
     price = Decimal(price)
-    fee = (price*RATE).quantize(Decimal('1'),rounding=ROUND_HALF_UP)
-    return price,fee,price-fee
+    fee = (price*rate).quantize(Decimal('1'),rounding=ROUND_HALF_UP)
+    center_fee = (price*center_share/100).quantize(Decimal('1'),rounding=ROUND_HALF_UP)
+    return price,fee,center_fee,price-fee-center_fee
+
+
+def churned_students(mentor_id, since, now):
+    """Students whose first lesson with this mentor stayed their last, decided between since and now."""
+    pair = dict(mentor_id=OuterRef('mentor_id'),student_id=OuterRef('student_id'))
+    earlier = Booking.objects.filter(**pair,status='completed',starts_at__lt=OuterRef('starts_at'))
+    later = Booking.objects.filter(**pair,starts_at__gt=OuterRef('starts_at')).exclude(status__in=['cancelled','expired'])
+    firsts = Booking.objects.filter(mentor_id=mentor_id,status='completed',completed_at__gte=since-CHURN_GRACE,completed_at__lte=now-CHURN_GRACE)
+    return firsts.exclude(feedback_rating__gte=4).exclude(Exists(earlier)).exclude(Exists(later)).values('student_id').distinct().count()
+
+
+def mentor_standing(mentor, now):
+    churned = churned_students(mentor.user_id,now-CHURN_WINDOW,now)
+    hidden = bool(mentor.hidden_until and mentor.hidden_until > now)
+    level = 'removed' if mentor.approval == 'rejected' and mentor.first_hidden_at else 'hidden' if hidden else 'higher_fee' if churned >= FEE_CHURNS else 'warning' if churned >= WARNING_CHURNS else 'ok'
+    return {'churned':churned,'level':level,'hidden_until':mentor.hidden_until if hidden else None}
+
+
+def apply_penalties(mentor, now):
+    """Hide a mentor after 5 leavers in 30 days; remove after 3 more once hidden. Run daily."""
+    if mentor.approval != 'approved':
+        return None
+    if mentor.first_hidden_at and churned_students(mentor.user_id,mentor.first_hidden_at,now) >= REMOVE_AFTER_HIDE:
+        mentor.approval = 'rejected'
+        mentor.save(update_fields=['approval'])
+        return 'removed'
+    hidden = mentor.hidden_until and mentor.hidden_until > now
+    if not hidden and churned_students(mentor.user_id,now-CHURN_WINDOW,now) >= HIDE_CHURNS:
+        mentor.hidden_until = now+HIDE_DURATION
+        mentor.first_hidden_at = mentor.first_hidden_at or now
+        mentor.save(update_fields=['hidden_until','first_hidden_at'])
+        return 'hidden'
+    return None
 
 
 @transaction.atomic
-def reserve(student,mentor_id,start,objective,*,agreed_price=None):
+def reserve(student,mentor_id,start,objective,*,agreed_price=None,use_tokens=False):
+    if student.profile.account_type == 'parent':
+        raise ValidationError({'detail':'Ota-ona hisobi bilan dars band qilib bo‘lmaydi. Darsni farzandingiz o‘z hisobidan band qiladi.'})
     if student.pk == mentor_id:
         raise ValidationError({'mentor_id':'O‘zingizdan dars band qila olmaysiz.'})
+    if not student.profile.email_verified:
+        raise ValidationError({'detail':'Dars band qilishdan oldin emailingizni tasdiqlang.'})
     lock_users([student.pk,mentor_id])
     now = timezone.now()
-    mentor = MentorProfile.objects.select_related('user__profile').filter(user_id=mentor_id,approval='approved',is_paused=False,user__is_active=True).first()
+    mentor = MentorProfile.objects.select_related('user__profile','center').filter(user_id=mentor_id,approval='approved',is_paused=False,user__is_active=True).first()
     if not mentor:
         raise Conflict('Mentor hozir band qilish uchun ochiq emas.')
     if start not in candidate_slots(mentor,now):
@@ -104,8 +180,50 @@ def reserve(student,mentor_id,start,objective,*,agreed_price=None):
     price = mentor.hourly_price if agreed_price is None else Decimal(agreed_price)
     if not Decimal('30000') <= price <= Decimal('60000'):
         raise ValidationError({'price': 'Narx 30 000–60 000 so‘m oralig‘ida bo‘lishi kerak.'})
-    total,fee,net = split_price(price)
-    return Booking.objects.create(student=student,mentor_id=mentor_id,starts_at=start,ends_at=start+SESSION_DURATION,objective=objective,total_price=total,platform_fee=fee,mentor_net=net,commission_rate=RATE,expires_at=now+HOLD_DURATION)
+    rate = commission_rate(successful_lessons(mentor_id))
+    center = mentor.center if mentor.center and mentor.center.approval == 'approved' else None
+    if center:
+        rate = min(rate,CENTER_RATE)
+    if churned_students(mentor_id,now-CHURN_WINDOW,now) >= FEE_CHURNS:
+        rate += PENALTY_RATE
+    # The owner teaching in their own center keeps the whole remainder.
+    share = mentor.center_share if center and center.owner_id != mentor_id else 0
+    total,fee,center_fee,net = split_price(price,rate,share)
+    money = dict(total_price=total,platform_fee=fee,center=center if share else None,center_fee=center_fee,mentor_net=net,commission_rate=rate)
+    if not use_tokens:
+        return Booking.objects.create(student=student,mentor_id=mentor_id,starts_at=start,ends_at=start+SESSION_DURATION,objective=objective,**money,expires_at=now+HOLD_DURATION)
+    if token_balance(student.pk) < TOKENS_PER_LESSON:
+        raise ValidationError({'detail':f'Bepul dars uchun {TOKENS_PER_LESSON} ta token kerak.'})
+    if token_lessons_this_month(student.pk,now) >= TOKEN_LESSONS_PER_MONTH:
+        raise ValidationError({'detail':'Tokenlar bilan oyiga bitta dars olish mumkin.'})
+    # The platform pays the mentor's usual share for a token lesson.
+    booking = Booking.objects.create(student=student,mentor_id=mentor_id,starts_at=start,ends_at=start+SESSION_DURATION,objective=objective,**money,expires_at=now+HOLD_DURATION,paid_with_tokens=True,status='confirmed',payment_status='verified',payment_reference='EduYor tokenlari',payment_verified_at=now)
+    TokenEntry.objects.create(user_id=student.pk,amount=-TOKENS_PER_LESSON,reason='lesson',booking=booking)
+    return booking
+
+
+def return_tokens(b):
+    """A cancelled token lesson gives the tokens back instead of a bank refund."""
+    if b.paid_with_tokens and b.payment_status == 'refund_required':
+        TokenEntry.objects.get_or_create(booking=b,reason='refund',defaults={'user_id':b.student_id,'amount':TOKENS_PER_LESSON})
+        b.payment_status,b.refunded_at = 'refunded',timezone.now()
+
+
+def reward_referrals(b, now):
+    """One token to whoever invited a participant, on that participant's first paid lesson."""
+    if b.paid_with_tokens:
+        return
+    for uid in (b.student_id,b.mentor_id):
+        referrer = Profile.objects.filter(user_id=uid).values_list('referred_by_id',flat=True).first()
+        # A referrer cannot earn from a lesson they take part in.
+        if not referrer or referrer in (b.student_id,b.mentor_id):
+            continue
+        if TokenEntry.objects.filter(reason='referral',referee_id=uid).exists():
+            continue
+        # shortcut: the referrer is not locked, so two lessons finishing at once may exceed the cap by one; lock them if abuse shows up.
+        if TokenEntry.objects.filter(user_id=referrer,reason='referral',created_at__gte=month_start(now)).count() >= REFERRAL_TOKENS_PER_MONTH:
+            continue
+        TokenEntry.objects.create(user_id=referrer,amount=1,reason='referral',referee_id=uid,booking=b)
 
 
 @contextmanager
@@ -201,6 +319,7 @@ def cancel(pk,user):
         if b.payment_status == 'verified':
             b.payment_status = 'refund_required'
         b.payout_status = 'not_eligible'
+        return_tokens(b)
         b.save()
         return b
 
@@ -217,6 +336,10 @@ def complete(pk,user):
         b.status,b.payout_status = 'completed','pending'
         b.completed_at = timezone.now()
         b.save()
+        reward_referrals(b,b.completed_at)
+        mentor = MentorProfile.objects.filter(user_id=b.mentor_id).first()
+        if mentor:
+            apply_penalties(mentor,b.completed_at)
         return b
 
 
@@ -305,6 +428,11 @@ def refund(pk,reference):
         return b
 
 
+def center_earnings(center):
+    eligible = Booking.objects.filter(center=center,status='completed',payment_status='verified',disputed=False)
+    return str(eligible.aggregate(x=Sum('center_fee'))['x'] or 0)
+
+
 def earnings(user):
     eligible = Booking.objects.filter(mentor=user,status='completed',payment_status='verified',disputed=False)
     result = eligible.aggregate(gross=Sum('total_price'),platform_fee=Sum('platform_fee'),net_earned=Sum('mentor_net'))
@@ -324,5 +452,6 @@ def resolve_with_refund(pk,note):
             raise Conflict('To‘lov tekshirilmagan yoki mentor allaqachon to‘langan. Avval bankdagi o‘tkazmalarni tekshiring.')
         b.status,b.payment_status,b.payout_status = 'cancelled','refund_required','not_eligible'
         b.disputed,b.resolution_note = False,note
+        return_tokens(b)
         b.save()
         return b

@@ -1,5 +1,78 @@
 // Static interface copy; user-authored profiles and stored form values stay unchanged.
 export const translations:Record<string,readonly [string,string]> = {
+  "Platforma ulushi 10% dan boshlanadi va 35-darsdan keyin har darsda 0.2% kamayib, 3% gacha tushadi.": ["The platform takes 10% at first; after 35 lessons it drops 0.2% per lesson, down to 3%.", "Доля платформы — 10%; после 35 уроков она снижается на 0,2% за урок, до 3%."],
+  "Mentorlarni bitta brend ostida birlashtiring. Platforma 7% oladi, markaz ulushini har bir mentor bilan kelishasiz (0–40%).": ["Bring mentors together under one brand. The platform takes 7%; you agree a 0–40% center share with each mentor.", "Объедините менторов под одним брендом. Платформа берёт 7%, долю центра (0–40%) вы согласуете с каждым ментором."],
+  "Markaz ulushi:": ["Center share:", "Доля центра:"],
+  "taklif": ["offer", "предложение"],
+  "Markaz ulushi, foiz": ["Center share, percent", "Доля центра, процент"],
+  "Taklif qilish": ["Propose", "Предложить"],
+  "Qabul qilish": ["Accept", "Принять"],
+  "Markaz ulushidan tushgan:": ["Earned from center share:", "Получено от доли центра:"],
+  "Ogohlantirish: 3 ta student ketsa, yangi darslarda komissiya 5% oshadi.": ["Warning: if 3 students leave, commission on new lessons rises by 5%.", "Предупреждение: если уйдут 3 ученика, комиссия на новые уроки вырастет на 5%."],
+  "Yangi darslarda komissiya 5% oshirilgan. 5 ta student ketsa, profil 30 kunga qidiruvdan yashiriladi.": ["Commission on new lessons is 5% higher. If 5 students leave, your profile is hidden from search for 30 days.", "Комиссия на новые уроки выше на 5%. Если уйдут 5 учеников, профиль скроют из поиска на 30 дней."],
+  "Profilingiz 30 kunga qidiruvdan yashirilgan. Yana 3 ta student ketsa, profil to‘xtatiladi.": ["Your profile is hidden from search for 30 days. If 3 more students leave, it will be suspended.", "Профиль скрыт из поиска на 30 дней. Если уйдут ещё 3 ученика, он будет приостановлен."],
+  "Ko‘p student birinchi darsdan keyin ketgani uchun profil to‘xtatildi. Administratorga murojaat qiling.": ["Your profile was suspended because many students left after the first lesson. Contact an administrator.", "Профиль приостановлен: многие ученики ушли после первого урока. Обратитесь к администратору."],
+  "30 kunda birinchi darsdan keyin qaytmaganlar:": ["Didn’t return after the first lesson (30 days):", "Не вернулись после первого урока (30 дней):"],
+  "Ulush 0 dan 40 foizgacha bo‘lishi kerak.": ["The share must be between 0 and 40 percent.", "Доля должна быть от 0 до 40 процентов."],
+  "O‘z darslaringizdan markaz ulushi olinmaydi.": ["No center share is taken from your own lessons.", "С ваших собственных уроков доля центра не берётся."],
+  "Emailingizni tasdiqlang": ["Confirm your email", "Подтвердите email"],
+  "Tasdiqlash kodi yuborildi:": ["We sent a confirmation code to:", "Код подтверждения отправлен на:"],
+  "6 xonali kod": ["6-digit code", "6-значный код"],
+  "Kod kelmadimi? Spam papkasini tekshiring.": ["No code? Check your spam folder.", "Код не пришёл? Проверьте папку «Спам»."],
+  "Qayta yuborish": ["Send again", "Отправить снова"],
+  "Do‘st taklif qiling": ["Invite a friend", "Пригласите друга"],
+  "Taklif qilgan do‘stingiz birinchi pullik darsini tugatsa, sizga 1 token beriladi. 10 token = 1 bepul dars.": ["When a friend you invited finishes their first paid lesson, you get 1 token. 10 tokens = 1 free lesson.", "Когда приглашённый друг завершит первый платный урок, вы получите 1 токен. 10 токенов = 1 бесплатный урок."],
+  "Tokenlar": ["Tokens", "Токены"],
+  "Ro‘yxatdan o‘tganlar": ["Signed up", "Зарегистрировались"],
+  "Token keltirganlar": ["Earned you a token", "Принесли токен"],
+  "Bepul dars tayyor. Mentor sahifasida «Tokenlar bilan to‘lash»ni belgilang.": ["Your free lesson is ready. Tick “Pay with tokens” on a mentor’s page.", "Бесплатный урок готов. Отметьте «Оплатить токенами» на странице ментора."],
+  "Telefon raqami · ixtiyoriy": ["Phone number · optional", "Номер телефона · необязательно"],
+  "Tokenlar bilan to‘lash · 10 token = bepul dars": ["Pay with tokens · 10 tokens = free lesson", "Оплатить токенами · 10 токенов = бесплатный урок"],
+  "To‘lov usuli": ["Payment method", "Способ оплаты"],
+  "EduYor tokenlari": ["EduYor tokens", "Токены EduYor"],
+  "Dars band qilishdan oldin emailingizni tasdiqlang.": ["Confirm your email before booking a lesson.", "Подтвердите email перед бронированием урока."],
+  "Bepul dars uchun 10 ta token kerak.": ["A free lesson needs 10 tokens.", "Для бесплатного урока нужно 10 токенов."],
+  "Tokenlar bilan oyiga bitta dars olish mumkin.": ["You can take one token lesson per month.", "Токенами можно оплатить один урок в месяц."],
+  "Kod yaqinda yuborildi. Bir daqiqadan keyin qayta urinib ko‘ring.": ["A code was just sent. Try again in a minute.", "Код только что отправлен. Повторите через минуту."],
+  "Kod eskirgan. Yangi kod so‘rang.": ["The code has expired. Ask for a new one.", "Срок действия кода истёк. Запросите новый."],
+  "Urinishlar tugadi. Yangi kod so‘rang.": ["Too many attempts. Ask for a new code.", "Слишком много попыток. Запросите новый код."],
+  "Kod noto‘g‘ri.": ["Wrong code.", "Неверный код."],
+  "Yangi kod emailingizga yuborildi.": ["A new code was sent to your email.", "Новый код отправлен на ваш email."],
+  "Kodni yuborib bo‘lmadi. Birozdan keyin qayta urinib ko‘ring.": ["We couldn’t send the code. Try again shortly.", "Не удалось отправить код. Попробуйте позже."],
+  "Email allaqachon tasdiqlangan.": ["Email is already confirmed.", "Email уже подтверждён."],
+  "Telefon raqamini to‘g‘ri kiriting.": ["Enter a valid phone number.", "Введите корректный номер телефона."],
+  "O‘quv markazi": ["Learning center", "Учебный центр"],
+  "Markaz logosi": ["Center logo", "Логотип центра"],
+  "Markaz sahifasi, katalog va reytingda ko‘rinadi. Kvadrat yoki shaffof fonli logo yaxshi chiqadi.": ["Shown on the center page, in the directory and on the leaderboard. Square or transparent logos look best.", "Показывается на странице центра, в каталоге и в рейтинге. Лучше всего смотрятся квадратные логотипы или логотипы с прозрачным фоном."],
+  "Logo yuklash": ["Upload logo", "Загрузить логотип"],
+  "Logoni almashtirish": ["Replace logo", "Заменить логотип"],
+  "Olib tashlash": ["Remove", "Удалить"],
+  "Logo": ["Logo", "Логотип"],
+  "Logo rasmini tanlang.": ["Choose a logo image.", "Выберите изображение логотипа."],
+  "Bir manzil. Bir jamoa. Sizga mos mentor.": ["One place. One team. Your mentor.", "Один адрес. Одна команда. Ваш ментор."],
+  "Bir jamoa. Istalgan joydan o‘rganish.": ["One team. Learn from anywhere.", "Одна команда. Учитесь откуда угодно."],
+  "Mentorlar jamoasi": ["Teaching team", "Команда менторов"],
+  "Markaz manzili": ["Center address", "Адрес центра"],
+  "Ta’lim formati": ["Learning format", "Формат обучения"],
+  "Darslar mentor bilan onlayn o‘tiladi.": ["Lessons take place online with a mentor.", "Занятия с ментором проходят онлайн."],
+  "MARKAZ BILAN TANISHING": ["MEET THE CENTER", "ЗНАКОМЬТЕСЬ С ЦЕНТРОМ"],
+  "BIZNING JAMOA": ["OUR TEAM", "НАША КОМАНДА"],
+  "Yo‘nalish, narx va bo‘sh vaqtiga qarab mentor tanlang. Har bir dars mentor bilan alohida band qilinadi va onlayn o‘tadi.": ["Choose a mentor by subject, price and availability. Each lesson is booked with that mentor and takes place online.", "Выберите ментора по предмету, цене и свободному времени. Каждый урок бронируется у ментора и проходит онлайн."],
+  "Markaz mentorlari tasdiqlangach shu yerda ko‘rinadi.": ["The center’s mentors will appear here once approved.", "Менторы центра появятся здесь после подтверждения."],
+  "Markazni boshqarish": ["Manage center", "Управление центром"],
+  "Jamoangizga mentor taklif qiling": ["Invite a mentor to your team", "Пригласите ментора в команду"],
+  "Markaz egasi sifatida taklif kodini ulashishingiz mumkin.": ["As the center owner, you can share the invite code.", "Как владелец центра, вы можете поделиться кодом приглашения."],
+  "Kodni yashirish": ["Hide code", "Скрыть код"],
+  "Taklif kodini ko‘rish": ["View invite code", "Показать код приглашения"],
+  "Boshqarish": ["Manage", "Управление"],
+  "Kodni mentorga yuboring. U «O‘quv markazlari → Markazim» sahifasida kod orqali qo‘shiladi.": ["Send the code to a mentor. They can join from Learning centers → My center.", "Отправьте код ментору. Он сможет присоединиться в разделе «Учебные центры → Мой центр»."],
+  "Mentorning o‘quv markazi": ["Mentor’s learning center", "Учебный центр ментора"],
+  "Markaz va jamoani ko‘rish": ["View center and team", "Посмотреть центр и команду"],
+
+  "O‘quv markaz arizalarini ko‘rib chiqing.": ["Review learning center applications.", "Рассмотрите заявки учебных центров."],
+  "Tasdiqlashni kutayotgan markazlar": ["Centers awaiting approval", "Центры, ожидающие подтверждения"],
+  "Markaz ma’lumotlari o‘zgargan. Ro‘yxatni yangilang va qayta ko‘rib chiqing.": ["Center details have changed. Refresh the list and review again.", "Данные центра изменились. Обновите список и проверьте снова."],
+
   "Bosh sahifa": [
     "Home",
     "Главная"
@@ -1383,10 +1456,6 @@ export const translations:Record<string,readonly [string,string]> = {
   "Dars narxi · 50 daqiqa": [
     "Lesson price · 50 minutes",
     "Цена урока · 50 минут"
-  ],
-  "Yangi dars narxining 70% sizga qoladi. Platforma ulushi — 30%.": [
-    "You keep 70% of each new lesson’s price. The platform receives 30%.",
-    "Вы получаете 70% стоимости нового урока. Доля платформы — 30%."
   ],
   "Profilni vaqtincha pauza qilish": [
     "Temporarily pause profile",
@@ -3311,5 +3380,196 @@ Object.assign(translations, {
   "Juda ko‘p so‘rov. Birozdan keyin qayta urining.": [
     "Too many requests. Try again shortly.",
     "Слишком много запросов. Повторите чуть позже."
+  ],
+  "O‘tkazilgan darslar": [
+    "Lessons taught",
+    "Проведено уроков"
+  ],
+  "Yangi mentor": [
+    "New mentor",
+    "Новый ментор"
+  ],
+  "Reyting": [
+    "Rating",
+    "Рейтинг"
+  ],
+  "Hali baholanmagan": [
+    "Not rated yet",
+    "Пока без оценок"
+  ],
+  "{count} ta baho": [
+    "{count} ratings",
+    "Оценок: {count}"
+  ],
+  "Platformada": [
+    "On EduYor since",
+    "На платформе с"
+  ],
+  "Mentor haqida": [
+    "About the mentor",
+    "О менторе"
+  ],
+  "Fanlar": [
+    "Subjects",
+    "Предметы"
+  ],
+  "Dars tillari": [
+    "Teaching languages",
+    "Языки занятий"
+  ],
+  "Ta’lim": [
+    "Education",
+    "Образование"
+  ],
+  "Dars formati": [
+    "Lesson format",
+    "Формат занятия"
+  ],
+  "Mentor vaqt zonasi": [
+    "Mentor time zone",
+    "Часовой пояс ментора"
+  ],
+  "Dars beradigan kunlar": [
+    "Teaching days",
+    "Дни занятий"
+  ],
+  "Dars bor": [
+    "Available",
+    "Есть занятия"
+  ],
+  "Dars yo‘q": [
+    "Not available",
+    "Нет занятий"
+  ],
+  "Har kuni": [
+    "Every day",
+    "Каждый день"
   ]
+});
+
+// Parent accounts and family links
+Object.assign(translations, {
+  "Hisob kim uchun?": ["Who is this account for?", "Для кого этот аккаунт?"],
+  "O‘zim uchun": ["For myself", "Для себя"],
+  "Farzandim uchun": ["For my child", "Для моего ребёнка"],
+  "Farzandingiz hisobini ulab, darslari va vazifalarini kuzatasiz.": ["Link your child’s account to follow their lessons and assignments.", "Подключите аккаунт ребёнка и следите за его уроками и заданиями."],
+  "Ota-onaning to‘liq ismi": ["Parent’s full name", "Полное имя родителя"],
+  "Farzandlarim": ["My children", "Мои дети"],
+  "Buni faqat siz va ulangan ota-onangiz ko‘radi.": ["Only you and your linked parent can see this.", "Это видите только вы и подключённый родитель."],
+  "Ulanish uzilsinmi? Bu ota-ona natijalaringizni boshqa ko‘ra olmaydi.": ["Remove this link? This parent will no longer see your progress.", "Отключить? Этот родитель больше не увидит ваши результаты."],
+  "Ota-ona bilan ulash": ["Link a parent", "Подключить родителя"],
+  "Ota-onangiz bergan kodni kiriting. Ular darslaringiz, vazifalaringiz va natijalaringizni ko‘radi.": ["Enter the code your parent gave you. They will see your lessons, assignments and results.", "Введите код, который дал вам родитель. Он увидит ваши уроки, задания и результаты."],
+  "Ota-onangiz ulandi.": ["Your parent is now linked.", "Родитель подключён."],
+  "Natijalaringizni ko‘radi": ["Can see your progress", "Видит ваши результаты"],
+  "Uzish": ["Remove", "Отключить"],
+  "Ulash kodi": ["Link code", "Код подключения"],
+  "Ulash": ["Link", "Подключить"],
+  "Kodni faqat ota-onangiz yoki vasiyingiz bersa kiriting. Ulanishni istalgan vaqtda uzishingiz mumkin.": ["Only enter a code from your parent or guardian. You can remove the link at any time.", "Вводите код, только если его дал родитель или опекун. Отключить можно в любой момент."],
+  "Bu bo‘lim ota-onalar uchun": ["This section is for parents", "Этот раздел для родителей"],
+  "Ota-onangiz natijalaringizni ko‘rishi uchun ular bergan kodni Profilim sahifasiga kiriting.": ["To let your parent see your progress, enter their code on the My profile page.", "Чтобы родитель видел ваши результаты, введите его код на странице «Мой профиль»."],
+  "Profilimga o‘tish": ["Go to my profile", "Перейти в профиль"],
+  "OTA-ONA KABINETI": ["PARENT ACCOUNT", "КАБИНЕТ РОДИТЕЛЯ"],
+  "Farzandingizning darslari, vazifalari va natijalari bir joyda.": ["Your child’s lessons, assignments and results in one place.", "Уроки, задания и результаты ребёнка в одном месте."],
+  "Farzandni tanlang": ["Choose a child", "Выберите ребёнка"],
+  "Farzandingiz bilan ulanish uzilsinmi? Qayta ulash uchun yangi kod kerak bo‘ladi.": ["Unlink your child? You will need a new code to link again.", "Отключить ребёнка? Для повторного подключения понадобится новый код."],
+  "Natijalar yuklanmoqda": ["Loading progress", "Загрузка результатов"],
+  "O‘RGANISH MAQSADI": ["LEARNING GOAL", "ЦЕЛЬ ОБУЧЕНИЯ"],
+  "Yakunlangan darslar": ["Completed lessons", "Завершённые уроки"],
+  "Topshirilgan vazifalar": ["Submitted assignments", "Сданные задания"],
+  "Tekshirilgan vazifalar": ["Reviewed assignments", "Проверенные задания"],
+  "{count} ta dars to‘lovni kutmoqda. To‘lov farzandingiz hisobidagi dars sahifasida tasdiqlanadi.": ["Lessons awaiting payment: {count}. Payment is confirmed on the lesson page in your child’s account.", "Уроков ждут оплаты: {count}. Оплата подтверждается на странице урока в аккаунте ребёнка."],
+  "Rejalashtirilgan dars yo‘q.": ["No scheduled lessons.", "Запланированных уроков нет."],
+  "So‘nggi darslar": ["Recent lessons", "Последние уроки"],
+  "Hali yakunlangan dars yo‘q.": ["No completed lessons yet.", "Завершённых уроков пока нет."],
+  "Vazifa va testlar": ["Assignments and tests", "Задания и тесты"],
+  "Muddat": ["Due", "Срок"],
+  "{correct} / {total} to‘g‘ri": ["{correct} / {total} correct", "{correct} / {total} верно"],
+  "Mentor topshiriq berganida shu yerda ko‘rinadi.": ["Assignments from mentors will appear here.", "Задания от менторов появятся здесь."],
+  "Ulanishni uzish": ["Unlink", "Отключить"],
+  "BIRINCHI QADAM": ["FIRST STEP", "ПЕРВЫЙ ШАГ"],
+  "YANA FARZAND QO‘SHISH": ["ADD ANOTHER CHILD", "ДОБАВИТЬ ЕЩЁ РЕБЁНКА"],
+  "Farzandingiz hisobini ulang": ["Link your child’s account", "Подключите аккаунт ребёнка"],
+  "Boshqa farzandingizni ulang": ["Link another child", "Подключите другого ребёнка"],
+  "Ulash kodini oling.": ["Get a link code.", "Получите код подключения."],
+  "Farzandingiz EduYor’dagi o‘z hisobiga kirsin. Hisobi bo‘lmasa, «O‘zim uchun» tanlab ro‘yxatdan o‘tsin.": ["Your child signs in to their own EduYor account. If they have none, they sign up choosing “For myself”.", "Ребёнок входит в свой аккаунт EduYor. Если аккаунта нет, пусть зарегистрируется, выбрав «Для себя»."],
+  "Farzandingiz Profilim sahifasidagi «Ota-ona bilan ulash» bo‘limiga kodni kiritsin.": ["Your child enters the code under “Link a parent” on the My profile page.", "Ребёнок вводит код в разделе «Подключить родителя» на странице «Мой профиль»."],
+  "Ulanganini tekshirish": ["Check link", "Проверить подключение"],
+  "Ulash kodini olish": ["Get link code", "Получить код"],
+  "Kod bir marta ishlaydi. Farzandingiz uni kiritgach, shu sahifada ko‘rinadi.": ["The code works once. Your child appears on this page after entering it.", "Код действует один раз. После ввода ребёнок появится на этой странице."],
+  "Ulash kodi faqat ota-ona hisobida beriladi.": ["Link codes are available only in parent accounts.", "Код подключения доступен только в аккаунте родителя."],
+  "Ota-ona hisobini farzand sifatida ulab bo‘lmaydi.": ["A parent account cannot be linked as a child.", "Аккаунт родителя нельзя подключить как ребёнка."],
+  "Kod noto‘g‘ri yoki allaqachon ishlatilgan.": ["The code is invalid or has already been used.", "Код неверный или уже использован."],
+  "Siz bu ota-onaga allaqachon ulangansiz.": ["You are already linked to this parent.", "Вы уже подключены к этому родителю."]
+});
+
+Object.assign(translations, {
+  "Ota-ona hisobi bilan dars band qilib bo‘lmaydi. Darsni farzandingiz o‘z hisobidan band qiladi.": ["Lessons cannot be booked from a parent account. Your child books lessons from their own account.", "С аккаунта родителя нельзя бронировать уроки. Ребёнок бронирует их из своего аккаунта."]
+});
+
+// Learning centers
+Object.assign(translations, {
+  "O‘quv markazlari": ["Learning centers", "Учебные центры"],
+  "BIRGA KUCHLIROQ": ["STRONGER TOGETHER", "ВМЕСТЕ СИЛЬНЕЕ"],
+  "Mentorlar jamoalari va hamkor o‘quv markazlari. Dars har doim tanlangan mentor bilan band qilinadi.": ["Mentor teams and partner learning centers. Lessons are always booked with the mentor you choose.", "Команды менторов и учебные центры-партнёры. Урок всегда бронируется у выбранного ментора."],
+  "Markazim": ["My center", "Мой центр"],
+  "Markaz ochish": ["Open a center", "Открыть центр"],
+  "Hozircha tasdiqlangan markaz yo‘q": ["No approved centers yet", "Одобренных центров пока нет"],
+  "Mentorlar birlashib yoki mavjud o‘quv markazi sifatida birinchi bo‘ling.": ["Be the first, as a team of mentors or as an existing learning center.", "Станьте первыми — командой менторов или действующим учебным центром."],
+  "Onlayn markaz": ["Online center", "Онлайн-центр"],
+  "Offline markaz": ["Offline center", "Офлайн-центр"],
+  "{count} ta mentor": ["Mentors: {count}", "Менторов: {count}"],
+  "Markazlarga qaytish": ["Back to centers", "Назад к центрам"],
+  "Markaz mentorlari": ["Center mentors", "Менторы центра"],
+  "Hozircha ochiq mentor yo‘q": ["No mentors available yet", "Доступных менторов пока нет"],
+  "Yana ko‘rsatish": ["Show more", "Показать ещё"],
+  "Ota-ona hisobi bilan markaz ochib bo‘lmaydi.": ["A center cannot be opened from a parent account.", "Нельзя открыть центр из аккаунта родителя."],
+  "MARKAZNI BOSHQARISH": ["MANAGE CENTER", "УПРАВЛЕНИЕ ЦЕНТРОМ"],
+  "Mentorlar jamoasi yoki mavjud offline o‘quv markazi sifatida ariza bering. Admin tasdiqlagach sahifangiz ochiladi.": ["Apply as a team of mentors or an existing offline learning center. Your page opens after admin approval.", "Подайте заявку как команда менторов или действующий офлайн-центр. Страница откроется после одобрения администратором."],
+  "Kod bilan qo‘shilish": ["Join with a code", "Вступить по коду"],
+  "Markazga mentor sifatida qo‘shilasiz. Avval mentor profilingizni yarating.": ["You join a center as a mentor. Create your mentor profile first.", "Вы вступаете в центр как ментор. Сначала создайте профиль ментора."],
+  "Mentor profilini yaratish": ["Create mentor profile", "Создать профиль ментора"],
+  "Markazdan chiqasizmi?": ["Leave this center?", "Выйти из центра?"],
+  "Mentor markazdan chiqarilsinmi? Taklif kodi yangilanadi.": ["Remove this mentor? The invite code will change.", "Исключить ментора? Код приглашения изменится."],
+  "Markaz sahifasi hammaga ochiq.": ["The center page is public.", "Страница центра открыта для всех."],
+  "Admin tasdiqlagach markaz sahifasi ochiladi.": ["The center page opens after admin approval.", "Страница центра откроется после одобрения администратором."],
+  "Ariza rad etildi. Ma’lumotlarni yangilab, qayta yuboring.": ["The application was rejected. Update the details and submit again.", "Заявка отклонена. Обновите данные и отправьте снова."],
+  "Sahifani ko‘rish": ["View page", "Открыть страницу"],
+  "MENTORLARNI TAKLIF QILISH": ["INVITE MENTORS", "ПРИГЛАСИТЬ МЕНТОРОВ"],
+  "Kodni mentorlarga yuboring. Ular «O‘quv markazlari → Markazim» sahifasida kodni kiritib qo‘shiladi. Mentorni chiqarsangiz, kod yangilanadi.": ["Send the code to mentors. They join by entering it under “Learning centers → My center”. Removing a mentor changes the code.", "Отправьте код менторам. Они вступают, введя его в разделе «Учебные центры → Мой центр». Если исключить ментора, код изменится."],
+  "Chiqish": ["Leave", "Выйти"],
+  "Chiqarish": ["Remove", "Исключить"],
+  "Hali mentor qo‘shilmagan. Kodni mentorlarga yuboring.": ["No mentors yet. Send the code to mentors.", "Менторов пока нет. Отправьте код менторам."],
+  "Markaz ma’lumotlari": ["Center details", "Данные центра"],
+  "O‘zgarishlar admin tomonidan qayta tekshiriladi.": ["Changes are reviewed again by an admin.", "Изменения снова проверит администратор."],
+  "Saqlandi. Admin tasdiqlagach ko‘rinadi.": ["Saved. Visible after admin approval.", "Сохранено. Будет видно после одобрения администратором."],
+  "Markaz turi": ["Center type", "Тип центра"],
+  "Markaz nomi": ["Center name", "Название центра"],
+  "Markaz haqida": ["About the center", "О центре"],
+  "Qaysi fanlar, kimlar uchun va qanday ishlaysiz?": ["Which subjects, for whom and how do you work?", "Какие предметы, для кого и как вы работаете?"],
+  "Shahar": ["City", "Город"],
+  "Shahar · ixtiyoriy": ["City · optional", "Город · необязательно"],
+  "Manzil": ["Address", "Адрес"],
+  "Nomi": ["Name", "Название"],
+  "Arizani yuborish": ["Submit application", "Отправить заявку"],
+  "Markaz egasi bergan kodni kiriting. Profilingizda markaz nomi ko‘rinadi; darslar, narx va to‘lovlar avvalgidek qoladi.": ["Enter the code from the center owner. The center name appears on your profile; lessons, prices and payments stay the same.", "Введите код от владельца центра. Название центра появится в профиле; уроки, цены и оплата не меняются."],
+  "Markaz kodi": ["Center code", "Код центра"],
+  "Qo‘shilish": ["Join", "Вступить"],
+  "Bu nomdagi markaz allaqachon bor.": ["A center with this name already exists.", "Центр с таким названием уже существует."],
+  "Offline markaz uchun shahar va manzilni kiriting.": ["Enter the city and address for an offline center.", "Укажите город и адрес офлайн-центра."],
+  "Siz allaqachon markazga bog‘langansiz.": ["You are already linked to a center.", "Вы уже связаны с центром."],
+  "Kod noto‘g‘ri yoki yangilangan. Markaz egasidan yangi kod so‘rang.": ["The code is invalid or has changed. Ask the center owner for a new code.", "Код неверный или изменён. Попросите у владельца центра новый код."],
+  "Markazga qo‘shilish uchun avval mentor profilini yarating.": ["Create a mentor profile before joining a center.", "Чтобы вступить в центр, сначала создайте профиль ментора."],
+  "Siz allaqachon markaz a’zosisiz. Avval undan chiqing.": ["You are already a member of a center. Leave it first.", "Вы уже состоите в центре. Сначала выйдите из него."]
+});
+
+// Leaderboard
+Object.assign(translations, {
+  "ENG YAXSHILAR": ["TOP RATED", "ЛУЧШИЕ"],
+  "O‘quvchilar to‘lovi tasdiqlangan darslardan keyin qo‘ygan baholar asosida.": ["Based on ratings students leave after paid, completed lessons.", "На основе оценок учеников после оплаченных и завершённых уроков."],
+  "Reyting hali shakllanmagan": ["No rankings yet", "Рейтинг пока не сформирован"],
+  "O‘quvchilar darsdan keyin baho qoldirgach, eng yaxshilar shu yerda chiqadi.": ["Once students rate their lessons, the best appear here.", "Когда ученики оценят уроки, лучшие появятся здесь."],
+  "Baholari kam bo‘lganlar ehtiyotkorlik bilan hisoblanadi, shuning uchun bitta 5 yulduzli baho uzoq va barqaror natijadan ustun chiqmaydi.": ["Entries with few ratings are scored cautiously, so a single 5-star review cannot outrank a long, steady record.", "Записи с малым числом оценок считаются осторожно, поэтому одна оценка 5 не обгонит долгий стабильный результат."],
+  "{count} ta dars": ["Lessons: {count}", "Уроков: {count}"],
+  "muvaffaqiyatli dars": ["successful lessons", "успешных уроков"],
+  "O‘rtacha baho": ["Average rating", "Средняя оценка"]
 });

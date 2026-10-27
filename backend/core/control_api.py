@@ -10,7 +10,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from .views import SecureView, AuthThrottle
-from .models import User, MentorProfile, Booking, PaymentReceipt
+from .models import User, MentorProfile, Booking, PaymentReceipt, LearningCenter
 from . import services
 
 
@@ -24,8 +24,13 @@ class ControlView(SecureView):
     permission_classes = [Administrator]
 
 
+def full_name(user):
+    profile = getattr(user, 'profile', None)
+    return profile.full_name if profile else user.first_name
+
+
 def operator(user):
-    return {'email': user.email, 'name': user.profile.full_name or 'Administrator'}
+    return {'email': user.email, 'name': full_name(user) or 'Administrator'}
 
 
 class Login(SecureView):
@@ -56,6 +61,7 @@ class Me(ControlView):
 class Summary(ControlView):
     def get(self, request):
         return Response({'mentors': MentorProfile.objects.filter(approval='pending').count(),
+                         'centers': LearningCenter.objects.filter(approval='pending').count(),
                          'payments': Booking.objects.filter(payment_status='submitted').count(),
                          'users': User.objects.count(), 'lessons': Booking.objects.count()})
 
@@ -69,7 +75,7 @@ def page(request, queryset, serialize):
 
 def mentor_data(m):
     fields = {key: str(getattr(m, key)) for key in ('headline', 'bio', 'experience', 'teaching_languages', 'hourly_price', 'approval', 'is_paused')}
-    fields.update(id=m.pk, name=m.user.profile.full_name, email=m.user.email,
+    fields.update(id=m.pk, name=full_name(m.user), email=m.user.email,
                   subjects=list(m.subjects.order_by('pk').values_list('name', flat=True)))
     fields['paused'] = m.is_paused
     fields['version'] = hashlib.sha256(json.dumps(fields, sort_keys=True).encode()).hexdigest()
@@ -100,6 +106,37 @@ class Mentors(ControlView):
                 mentor.is_paused = action == 'pause'
             mentor.save(update_fields=['approval', 'is_paused'])
             return Response(mentor_data(mentor))
+
+
+def center_data(center):
+    fields = {key: getattr(center, key) for key in ('name', 'kind', 'description', 'city', 'address', 'approval')}
+    fields.update(id=center.pk, email=center.owner.email, owner_name=full_name(center.owner))
+    fields['version'] = hashlib.sha256(json.dumps(fields, sort_keys=True).encode()).hexdigest()
+    return fields
+
+
+class Centers(ControlView):
+    def get(self, request):
+        rows = LearningCenter.objects.select_related('owner__profile').order_by('-pk')
+        state = request.query_params.get('state', 'pending')
+        if state in ['pending', 'approved', 'rejected']:
+            rows = rows.filter(approval=state)
+        return page(request, rows, center_data)
+
+    def post(self, request, pk):
+        identity = get_object_or_404(LearningCenter, pk=pk)
+        action = request.data.get('action')
+        if action not in ['approve', 'reject']:
+            raise ValidationError('Amal noto‘g‘ri.')
+        with transaction.atomic():
+            # Center edits also lock the owner, so approval cannot race with an edit.
+            services.lock_users([identity.owner_id])
+            center = get_object_or_404(LearningCenter.objects.select_related('owner__profile'), pk=pk)
+            if request.data.get('version') != center_data(center)['version']:
+                return Response({'detail': 'Markaz ma’lumotlari o‘zgargan. Ro‘yxatni yangilang va qayta ko‘rib chiqing.'}, status=409)
+            center.approval = 'approved' if action == 'approve' else 'rejected'
+            center.save(update_fields=['approval'])
+            return Response(center_data(center))
 
 
 def booking_data(b):
@@ -159,4 +196,4 @@ class Users(ControlView):
         search = request.query_params.get('search', '').strip()[:120]
         if search:
             rows = rows.filter(Q(email__icontains=search) | Q(profile__full_name__icontains=search))
-        return page(request, rows, lambda u: {'id': u.pk, 'name': u.profile.full_name, 'email': u.email, 'active': u.is_active, 'admin': u.is_staff and u.is_superuser})
+        return page(request, rows, lambda u: {'id': u.pk, 'name': full_name(u), 'email': u.email, 'active': u.is_active, 'admin': u.is_staff and u.is_superuser})

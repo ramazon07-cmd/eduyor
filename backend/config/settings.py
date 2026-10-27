@@ -51,5 +51,14 @@ X_FRAME_OPTIONS = 'DENY'
 FILE_UPLOAD_MAX_MEMORY_SIZE = 2 * 1024 * 1024
 DATA_UPLOAD_MAX_MEMORY_SIZE = 3 * 1024 * 1024
 PAYMENT_INSTRUCTIONS = os.getenv('PAYMENT_INSTRUCTIONS','')
+# Brevo SMTP (free tier: 300 emails/day). Without a host, codes print to the console.
+EMAIL_HOST = os.getenv('EMAIL_HOST', '')
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' if EMAIL_HOST else 'django.core.mail.backends.console.EmailBackend'
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+EMAIL_TIMEOUT = 10
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'EduYor <no-reply@eduyor.uz>')
 PAYMENT_SUPPORT = os.getenv('PAYMENT_SUPPORT','Administrator bilan bog‘laning')
 REST_FRAMEWORK = {'DEFAULT_AUTHENTICATION_CLASSES':['rest_framework.authentication.SessionAuthentication'],'DEFAULT_PERMISSION_CLASSES':['rest_framework.permissions.IsAuthenticated'],'DEFAULT_RENDERER_CLASSES':['rest_framework.renderers.JSONRenderer'],'EXCEPTION_HANDLER':'core.errors.exception_handler','DEFAULT_THROTTLE_RATES':{'auth':'20/hour'}}

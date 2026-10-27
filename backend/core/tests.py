@@ -119,7 +119,7 @@ class BookingTests(TestCase):
 
     def test_money_and_immutable_snapshot(self):
         b=self.reserve()
-        self.assertEqual((b.total_price,b.platform_fee,b.mentor_net,b.commission_rate),(Decimal('50000'),Decimal('15000'),Decimal('35000'),Decimal('0.30')))
+        self.assertEqual((b.total_price,b.platform_fee,b.mentor_net,b.commission_rate),(Decimal('50000'),Decimal('5000'),Decimal('45000'),Decimal('0.10')))
         self.b.mentor.hourly_price=60000;self.b.mentor.save()
         b=self.confirm(b)
         self.assertEqual(b.total_price,50000)
@@ -197,12 +197,12 @@ class BookingTests(TestCase):
         with patch('core.services.timezone.now',return_value=START+timedelta(hours=2)):
             with self.assertRaises(Conflict):s.cancel(b.pk,self.ops)
             s.complete(b.pk,self.a)
-            self.assertEqual(s.earnings(self.b)['net_earned'],'35000')
+            self.assertEqual(s.earnings(self.b)['net_earned'],'45000')
             s.report_issue(b.pk,self.a,'Lesson issue')
             self.assertEqual(s.earnings(self.b)['net_earned'],'0')
             with self.assertRaises(Conflict):s.pay_out(b.pk,'x')
             s.resolve_issue(b.pk,'Resolved with both participants')
-            self.assertEqual(s.earnings(self.b)['pending_payout'],'35000')
+            self.assertEqual(s.earnings(self.b)['pending_payout'],'45000')
 
     def test_unpaid_is_not_earnings(self):
         self.reserve()

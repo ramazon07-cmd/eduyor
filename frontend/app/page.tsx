@@ -18,6 +18,9 @@ const questions=[
   ['Narxga qo‘shimcha to‘lov qo‘shiladimi?','Yo‘q. Ko‘rsatilgan 30 000–60 000 so‘mlik narxni to‘laysiz.'],
 ];
 
+// The hero fan shows the earliest mentors who uploaded a photo; the full list stays in the mentors section below.
+const SPOTLIGHT_SIZE=7;
+
 export default function Home(){
   const {t:translate}=useI18n();
   const [mentors,setMentors]=useState<Mentor[]>([]);
@@ -40,6 +43,7 @@ export default function Home(){
     api<Subject[]>('subjects/').then(data=>{if(active)setSubjects(data);}).catch(()=>{});
     return()=>{active=false;};
   },[]);
+  const spotlightMentors=mentors.filter(mentor=>mentor.avatar).sort((a,b)=>a.id-b.id).slice(0,SPOTLIGHT_SIZE);
   return <>
     <section className="container editorial-hero">
       <div className="editorial-hero-copy">
@@ -47,7 +51,7 @@ export default function Home(){
         <p>{translate("Sizga mos mentor bilan keyingi qadamingizni qo‘ying.")}</p>
         <div className="hero-actions"><Link className="btn btn-primary" href="/mentors">{translate("Mentoringizni toping")} <ArrowUpRight size={18}/></Link><Link className="text-link" href="/dashboard?tab=mentor">{translate("Men ham mentor bo‘laman")} <ArrowRight size={16}/></Link></div>
       </div>
-      <MentorSpotlight mentors={mentors} loading={!loaded}/>
+      <MentorSpotlight mentors={spotlightMentors} loading={!loaded}/>
     </section>
 
     <section className="container editorial-features" aria-labelledby="features-title">

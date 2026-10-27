@@ -14,7 +14,7 @@ import {Card} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
 import {ScheduleForm} from '@/components/schedule';
 import {MentorForm} from '@/components/mentor-settings';
-const tabs=[{id:'lessons',label:'Darslarim',icon:BookOpen},{id:'mentor',label:'Mentor profilim',icon:GraduationCap},{id:'earnings',label:'Daromadim',icon:Wallet}];
+const tabs=[{id:'lessons',label:'Darslarim',icon:BookOpen},{id:'mentor',label:'Mentor profilim',icon:GraduationCap}];
 function localDay(value:string,tz:string){const parts=new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date(value));return ['year','month','day'].map(type=>parts.find(p=>p.type===type)?.value).join('-');}
 function dayKey(date:Date){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;}
 export default function DashboardPage(){
@@ -22,15 +22,15 @@ export default function DashboardPage(){
 function Dashboard(){
   const {t:translate,locale}=useI18n();
   const {user,loading}=useAuth();const params=useSearchParams();
-  const requested=params.get('tab');const tab=tabs.some(t=>t.id===requested)?requested!:'lessons';
+  // Earnings now live inside the mentor profile; old ?tab=earnings links land on that section.
+  const legacyEarnings=params.get('tab')==='earnings';
+  const requested=legacyEarnings?'mentor':params.get('tab');const tab=tabs.some(t=>t.id===requested)?requested!:'lessons';
   if(loading)return <Loading/>;if(!user)return <LoginRequired next={tab==='mentor'?'/dashboard?tab=mentor':'/dashboard'}/>;
   return <div className="dashboard-page">
-    <header className="workspace-heading"><div><span className="eyebrow">{translate(tab==='lessons'?'YANGI BILIMGA YANGI KUN':tab==='mentor'?'TAJRIBANGIZNI ULASHING':'MEHNATINGIZ NATIJASI')}</span><h1>{translate(tab==='lessons'?`Salom, ${user.profile.full_name.split(' ')[0]}`:tab==='mentor'?'Mentor profilim':'Daromadim')}</h1><p>{translate(tab==='lessons'?'O‘rganish va o‘rgatish — bir joyda.':tab==='mentor'?'Bilimingiz kimningdir keyingi qadami bo‘lsin.':'Yakunlangan darslar va mentor ulushingiz.')}</p></div></header>
-      {tab==='lessons'?<Lessons user={user}/>:<div className="workspace-settings-grid"><div>{tab==='mentor'?<><MentorForm/><section id="availability" aria-label={translate("Haftalik jadval")}><ScheduleForm/></section></>:<Earnings/>}</div><aside className="workspace-rail"><BrandNote/></aside></div>}
+    <header className="workspace-heading"><div><span className="eyebrow">{translate(tab==='lessons'?'YANGI BILIMGA YANGI KUN':'TAJRIBANGIZNI ULASHING')}</span><h1>{translate(tab==='lessons'?`Salom, ${user.profile.full_name.split(' ')[0]}`:'Mentor profilim')}</h1><p>{translate(tab==='lessons'?'O‘rganish va o‘rgatish — bir joyda.':'Bilimingiz kimningdir keyingi qadami bo‘lsin.')}</p></div></header>
+      {tab==='lessons'?<Lessons user={user}/>:<div><MentorForm/>{user.mentor&&<section id="earnings" className="mentor-earnings" aria-label={translate("Daromadim")}><Earnings focus={legacyEarnings}/></section>}<section id="availability" aria-label={translate("Haftalik jadval")}><ScheduleForm/></section></div>}
   </div>;
 }
-function BrandNote(){
-  const {t:translate,locale}=useI18n();return <Card className="brand-note"><BrandMark/><h3>{translate("Bilimga hamroh.")}</h3><p>{translate("Bitta profil orqali ham o‘rganing, ham o‘rgating.")}</p><span><Video size={15}/>{translate("Google Meet · 50 daqiqa")}</span></Card>;}
 function Lessons({user}:{user:User}){
   const {t:translate,locale}=useI18n();
   const [data,setData]=useState<Page<Booking>|null>(null);const [page,setPage]=useState(1);const [role,setRole]=useState('');const [status,setStatus]=useState('');const [date,setDate]=useState('');const [retry,setRetry]=useState(0);const [error,setError]=useState('');const [busy,setBusy]=useState(true);
@@ -62,9 +62,11 @@ function DashboardCalendar({month,setMonth,selected,select,today,marked}:{month:
   const cells=[...Array(offset).fill(null),...Array.from({length:total},(_,i)=>new Date(month.getFullYear(),month.getMonth(),i+1))] as (Date|null)[];
   return <Card className="dashboard-calendar"><div className="month-bar"><strong>{translate(monthTitle(month,locale))}</strong><div><button type="button" aria-label={translate("Oldingi oy")} onClick={()=>setMonth(new Date(month.getFullYear(),month.getMonth()-1,1))}><ChevronLeft size={17}/></button><button type="button" aria-label={translate("Keyingi oy")} onClick={()=>setMonth(new Date(month.getFullYear(),month.getMonth()+1,1))}><ChevronRight size={17}/></button></div></div><div className="dashboard-calendar-grid">{['Du','Se','Ch','Pa','Ju','Sh','Ya'].map(day=><span key={day}>{translate(day)}</span>)}{cells.map((day,i)=>day?<button type="button" key={dayKey(day)} aria-pressed={selected===dayKey(day)} className={`${selected===dayKey(day)?'selected':''} ${today===dayKey(day)?'today':''} ${marked.has(dayKey(day))?'has-lesson':''}`} onClick={()=>select(dayKey(day))}>{day.getDate()}</button>:<i key={`blank-${i}`}/>)}</div><p>{translate("Sanani tanlab darslarni ko‘ring.")}</p><small><span/>{translate("Ro‘yxatdagi dars sanalari")}</small></Card>;
 }
-function Earnings(){
+function Earnings({focus}:{focus:boolean}){
   const {t:translate,locale}=useI18n();
   const [data,setData]=useState<Record<string,string>|null>(null);const [error,setError]=useState('');const [retry,setRetry]=useState(0);
+  // Scroll once the figures are in, so the page is tall enough to land on the section.
+  useEffect(()=>{if(focus&&data)document.getElementById('earnings')?.scrollIntoView({behavior:'instant',block:'start'});},[focus,data]);
   useEffect(()=>{let active=true;setError('');api<Record<string,string>>('earnings/').then(value=>{if(active)setData(value);}).catch(e=>{if(active)setError(e.message);});return()=>{active=false;};},[retry]);
   return <>{error?<Notice kind="error">{translate(error)}<button onClick={()=>setRetry(n=>n+1)}>{translate("Qayta urinish")}</button></Notice>:!data?<Loading/>:<><Card className="earnings-intro"><Wallet size={25}/><div><h2>{translate("Mehnatingiz qiymati")}</h2><p>{translate("Faqat to‘lovi tekshirilgan, yakunlangan va nizosiz darslar hisoblanadi.")}</p></div></Card><div className="earnings-grid">{[['gross','Darslar qiymati'],['platform_fee','Platforma ulushi'],['net_earned','Sof daromad'],['pending_payout','O‘tkazilishi kutilmoqda'],['paid','To‘langan']].map(([key,label])=><Card key={key} className={`earning-card ${key==='net_earned'?'earning-highlight':''}`}><p>{translate(label)}</p><strong>{money(data[key])}</strong></Card>)}</div><Notice>{translate("Dars yakuni tasdiqlangach, mentor ulushi admin tomonidan qo‘lda o‘tkaziladi.")}</Notice></>}</>;
 }

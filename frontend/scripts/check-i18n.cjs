@@ -68,3 +68,15 @@ assert.equal(t('Ochiq so‘rovlar','en'),'Open requests');
 assert.equal(t('Tasdiqlash va bron qilish','ru'),'Подтвердить и забронировать');
 assert.equal(t('Student-authored IELTS request','en'),'Student-authored IELTS request');
 console.log('Request navigation, offer counts and booking labels translate correctly.');
+
+assert.equal(t('3 / 5 to‘g‘ri','en'),'3 / 5 correct');
+assert.equal(t('2 ta dars to‘lovni kutmoqda. To‘lov farzandingiz hisobidagi dars sahifasida tasdiqlanadi.','ru'),'Уроков ждут оплаты: 2. Оплата подтверждается на странице урока в аккаунте ребёнка.');
+console.log('Parent progress counts translate correctly.');
+
+assert.equal(t('3 ta mentor','ru'),'Менторов: 3');
+assert.equal(t('Manzil: Offline markaz uchun shahar va manzilni kiriting.','en'),'Address: Enter the city and address for an offline center.');
+console.log('Learning center counts and field errors translate correctly.');
+
+assert.equal(t('12 ta dars','en'),'Lessons: 12');
+assert.equal(t('1 ta dars to‘lovni kutmoqda. To‘lov farzandingiz hisobidagi dars sahifasida tasdiqlanadi.','en'),'Lessons awaiting payment: 1. Payment is confirmed on the lesson page in your child’s account.');
+console.log('Leaderboard lesson counts translate without clashing with longer keys.');
