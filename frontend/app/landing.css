@@ -74,6 +74,13 @@
 .editorial-section-heading>.eyebrow{justify-content:center;margin-bottom:15px}
 .editorial-section-heading h2{font-size:44px;line-height:1.1;letter-spacing:-1.7px;margin-bottom:17px}
 .editorial-section-heading p{font-size:13px;line-height:1.9;max-width:490px;margin:0 auto}
+.center-directory-link{display:inline-flex;align-items:center;gap:8px;margin-top:16px;font-size:13px;min-height:36px}
+.center-directory-link:hover{text-decoration:underline;text-underline-offset:4px}
+.center-empty{padding:40px 24px;text-align:center;border:1px solid var(--landing-border);border-radius:23px;background:var(--landing-panel)}
+.center-empty>svg{color:var(--landing-accent);margin-bottom:16px}
+.center-empty h3{font-size:20px;margin:0 0 10px;text-wrap:balance}
+.center-empty p{font-size:13px;line-height:1.8;margin:0}
+.cp-card.cp-skeleton{min-height:250px}
 .feature-bento{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:18px}
 .bento-card{border:1px solid var(--landing-border);border-radius:23px;overflow:hidden;min-width:0;background:var(--landing-panel)}
 .bento-copy h3{font-size:24px;letter-spacing:-.8px;margin:12px 0 10px;line-height:1.2}

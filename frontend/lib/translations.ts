@@ -1,5 +1,9 @@
 // Static interface copy; user-authored profiles and stored form values stay unchanged.
 export const translations:Record<string,readonly [string,string]> = {
+  "Barcha markazlar": ["All centers", "Все центры"],
+  "O‘quv markazlari yuklanmoqda": ["Loading learning centers", "Загрузка учебных центров"],
+  "O‘quv markazlarini yuklab bo‘lmadi.": ["Couldn’t load learning centers.", "Не удалось загрузить учебные центры."],
+  "Tasdiqlangan o‘quv markazlari shu yerda ko‘rinadi.": ["Approved learning centers will appear here.", "Одобренные учебные центры появятся здесь."],
   "Mentor va o‘quvchi onlayn darsda": ["A mentor and a student in an online lesson", "Ментор и ученик на онлайн-уроке"],
   "Onlayn dars": ["Live lesson", "Онлайн-урок"],
   "Bir jamoa.": ["One team.", "Одна команда."],

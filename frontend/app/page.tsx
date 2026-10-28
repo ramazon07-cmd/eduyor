@@ -3,7 +3,7 @@ import {useI18n} from '@/components/i18n';
 
 import Link from 'next/link';
 import {useEffect,useState} from 'react';
-import {ArrowRight,ArrowUpRight,GraduationCap} from 'lucide-react';
+import {ArrowUpRight,Building2,GraduationCap} from 'lucide-react';
 import {api} from '@/lib/api';
 import type {Mentor,Page,Subject} from '@/lib/types';
 import {Notice} from '@/components/common';
@@ -31,8 +31,18 @@ export default function Home(){
   const [mentors,setMentors]=useState<Mentor[]>([]);
   const [subjects,setSubjects]=useState<Subject[]>([]);
   const [centers,setCenters]=useState<Center[]>([]);
-  // Centers are optional on the landing page; a failed load just hides the section.
-  useEffect(()=>{api<Page<Center>>('centers/').then(d=>setCenters(d.results.filter(c=>c.mentor_count>0).slice(0,3))).catch(()=>setCenters([]));},[]);
+  const [centersLoading,setCentersLoading]=useState(true);
+  const [centersError,setCentersError]=useState(false);
+  const [centersRetry,setCentersRetry]=useState(0);
+  useEffect(()=>{
+    let active=true;
+    setCentersLoading(true);
+    setCentersError(false);
+    api<Page<Center>>('centers/').then(data=>{
+      if(active)setCenters(data.results.slice(0,3));
+    }).catch(()=>{if(active)setCentersError(true);}).finally(()=>{if(active)setCentersLoading(false);});
+    return()=>{active=false;};
+  },[centersRetry]);
   const [error,setError]=useState('');
   const [loaded,setLoaded]=useState(false);
   useEffect(()=>{
@@ -57,7 +67,7 @@ export default function Home(){
       <div className="editorial-hero-copy">
         <h1><span>{translate("Katta maqsadlar")}</span><strong>{translate("birga boshlanadi.")}</strong></h1>
         <p>{translate("Sizga mos mentor bilan keyingi qadamingizni qo‘ying.")}</p>
-        <div className="hero-actions"><Link className="btn btn-primary" href={authHref('/mentors')}>{translate("Mentoringizni toping")} <ArrowUpRight size={18}/></Link><Link className="text-link" href={authHref('/dashboard?tab=mentor')}>{translate("Men ham mentor bo‘laman")} <ArrowRight size={16}/></Link></div>
+        <div className="hero-actions"><Link className="btn btn-primary" href={authHref('/mentors')}>{translate("Mentoringizni toping")} <ArrowUpRight size={18}/></Link><Link className="text-link" href="#markazlar">{translate("O‘quv markazlari")} <ArrowUpRight size={16}/></Link></div>
       </div>
       <MentorSpotlight mentors={spotlightMentors} loading={!loaded}/>
     </section>
@@ -82,7 +92,7 @@ export default function Home(){
       <div className="promo-bento">
         <article className="promo-tile"><strong>{translate("50 daqiqa")}</strong><p>{translate("Google Meet orqali yakkama-yakka dars.")}</p></article>
         <article className="promo-tile"><strong>{translate("30 000–60 000 UZS")}</strong><p>{translate("Bitta dars narxi. Qo‘shimcha to‘lov yo‘q.")}</p></article>
-        <article className="promo-tile promo-tile-cta"><h3>{translate("Birinchi darsingizni bugun band qiling.")}</h3><Link className="btn btn-primary" href={authHref('/mentors')}>{translate("Mentor topish")} <ArrowUpRight size={18}/></Link></article>
+        <article className="promo-tile promo-tile-schedule"><strong>{translate("Vaqtni band qiling")}</strong><p>{translate("Qulay vaqtingizni tanlab, dars uchun to‘lov yuboring.")}</p></article>
         <PromoVideo/>
       </div>
     </section>
@@ -91,13 +101,13 @@ export default function Home(){
       <div className="editorial-section-heading"><h2>{translate("Bir maqsad.")}<br/><em>{translate("Mos mentor.")}</em></h2></div>
       {error&&<Notice kind="error">{translate(error)} <Link href={authHref('/mentors')}>{translate("Qayta urinish")}</Link></Notice>}
       {(!loaded||mentors.length>0)&&<MentorPreview mentors={mentors} loading={!loaded}/>}
-      {loaded&&!mentors.length&&!error&&<div className="card empty"><GraduationCap size={32}/><h3>{translate("Birinchi mentor bo‘ling")}</h3><p>{translate("Tajribangizni ulashishdan boshlang.")}</p><Link className="btn btn-primary" href={authHref('/dashboard?tab=mentor')}>{translate("Mentorlikka ariza")} <ArrowUpRight size={17}/></Link></div>}
+      {loaded&&!mentors.length&&!error&&<div className="card empty"><GraduationCap size={32}/><h3>{translate("Birinchi mentor bo‘ling")}</h3><p>{translate("Tajribangizni ulashishdan boshlang.")}</p></div>}
     </section>
 
-    {centers.length>0&&<section id="markazlar" className="container section home-mentors">
-      <div className="editorial-section-heading"><h2>{translate("Bir jamoa.")}<br/><em>{translate("Ishonchli markaz.")}</em></h2></div>
-      <CenterPreview centers={centers} href={authHref}/>
-    </section>}
+    <section id="markazlar" className="container section home-mentors home-centers" aria-labelledby="centers-title">
+      <div className="editorial-section-heading"><h2 id="centers-title">{translate("O‘quv markazlari")}</h2><p>{translate("Bir jamoa. Istalgan joydan o‘rganish.")}</p><Link className="text-link center-directory-link" href={authHref('/centers')}>{translate("Barcha markazlar")} <ArrowUpRight size={17}/></Link></div>
+      {centersLoading?<div className="cp-row" role="status" aria-label={translate("O‘quv markazlari yuklanmoqda")}><span className="sr-only">{translate("O‘quv markazlari yuklanmoqda")}</span>{[0,1,2].map(n=><div key={n} className="cp-card cp-skeleton skeleton" aria-hidden="true"/>)}</div>:centersError?<Notice kind="error">{translate("O‘quv markazlarini yuklab bo‘lmadi.")} <button type="button" onClick={()=>setCentersRetry(n=>n+1)}>{translate("Qayta urinish")}</button></Notice>:centers.length>0?<CenterPreview centers={centers} href={authHref}/>:<div className="center-empty" role="status"><Building2 size={30} aria-hidden="true"/><h3>{translate("Hozircha tasdiqlangan markaz yo‘q")}</h3><p>{translate("Tasdiqlangan o‘quv markazlari shu yerda ko‘rinadi.")}</p></div>}
+    </section>
 
     <section id="qanday-ishlaydi" className="container editorial-how">
       <div className="editorial-section-heading"><h2>{translate("Uch qadam.")}<br/><em>{translate("Yangi imkoniyat.")}</em></h2></div>
