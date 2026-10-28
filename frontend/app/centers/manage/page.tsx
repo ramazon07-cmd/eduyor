@@ -69,14 +69,13 @@ function LogoCard({center,onChange}:{center:NonNullable<MyCenter['center']>;onCh
 }
 
 function CenterForm({method,initial,onSaved}:{method:'POST'|'PUT';initial?:CenterFields;onSaved:(data:MyCenter)=>void}){
-  const {t}=useI18n();const [kind,setKind]=useState(initial?.kind||'online');const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [notice,setNotice]=useState('');
+  const {t}=useI18n();const [busy,setBusy]=useState(false);const [error,setError]=useState('');const [notice,setNotice]=useState('');
   async function submit(e:React.FormEvent<HTMLFormElement>){e.preventDefault();const body=JSON.stringify(Object.fromEntries(new FormData(e.currentTarget)));setBusy(true);setError('');setNotice('');try{const result=await api<MyCenter>('centers/mine/',{method,body});onSaved(result);setNotice(result.center?.approval==='pending'?'Saqlandi. Admin tasdiqlagach ko‘rinadi.':'Saqlandi.');}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
   return <form className="form-stack" onSubmit={submit}>
     {error&&<Notice kind="error">{t(error)}</Notice>}{notice&&<Notice kind="success">{t(notice)}</Notice>}
-    <fieldset className="subject-fieldset"><legend>{t('Markaz turi')}</legend><div className="checkbox-chips language-choices">{(['online','offline'] as const).map(value=><label key={value} className={kind===value?'checked':''}><input type="radio" name="kind" value={value} checked={kind===value} onChange={()=>setKind(value)}/>{t(value==='online'?'Onlayn markaz':'Offline markaz')}</label>)}</div></fieldset>
     <label>{t('Markaz nomi')}<Input name="name" defaultValue={initial?.name} required maxLength={120}/></label>
     <label>{t('Markaz haqida')}<textarea name="description" defaultValue={initial?.description} required maxLength={2000} rows={4} placeholder={t('Qaysi fanlar, kimlar uchun va qanday ishlaysiz?')}/></label>
-    <div className="form-row"><label>{t(kind==='offline'?'Shahar':'Shahar · ixtiyoriy')}<Input name="city" defaultValue={initial?.city} maxLength={80} required={kind==='offline'}/></label>{kind==='offline'&&<label>{t('Manzil')}<Input name="address" defaultValue={initial?.address} maxLength={200} required/></label>}</div>
+    <label>{t('Shahar · ixtiyoriy')}<Input name="city" defaultValue={initial?.city} maxLength={80}/></label>
     <Button disabled={busy}>{t(busy?'Saqlanmoqda…':method==='POST'?'Arizani yuborish':'Saqlash')}</Button>
   </form>;
 }

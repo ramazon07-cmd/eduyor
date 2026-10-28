@@ -1,5 +1,9 @@
 // Static interface copy; user-authored profiles and stored form values stay unchanged.
 export const translations:Record<string,readonly [string,string]> = {
+  "Mentor va o‘quvchi onlayn darsda": ["A mentor and a student in an online lesson", "Ментор и ученик на онлайн-уроке"],
+  "Onlayn dars": ["Live lesson", "Онлайн-урок"],
+  "Bir jamoa.": ["One team.", "Одна команда."],
+  "Ishonchli markaz.": ["A center you can trust.", "Центр, которому доверяют."],
   "Platforma ulushi 10% dan boshlanadi va 35-darsdan keyin har darsda 0.2% kamayib, 3% gacha tushadi.": ["The platform takes 10% at first; after 35 lessons it drops 0.2% per lesson, down to 3%.", "Доля платформы — 10%; после 35 уроков она снижается на 0,2% за урок, до 3%."],
   "Mentorlarni bitta brend ostida birlashtiring. Platforma 7% oladi, markaz ulushini har bir mentor bilan kelishasiz (0–40%).": ["Bring mentors together under one brand. The platform takes 7%; you agree a 0–40% center share with each mentor.", "Объедините менторов под одним брендом. Платформа берёт 7%, долю центра (0–40%) вы согласуете с каждым ментором."],
   "Markaz ulushi:": ["Center share:", "Доля центра:"],
@@ -228,14 +232,6 @@ export const translations:Record<string,readonly [string,string]> = {
   "EduYor bosh sahifa": [
     "EduYor home",
     "Главная EduYor"
-  ],
-  "Avval hisobingizga kiring": [
-    "Sign in first",
-    "Сначала войдите в аккаунт"
-  ],
-  "Darslarni boshqarish va mentorlik qilish uchun.": [
-    "To manage lessons and teach as a mentor.",
-    "Чтобы управлять уроками и преподавать."
   ],
   "Qayta urinish": [
     "Try again",
@@ -552,10 +548,6 @@ export const translations:Record<string,readonly [string,string]> = {
   "Mentorlikka ariza": [
     "Apply to mentor",
     "Подать заявку ментора"
-  ],
-  "Barcha mentorlar": [
-    "All mentors",
-    "Все менторы"
   ],
   "BOSHLASH UCHUN": [
     "GETTING STARTED",
@@ -3518,6 +3510,7 @@ Object.assign(translations, {
   "Onlayn markaz": ["Online center", "Онлайн-центр"],
   "Offline markaz": ["Offline center", "Офлайн-центр"],
   "{count} ta mentor": ["Mentors: {count}", "Менторов: {count}"],
+  "Markazni ko‘rish": ["View center", "Открыть центр"],
   "Markazlarga qaytish": ["Back to centers", "Назад к центрам"],
   "Markaz mentorlari": ["Center mentors", "Менторы центра"],
   "Hozircha ochiq mentor yo‘q": ["No mentors available yet", "Доступных менторов пока нет"],

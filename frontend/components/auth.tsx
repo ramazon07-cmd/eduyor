@@ -17,8 +17,12 @@ export function AuthProvider({children}:{children:ReactNode}) {
   return <Context.Provider value={{user,loading,error,refresh,setUser}}>{children}</Context.Provider>;
 }
 export const useAuth = () => useContext(Context);
-// Signed-out visitors go to sign-in first and return to the mentor's booking page afterwards.
-export function useMentorHref(){
+// Signed-out visitors go to sign-in first and return to the requested page afterwards.
+export function useAuthHref(){
   const {user}=useAuth();
-  return (id:number)=>user?`/mentors/${id}`:`/login?next=${encodeURIComponent(`/mentors/${id}`)}`;
+  return (path:string)=>user?path:`/login?next=${encodeURIComponent(path)}`;
+}
+export function useMentorHref(){
+  const authHref=useAuthHref();
+  return (id:number)=>authHref(`/mentors/${id}`);
 }

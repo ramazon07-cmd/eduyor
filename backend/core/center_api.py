@@ -19,7 +19,7 @@ NAME_TAKEN = 'Bu nomdagi markaz allaqachon bor.'
 class CenterInput(serializers.ModelSerializer):
     class Meta:
         model = LearningCenter
-        fields = ['name', 'kind', 'description', 'city', 'address']
+        fields = ['name', 'description', 'city']
 
     def validate_name(self, name):
         if LearningCenter.objects.filter(name__iexact=name).exclude(pk=getattr(self.instance, 'pk', None)).exists():
@@ -27,10 +27,8 @@ class CenterInput(serializers.ModelSerializer):
         return name
 
     def validate(self, data):
-        if data['kind'] == 'offline' and not (data.get('city', '').strip() and data.get('address', '').strip()):
-            raise serializers.ValidationError({'address': 'Offline markaz uchun shahar va manzilni kiriting.'})
-        if data['kind'] == 'online':
-            data['address'] = ''
+        # Lessons are always online; a center is a brand, not a place.
+        data['kind'], data['address'] = 'online', ''
         return data
 
 

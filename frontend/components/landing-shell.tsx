@@ -6,7 +6,7 @@ import {LanguageSwitcher} from './language-switcher';
 import {useState,type ReactNode} from 'react';
 import {ArrowUpRight,Menu,X} from 'lucide-react';
 import {Logo,Notice} from './common';
-import {useAuth} from './auth';
+import {useAuth,useAuthHref} from './auth';
 
 const navigation=[['/#qanday-ishlaydi','Qanday ishlaydi?'],['/#mentorlar','Mentorlar'],['/#mentor-bolish','Mentor bo‘lish'],['/#savollar','Savollar']];
 
@@ -14,6 +14,7 @@ export function LandingShell({children}:{children:ReactNode}){
   const {t:translate}=useI18n();
   const [open,setOpen]=useState(false);
   const {user,loading,error}=useAuth();
+  const authHref=useAuthHref();
   return <div className="landing-site">
     <a className="skip-link" href="#page-content">{translate("Asosiy mazmunga o‘tish")}</a>
     <header className="landing-header">
@@ -29,6 +30,6 @@ export function LandingShell({children}:{children:ReactNode}){
     </header>
     {error&&<div className="container"><Notice kind="error">{translate(error)}</Notice></div>}
     <main id="page-content" className="landing-main">{children}</main>
-    <footer className="container landing-footer"><div><Logo/></div><nav aria-label={translate("Pastki menyu")}><Link href="/mentors">{translate("Mentor topish")}</Link><Link href="/dashboard?tab=mentor">{translate("Mentor bo‘lish")}</Link><Link href="/#savollar">{translate("Savollar va javoblar")}</Link></nav><span>© {new Date().getFullYear()} {translate("EduYor")}</span></footer>
+    <footer className="container landing-footer"><div><Logo/></div><nav aria-label={translate("Pastki menyu")}><Link href={authHref('/mentors')}>{translate("Mentor topish")}</Link><Link href={authHref('/dashboard?tab=mentor')}>{translate("Mentor bo‘lish")}</Link><Link href="/#savollar">{translate("Savollar va javoblar")}</Link></nav><span>© {new Date().getFullYear()} {translate("EduYor")}</span></footer>
   </div>;
 }

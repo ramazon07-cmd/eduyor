@@ -54,11 +54,10 @@ class CenterTests(TestCase):
         parent = make_user('parent@center.test', 'Parent', 'parent')
         self.assertEqual(self.as_user(parent).post('/api/centers/mine/', ONLINE, format='json').status_code, 403)
 
-    def test_offline_center_needs_city_and_address(self):
+    def test_every_center_is_online(self):
         director = make_user('director@center.test', 'Director')
-        self.assertEqual(self.as_user(director).post('/api/centers/mine/', {**OFFLINE, 'address': ''}, format='json').status_code, 400)
         data = self.open_center(director, **OFFLINE)
-        self.assertEqual((data['center']['kind'], data['center']['members']), ('offline', []))
+        self.assertEqual((data['center']['kind'], data['center']['address'], data['center']['city'], data['center']['members']), ('online', '', 'Toshkent', []))
 
     def test_one_center_per_person_and_names_are_unique_ignoring_case(self):
         code = self.open_center()['center']['invite_code']
@@ -135,7 +134,7 @@ class CenterTests(TestCase):
         for endpoint in [f'/api/mentors/{self.owner.pk}/', f"/api/mentors/?center={data['center']['id']}"]:
             response = APIClient().get(endpoint).json()
             row = response['results'][0] if 'results' in response else response
-            self.assertEqual(row['center'], {'id': data['center']['id'], **OFFLINE, 'logo': None})
+            self.assertEqual(row['center'], {'id': data['center']['id'], **OFFLINE, 'kind': 'online', 'address': '', 'logo': None})
             self.assertNotIn(data['center']['invite_code'], str(row))
         self.assertEqual(self.as_user(self.owner).get('/api/centers/mine/').json()['center']['invite_code'], data['center']['invite_code'])
         LearningCenter.objects.filter(pk=data['center']['id']).update(approval='rejected')
