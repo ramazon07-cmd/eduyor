@@ -5,7 +5,7 @@ import {useI18n} from '@/components/i18n';
 
 // Drop the promo file at public/videos/eduyor-promo.mp4; until it exists the card shows a notice instead of a broken player.
 const SRC='/videos/eduyor-promo.mp4';
-const POSTER='/images/learning-together.png';
+const POSTER='/videos/eduyor-promo-poster.jpg';
 
 export function PromoVideo(){
   const {t:translate}=useI18n();
